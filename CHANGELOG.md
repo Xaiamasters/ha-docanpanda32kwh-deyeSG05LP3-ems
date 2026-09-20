@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0-beta.1 — first public beta, 2026-09-20
+## 0.4.0-beta.1: first public beta, 2026-09-20
 
 - Public identity: Docan Panda & Deye EMS, integration domain `docan_deye_ems`.
 - Independent Docan USB/RS485 telemetry with fixed read query and no command API.

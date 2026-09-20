@@ -4,42 +4,46 @@
 [![HACS validation](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hacs.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hacs.yaml)
 [![Software tests](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/tests.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/tests.yaml)
 
-![Docan Panda & Deye EMS](custom_components/docan_deye_ems/brand/icon.png)
+A Home Assistant integration for the **Docan Panda 32 kWh** battery and
+**Deye SUN-10K-SG05LP3-EU-SM2** inverter. It reads equipment data, adds an energy
+dashboard and calculates charging and export plans from prices and forecasts.
+Profiles for the 6, 8 and 12 kW SG05LP3 variants are also included.
 
-Understand your battery, forecast tomorrow's energy needs, and compare a simulated
-charging/export plan against your electricity tariff — in one Home Assistant
-integration with an automatically created dashboard.
+**Current release: 0.4.0-beta.1. It reads and simulates only. It cannot control
+the inverter or battery, and it has no live-mode setting.** Software tests have
+passed, including installation through HACS. Physical hardware compatibility
+has not been verified.
 
-**Experimental beta 0.4.0-beta.1. Read-only: this integration never operates the
-battery or inverter.** Export arbitrage and charging are simulations. No schedule
-is armed, no plant services are registered, and no controls are created.
+## Project direction
 
-Designed for the **Docan Panda 32 kWh** and **Deye SUN-10K-SG05LP3-EU-SM2**.
-The 6, 8 and 12 kW SG05LP3 variants are selectable profiles. These profiles have
-passed simulated protocol tests; physical hardware/firmware compatibility has
-not been verified for this beta.
+The intended finished product is a deployable EMS with three operating modes:
 
-## What it does
+| Mode | Intended behaviour | Available in 0.4.0-beta.1? |
+|---|---|---|
+| Read-only | Show equipment readings and energy use | Yes |
+| Shadow | Calculate a plan without sending equipment commands | Yes |
+| Live | Execute the plan after the owner completes setup checks and explicitly enables control | No, requires a controller implementation |
 
-| Feature | What you get |
+New installations must start without equipment control. The live controller,
+its activation checks and its handling of failures still need to be built and
+validated. The current beta cannot replace an operating EMS controller.
+
+## Available features
+
+| Feature | Current behaviour |
 |---|---|
 | Equipment connection | Built-in Deye telemetry over Solarman V5, Modbus TCP or RTU-over-TCP; optional independent Docan USB/RS485 readings |
 | Energy dashboard | Battery, power flow, optional sun/location map, solar, home, grid, price chart, simulated schedule and history |
 | Solar forecast | Built-in Forecast.Solar for one panel orientation, or an aggregated forecast sensor for multiple orientations |
-| Household load forecast | Starts with your entered average load; learns a local time-of-day profile from sufficiently complete observed days |
+| Home consumption forecast | Uses an entered average initially, then learns a daily pattern from recorded observations |
 | Import/export optimization | Simulates charging, self-consumption and optional battery export using solar, load, tariffs, losses, reserve, power limits and battery wear cost |
 | Price anticipation | Optional historical estimate of unpublished tomorrow prices, clearly labelled and drawn with a dashed line |
 | Efficiency learning | Optional measured charge/discharge efficiency when a dedicated battery AC power measurement is available alongside DC power |
-| Performance reporting | Observed whole-home grid costs with coverage, solar/load forecast errors and explicitly labelled simulated-versus-observed cost difference |
+| Cost reporting | Measured grid costs, data coverage and forecast errors; simulated savings are not claimed as achieved savings |
 | Recovery | Private settings export/import and stable installation identity; normal HA backups preserve the full configuration |
 
-It is an observation and planning tool, not an autonomous equipment controller.
-It does not provide battery protection, commissioning or guaranteed savings.
-
-![Dashboard with synthetic laboratory data](docs/dashboard-synthetic.png)
-
-*Disposable HA demonstration using synthetic measurements, prices and forecasts.
-This is not a live household screenshot.*
+See [planning](PLANNING.md) for the calculations and limitations, and
+[testing](TESTING.md) for the checks completed on this beta.
 
 ## Hardware and information needed
 
@@ -67,14 +71,13 @@ This is not a live household screenshot.*
 7. Optionally, your home address label and selected coordinates for the sun map.
    No address or coordinates from another household are included.
 
-See [equipment connections](EQUIPMENT_CONNECTION.md) and
-[forecast/planning details](PLANNING.md) for the exact supported boundaries.
+See [equipment connections](EQUIPMENT_CONNECTION.md) for the supported interfaces.
 
 ## Installation
 
-Install the beta through a **HACS custom repository** using the steps below.
-This integration is not a default-store HACS listing. Home Assistant 2026.5.3 or later is declared; actual lab testing used
-2026.6.1.
+Install the beta through a **HACS custom repository**. It is not in the HACS
+default store. The declared minimum Home Assistant version is 2026.5.3.
+Testing used 2026.6.1.
 
 1. Back up Home Assistant and configure HACS.
 2. Open **HACS → menu → Custom repositories**.
@@ -116,15 +119,14 @@ importing. Unknown or stale measurements remain unavailable. A missing required
 input hides the plan and raises a Repairs warning. A failed independent battery
 read never silently substitutes inverter-reported SoC.
 
-Historical charts build from this HA instance's recorder. The learning store
-builds locally from actual observations; a new installation has no invented
-history. Forecast totals describe the remaining horizon, not a full-day meter.
+Historical charts and learning need observations from this Home Assistant
+installation. A new installation has no previous history. Forecast totals cover
+the remaining planning period, not an entire day's meter readings.
 
-## Privacy, backups and licences
+## Privacy and backups
 
-All household values are entered during setup. The public package contains no
-household address, live endpoint, credentials, learned history or private backup.
-The public GitHub maintainer identity is intentionally present in metadata.
+Each owner enters their own equipment connection, location and tariff settings.
+The release excludes household credentials, backups and learned history.
 
 The map and solar forecast have separate opt-ins. Map providers receive selected
 coordinates/browser requests when enabled; Forecast.Solar receives coordinates,
@@ -139,7 +141,16 @@ when restoring. A complete HA backup is needed to preserve credentials, learned
 history and recorder data. Removing the integration deletes its learning store;
 HA's recorder retains history according to its own retention policy.
 
-Original integration code is MIT. Bundled components retain their own licences,
-including GPL-3.0-or-later for Helios; source/notices are supplied. See
-[third-party notices](THIRD_PARTY_NOTICES.md), [testing](TESTING.md),
-[support](SUPPORT.md) and the [publication checklist](PUBLICATION_CHECKLIST.md).
+## Licence
+
+The original integration code currently uses **MIT**. People may use, change,
+redistribute or sell that code, including in closed-source products, provided
+they retain the required copyright and licence notices. It is supplied without
+a warranty. See [LICENSE](LICENSE) for the terms.
+
+Bundled dependencies keep their own licences. **Helios uses GPL-3.0-or-later**;
+the Sunsynk power-flow card and Chart.js use MIT. The top-level MIT licence does
+not replace their terms. Their source and notices are included. See
+[third-party notices](THIRD_PARTY_NOTICES.md).
+
+For bug reports, see [support](SUPPORT.md).

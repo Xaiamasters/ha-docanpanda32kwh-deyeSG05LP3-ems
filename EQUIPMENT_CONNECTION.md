@@ -32,7 +32,7 @@ avoid competing requests on a single-client gateway or serial bus.
 
 This mode requires an RS485-to-USB adapter connected from the battery's supported
 telemetry interface to the HA host. Select its stable `/dev/serial/by-id/` path
-when available and the configured battery address (0–15). The reader uses 9600
+when available and the configured battery address (0 to 15). The reader uses 9600
 baud, 8 data bits, no parity, one stop bit and a bounded two-second response wait.
 It does not scan addresses or change the battery's configuration.
 

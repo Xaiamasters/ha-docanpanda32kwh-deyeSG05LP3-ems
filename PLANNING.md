@@ -59,7 +59,7 @@ Home demand starts with your entered average load. A local quarter-hour profile
 replaces that baseline where at least three different prior days each have at
 least 850 seconds of observations in that quarter. The profile uses a median;
 after eight sufficiently covered recent quarters it applies a bounded intraday
-adjustment of 0.5–1.5. Gaps and downtime are not interpolated. There is no occupancy,
+adjustment of 0.5 to 1.5. Gaps and downtime are not interpolated. There is no occupancy,
 EV-arrival or appliance schedule model in this beta.
 
 ## Optimization assumptions

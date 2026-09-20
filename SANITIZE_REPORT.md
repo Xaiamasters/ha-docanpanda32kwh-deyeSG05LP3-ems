@@ -1,4 +1,4 @@
-# Sanitize report — 0.4.0-beta.1
+# Sanitize report: 0.4.0-beta.1
 
 Scanned 16314 files and nested archive members. Blocking findings: 0.
 
