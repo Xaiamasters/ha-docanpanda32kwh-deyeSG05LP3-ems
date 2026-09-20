@@ -68,9 +68,8 @@ See [equipment connections](EQUIPMENT_CONNECTION.md) and
 
 ## Installation
 
-**This candidate is staged, not yet published.** These HACS steps become usable
-after the repository and beta release are published. It is not a default-store
-HACS listing. Home Assistant 2026.5.3 or later is declared; actual lab testing used
+Install the beta through a **HACS custom repository** using the steps below.
+This integration is not a default-store HACS listing. Home Assistant 2026.5.3 or later is declared; actual lab testing used
 2026.6.1.
 
 1. Back up Home Assistant and configure HACS.

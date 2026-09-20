@@ -1,8 +1,8 @@
-# Public-beta publication checklist — DO NOT EXECUTE
+# Public-beta publication checklist
 
 Target repository: `Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems`.
-Version: `0.4.0-beta.1`. Publication is a separate owner decision from preparing
-this candidate. This checklist does not execute or authorize a push.
+Version: `0.4.0-beta.1`. The owner approved this separate public beta on
+2026-09-20. Default-store submission and a brands PR remain separate decisions.
 
 ## Prepare the candidate
 
@@ -16,7 +16,7 @@ this candidate. This checklist does not execute or authorize a push.
 - [x] Keep the existing private repository and its entire history private.
   No Git history is copied into this staged candidate.
 
-## After the owner authorizes publication
+## Authorized publication checks
 
 - [ ] Start this separate public edition with clean Git history and a GitHub
   noreply commit email. Never push the private repository's history.
