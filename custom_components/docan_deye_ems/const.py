@@ -2,7 +2,7 @@
 from homeassistant.const import Platform
 DOMAIN='docan_deye_ems'
 NAME='Docan Panda & Deye EMS'
-VERSION='0.5.0.dev1'
+VERSION='0.5.0.dev2'
 PLATFORMS=[Platform.SENSOR,Platform.BINARY_SENSOR]
 MODELS={f'SUN-{n}K-SG05LP3-EU-SM2':n for n in (6,8,10,12)}
 DEFAULT_MODEL='SUN-10K-SG05LP3-EU-SM2'

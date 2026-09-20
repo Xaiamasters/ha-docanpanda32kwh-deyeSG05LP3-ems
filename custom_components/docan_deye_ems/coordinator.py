@@ -17,6 +17,7 @@ from .learning import Learning
 from .forecast import SolarReader
 from .optimizer import make_slots, optimize
 from .engine_adapter import ProductionShadowAdapter
+from .control_device import DeviceError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -90,7 +91,16 @@ class HouseholdCoordinator(DataUpdateCoordinator):
         d = self.settings
         values, failures, sources = {}, {}, {}
         keys = direct_keys(d)
-        if keys:
+        controller_frame=None
+        observer=self.production_engine.observation if self.production_engine else None
+        if observer:
+            try:
+                controller_frame=await observer.read(now.astimezone(ZoneInfo(self.hass.config.time_zone)),owner_stop=False)
+                values.update({k:v for k,v in observer.measurements.items() if k in keys or k in BATTERY_KEYS})
+            except (DeviceError,InputError,OSError,TimeoutError,ValueError):
+                values.update({k:None for k in (*keys,*BATTERY_KEYS)})
+                failures['equipment']='controller_observation_unavailable'
+        elif keys:
             try:
                 observed = await read_equipment(d['equipment'])
                 values.update({k: observed[k] for k in keys})
@@ -116,7 +126,7 @@ class HouseholdCoordinator(DataUpdateCoordinator):
             except InputError as err:
                 values[key] = None
                 failures[key] = str(err)
-        if d['battery']['source']=='docan_usb':
+        if d['battery']['source']=='docan_usb' and observer is None:
             try:
                 values.update(await self.hass.async_add_executor_job(read_docan,d['battery']))
             except InputError as err:
@@ -150,7 +160,7 @@ class HouseholdCoordinator(DataUpdateCoordinator):
                 plan, price_data = await self.forecast_plan(now,price_data,sources,values)
             elif d['plan']['source']=='production_shadow':
                 periods=await self.prices.horizon(now,price_data,sources.get('price_curve'))
-                plan=await self.production_engine.plan(now,sources.get('controller_snapshot'),periods)
+                plan=await self.production_engine.plan(now,sources.get('controller_snapshot'),periods,controller_frame)
                 if not plan['inputs_valid']:
                     failures['plan']='controller_inputs_not_ready'
             else:

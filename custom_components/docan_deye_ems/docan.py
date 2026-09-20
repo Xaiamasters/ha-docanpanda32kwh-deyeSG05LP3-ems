@@ -37,7 +37,7 @@ def telemetry_query(address):
     return ('~'+body+checksum(body)+'\r').encode('ascii')
 
 
-def parse_frame(frame, address):
+def parse_frame(frame, address, *, controller=False):
     """Accept only the bounded 16-cell VER22/CID1 4A profile, never raw identifiers."""
     try:
         if not 18 <= len(frame) <= 2048 or not frame.startswith(b'~') or not frame.endswith(b'\r'):
@@ -71,14 +71,23 @@ def parse_frame(frame, address):
             raise ValueError
         if any(not 1.5 <= v <= 4.5 for v in cells) or not -40 <= temperature <= 100:
             raise ValueError
-        return {'battery_soc': soc, 'battery_voltage': voltage, 'battery_current': current,
+        result = {'battery_soc': soc, 'battery_voltage': voltage, 'battery_current': current,
                 'battery_power': voltage*current, 'battery_temperature': temperature,
                 'battery_cell_delta': max(cells)-min(cells)}
+        if controller:
+            temps = {'environment_temperature': temperature,
+                     'mos_temperature': unsigned(pos+4)/10,
+                     **{f'probe_{i+1}_temperature': unsigned(pos+7+2*i)/10 for i in range(temp_count)}}
+            if temp_count != 4 or any(not -40 <= t <= 120 for t in temps.values()):
+                raise ValueError
+            result.update(controller_temperatures=temps, cell_voltage_sum=sum(cells),
+                          cell_count=16, probe_count=temp_count)
+        return result
     except (UnicodeError, ValueError, IndexError, TypeError):
         raise InputError('invalid_battery_frame') from None
 
 
-def read_docan(settings):
+def _read_docan(settings, controller=False):
     """Blocking bounded read for HA's executor. Only a fixed telemetry query is sent."""
     import serial
     cfg = validate_docan(settings)
@@ -95,7 +104,16 @@ def read_docan(settings):
             while time.monotonic() < deadline and len(frame) <= 2048:
                 frame.extend(port.read(1))
                 if frame.endswith(b'\r'):
-                    return parse_frame(bytes(frame), cfg['address'])
+                    return parse_frame(bytes(frame), cfg['address'], controller=controller)
         raise InputError('battery_no_response')
     except (OSError, serial.SerialException):
         raise InputError('battery_connection_failed') from None
+
+
+def read_docan(settings):
+    return _read_docan(settings)
+
+
+def read_docan_control(settings):
+    """Read all six thermal guards; unsupported probe layouts remain unavailable."""
+    return _read_docan(settings, controller=True)

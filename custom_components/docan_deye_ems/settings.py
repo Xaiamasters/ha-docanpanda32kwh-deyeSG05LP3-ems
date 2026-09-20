@@ -93,7 +93,8 @@ def _validate_document(data):
     if k.get('source') not in ('observed','shadow_estimate','forecast_shadow','production_shadow'):raise InputError('invalid_plan')
     if k['source']=='production_shadow':
         required={'source','capacity_kwh','fallback_reserve_soc','export_power_w','round_trip_efficiency','wear_cost_per_kwh','export_price_deduction'}
-        if set(k)!=required or 'controller_snapshot' not in bindings:raise InputError('missing_controller_snapshot')
+        direct_frame=d.get('connection')=='direct_deye' and d['battery']['source']=='docan_usb'
+        if set(k)!=required or ('controller_snapshot' not in bindings and not direct_frame):raise InputError('missing_controller_snapshot')
         if not 20<=number(k['capacity_kwh'])<=40 or not 25<=number(k['fallback_reserve_soc'])<=70:raise InputError('invalid_planning_limits')
         if not 0<number(k['export_power_w'])<=MODELS[d['model']]*1000:raise InputError('invalid_planning_limits')
         if not 0<number(k['round_trip_efficiency'])<=1 or not 0<=number(k['wear_cost_per_kwh'])<=1:raise InputError('invalid_planning_limits')

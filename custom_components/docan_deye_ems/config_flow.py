@@ -344,10 +344,15 @@ class HouseholdFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_production(self, user_input=None):
         error=None
+        direct_frame=self.d.get('connection')=='direct_deye' and self.d.get('battery',{}).get('source')=='docan_usb'
         if user_input:
             try:
                 values=dict(user_input)
-                self.d['bindings']['controller_snapshot']=binding(self.hass,values.pop('controller_snapshot'))
+                if direct_frame:
+                    self.d['bindings'].pop('controller_snapshot',None)
+                    values.pop('controller_snapshot',None)
+                else:
+                    self.d['bindings']['controller_snapshot']=binding(self.hass,values.pop('controller_snapshot'))
                 self.d['plan']={'source':'production_shadow',**values}
                 validate_document(self.d)
                 return await self.async_step_finish()
@@ -355,7 +360,7 @@ class HouseholdFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 error=str(err)
         old=self.d['plan']
         entity=resolve(self.hass,self.d['bindings'].get('controller_snapshot'))
-        schema={vol.Required('controller_snapshot',**({'default':entity} if entity else {})):SENSOR}
+        schema={} if direct_frame else {vol.Required('controller_snapshot',**({'default':entity} if entity else {})):SENSOR}
         fields={'capacity_kwh':(32.0,20,40,.01),'fallback_reserve_soc':(64,25,70,1),
                 'export_power_w':(min(7900,MODELS[self.d['model']]*1000),1,MODELS[self.d['model']]*1000,1),
                 'round_trip_efficiency':(.87,.01,1,.01),'wear_cost_per_kwh':(.04,0,1,.001),

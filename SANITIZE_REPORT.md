@@ -1,6 +1,6 @@
-# Sanitize report - 0.5.0.dev1
+# Sanitize report - 0.5.0.dev2
 
-Scanned 16332 files and nested archive members. Blocking findings: 0.
+Scanned 16341 files and nested archive members. Blocking findings: 0.
 
 No JWTs, recognized secrets, private IP addresses or non-allowlisted known owner identifiers were detected. Matching values are intentionally omitted.
 

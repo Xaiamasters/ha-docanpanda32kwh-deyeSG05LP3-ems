@@ -236,7 +236,7 @@
       },
       "production": {
         "title": "Production policy comparison",
-        "description": "Advanced shadow comparison for the 10 kW reference profile. Select a sensor carrying the complete controller observation frame described in ENGINE_PORT.md. This calculates decisions and proposed settings without sending commands. It requires 96 published quarter-hour prices in EUR. Enter your tariff deduction; no other household's fee is supplied. This reference policy uses one price curve for planning; the separate fixed/curve selling tariff from the forecast optimizer does not apply. Solar forecasts and anticipated prices do not affect this policy.",
+        "description": "Shadow comparison for the 10 kW reference profile. Direct Deye plus independent Docan USB setup reads the complete observation frame automatically. Other connections require the observation sensor described in ENGINE_PORT.md. Decisions never send equipment commands. This policy requires 96 published quarter-hour prices in EUR and measured overnight history for daily planning. Enter your tariff deduction. The separate forecast optimizer export tariff, solar forecasts and anticipated prices do not affect this policy.",
         "data": {
           "controller_snapshot": "Complete controller observation sensor",
           "capacity_kwh": "Usable battery capacity (kWh)",
@@ -331,7 +331,7 @@
       "solar_forecast_retry_pending": "Solar forecast retry pending. Review the selected inputs.",
       "solar_forecast_stale": "Solar forecast stale. Review the selected inputs.",
       "solar_forecast_unavailable": "Solar forecast unavailable. Review the selected inputs.",
-      "missing_controller_snapshot": "Select a complete controller observation sensor and fill in every comparison setting.",
+      "missing_controller_snapshot": "Use direct Deye plus independent Docan USB, or select a complete observation sensor. Fill in every comparison setting.",
       "production_policy_requires_eur": "The reference policy comparison currently requires prices in EUR.",
       "production_profile_requires_10k": "The captured controller profile is for the 10 kW inverter. Other model control profiles still need commissioning.",
       "controller_snapshot_unavailable": "The selected controller observation sensor is unavailable.",

@@ -2,10 +2,18 @@
 
 ## Unreleased production engine candidate
 
-Version 0.5.0.dev1 adds production-policy software tests. They run the controller
-against an in-memory plant and exercise the real Home Assistant coordinator,
-configuration form and storage with synthetic observations. This candidate has
-not undergone a new HACS installation test or a physical equipment test.
+Version 0.5.0.dev2 adds actual socket-level command tests against local Modbus
+TCP, RTU-over-TCP and Solarman V5 emulators. The HA coordinator also reads a
+complete synthetic Deye/Docan frame directly, without invoking a service or
+writing to the emulator. Physical hardware was not contacted. This candidate
+has not undergone a new HACS installation test.
+
+The lifecycle tests cover startup admission, lost acknowledgements after a
+command takes effect, malformed responses, disconnects, missing BMS data,
+independent deadmen, a killed controller process, durable STOP across restart,
+manual acknowledgement without automatic rearming, late thread commands after
+cancellation, shared wire/serial ownership, settings attribution and storage
+failure. See [the adapter test contract](CONTROL_ADAPTER.md).
 
 Private offline comparisons also run the captured original modules against the
 port. They compare 1,000 planner cases, 1,000 controller cases, 150 ceiling

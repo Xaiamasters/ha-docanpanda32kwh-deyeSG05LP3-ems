@@ -18,6 +18,9 @@ from custom_components.docan_deye_ems.engine_adapter import ProductionShadowAdap
 from custom_components.docan_deye_ems.engine.simulation import example_snapshot
 from custom_components.docan_deye_ems.settings import validate_document,portable_export
 from custom_components.docan_deye_ems.model import InputError
+from control_peer import ControlPeer
+from test_control_device import battery_frame
+from custom_components.docan_deye_ems.docan import parse_frame
 
 
 class AdapterTests(unittest.IsolatedAsyncioTestCase):
@@ -133,6 +136,42 @@ class AdapterTests(unittest.IsolatedAsyncioTestCase):
             data['plan']['export_power_w']=min(n*1000,7900)
             with self.assertRaisesRegex(InputError,'production_profile_requires_10k'):
                 validate_document(data)
+
+    async def test_direct_adapter_builds_frame_without_supplied_sensor_or_writes(self):
+        peer=await ControlPeer('modbus_tcp').start()
+        try:
+            self.settings.update(connection='direct_deye',equipment=peer.connection(),
+                                 battery={'source':'docan_usb','port':'/dev/ttyUSB0','address':0})
+            self.settings['bindings']={'price_curve':self.settings['bindings']['price_curve']}
+            c=await self.coordinator()
+            battery=parse_frame(battery_frame(),0,controller=True)
+            c.production_engine.observation.battery_reader=lambda _:battery
+            with patch.object(type(self.hass.services),'async_call',new=AsyncMock(side_effect=AssertionError('No service calls'))),\
+                 patch('custom_components.docan_deye_ems.coordinator.read_equipment',side_effect=AssertionError('No duplicate polling')),\
+                 patch('custom_components.docan_deye_ems.coordinator.read_docan',side_effect=AssertionError('No duplicate BMS polling')):
+                for _ in range(3):await c.async_refresh()
+            self.assertTrue(c.data['ready'])
+            self.assertEqual(c.data['values']['battery_soc'],55)
+            self.assertEqual(c.data['plan']['mode'],'production_shadow')
+            self.assertFalse(c.data['physical_authority'])
+            self.assertEqual(peer.writes,[])
+            peer.fault='disconnect'
+            await c.async_refresh()
+            self.assertFalse(c.data['ready'])
+            self.assertIsNone(c.data['values']['battery_soc'])
+            self.assertEqual(c.data['plan']['windows'],[])
+        finally:await peer.close()
+
+    async def test_direct_setup_omits_external_snapshot_requirement(self):
+        self.settings.update(connection='direct_deye',equipment={'transport':'modbus_tcp','host':'127.0.0.1','port':502,'unit':1},
+                             battery={'source':'docan_usb','port':'/dev/ttyUSB0','address':0})
+        self.settings['bindings']={'price_curve':self.settings['bindings']['price_curve']}
+        flow=HouseholdFlow();flow.hass=self.hass;flow.d=copy.deepcopy(self.settings)
+        form=await flow.async_step_production()
+        self.assertNotIn('controller_snapshot',{str(k) for k in form['data_schema'].schema})
+        result=await flow.async_step_production({k:v for k,v in self.settings['plan'].items() if k!='source'})
+        self.assertEqual(result['step_id'],'finish')
+        self.assertNotIn('controller_snapshot',flow.d['bindings'])
 
 
 if __name__=='__main__':unittest.main()

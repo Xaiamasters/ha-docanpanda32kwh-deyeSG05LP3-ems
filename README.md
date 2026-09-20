@@ -1,9 +1,10 @@
 # Docan Panda & Deye EMS
 
-**Development branch: 0.5.0.dev1.** This branch adds a production planning and
-control-policy port for offline and Home Assistant shadow comparison. It is not
-a published release and does not enable equipment control. See the
-[engine port status and remaining work](ENGINE_PORT.md).
+**Development candidate: 0.5.0.dev2.** Adds the production policy port,
+complete Deye/Docan observations, an emulator-only command adapter and independent
+watchdogs. The HA integration remains read-only. Physical command destinations
+are rejected in the transport. See [engine status](ENGINE_PORT.md) and
+[adapter validation](CONTROL_ADAPTER.md).
 
 [![Hassfest](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hassfest.yaml)
 [![HACS validation](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hacs.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hacs.yaml)

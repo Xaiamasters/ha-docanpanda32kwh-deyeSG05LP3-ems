@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0.dev2 (development candidate)
+
+- Read the full Deye control/program/alarm frame and six independent BMS temperatures.
+- Feed production shadow mode directly from Deye plus Docan USB, without a snapshot sensor.
+- Add bounded emulator-only commands, verified six-program transactions, durable STOP state and process ownership.
+- Add charge/export deadmen, a settings-change auditor and heartbeat supervision.
+- Test communication faults, a killed controller process, storage faults and manual STOP recovery locally.
+- Keep physical writes and HA live-mode activation unavailable pending commissioning.
+
 ## 0.5.0.dev1 (unreleased)
 
 - Port the production price planner, conditional charge ceiling, measured reserve,

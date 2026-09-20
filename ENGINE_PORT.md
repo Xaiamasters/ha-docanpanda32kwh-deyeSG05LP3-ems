@@ -1,14 +1,15 @@
 # Production engine port
 
-This is the **unreleased 0.5.0.dev1 development candidate**. It adds the planning
-and controller policy extracted from an operating installation, with household
-identifiers and external access removed. The running installation was read only.
-This candidate has not been installed there or published as a HACS release.
+This is the **0.5.0.dev2 development candidate**. It includes the planning and
+controller policy extracted from an operating installation, with household
+identifiers and external access removed. Earlier source comparisons used a
+bounded read-only capture. This adapter phase used saved files and local tests;
+it did not contact an operating HA system.
 
-The port is available for offline comparison and as a Home Assistant shadow
-policy. **It cannot send equipment commands.** The transaction code is exercised
-against an in-memory device. A physical equipment adapter is still required
-before this can become a live EMS.
+HA runs the policy in shadow mode. The command adapter can exercise it against a
+loopback emulator. **Physical command destinations are rejected.** The code and
+tests are available for review; this is not a production control release.
+See [adapter details and commissioning requirements](CONTROL_ADAPTER.md).
 
 ## What is implemented
 
@@ -21,8 +22,8 @@ before this can become a live EMS.
 | Deye programs | Converts the plan to six firmware boundaries and applies the original schedule checks |
 | Controller | Calculates CHARGE, HOLD, IDLE or EXPORT using the observed firmware window, pinned reserve/ceiling, temperatures, freshness, alarms and owner-stop inputs |
 | Transaction core | Orders changes, records intent before a simulated write, checks readback, retries reads without repeating commands, and retains a STOP latch after uncertain writes |
-| Deadmen and recovery | Includes pure stop-decision and recovery-classification functions; independent running watchdogs and notifications are not connected |
-| Home Assistant | Adds a selectable production-policy shadow adapter with local state persistence, input errors and plan details |
+| Deadmen and recovery | Independent charge/export, heartbeat and settings-auditor workers with durable STOP recovery, tested locally; HA live supervision and notifications are not enabled |
+| Home Assistant | Production shadow mode reads direct Deye/Docan observations or a supplied frame, with local persistence, input errors and plan details |
 
 The existing forecast optimizer remains a separate policy. It uses solar/load
 forecasts and can estimate unpublished prices. Those features do not influence
@@ -55,8 +56,9 @@ must be changed and tested before it can support daylight-saving transitions.
 
 ## Shadow comparison input
 
-Select **Production policy comparison** during plan setup and supply a local
-sensor carrying this observation contract in its attributes:
+Select **Production policy comparison** during plan setup. With direct Deye
+and independent Docan USB configured, the integration reads its own frame.
+Otherwise supply a local sensor carrying this contract in its attributes:
 
 - `schema`: integer `1`.
 - `updated_at`: timezone-aware timestamp of the captured frame.
@@ -80,12 +82,17 @@ sensor carrying this observation contract in its attributes:
 Missing values must remain missing. Do not fill alarms, temperatures or freshness
 with assumed healthy values. Synthetic fixtures in the tests are for tests only.
 
-The current built-in telemetry reader does not produce this complete controller
-frame. This adapter is a comparison interface, not the finished all-in-one
-equipment connection. It stores up to 14 days of observations privately under
-this installation's HA storage key. Rebinding the source or changing comparison
-settings invalidates prior engine state. No endpoint, token, personal entity ID,
-address, actual price history or captured operating frame is bundled.
+The direct reader requires the supported 16-cell/four-probe BMS frame, coherent
+pack/cell voltage and three consecutive valid observations. A failed read resets
+admission. It also checks voltage mode and today's enabled TOU bit. Its grid
+input comes from the inverter; equivalence to an independent fiscal meter is
+not established. Shadow comparison never interprets that as write permission.
+
+Up to 14 days of observations are retained in private HA storage. Rebinding
+equipment or changing comparison settings invalidates prior engine state.
+Daily planning needs measured overnight history. A new installation cannot
+reconstruct a previous household's reserve history or pinned day plan.
+No endpoint, token, personal entity ID, address or operating frame is bundled.
 
 ## Verification and what it proves
 
@@ -102,21 +109,16 @@ tests; they do not establish electrical behaviour or firmware compatibility.
 
 ## Remaining work before live mode
 
-1. Build the complete equipment observation adapter, including independent BMS
-   truth/freshness, six temperatures, alarms and all six firmware programs.
+1. Commission the register map, firmware, BMS frame, power signs and independent
+   grid measurement on a separately authorized test installation.
 2. Generalize the reference calibration and tariff assumptions into validated
    installation settings, and support daylight-saving delivery days.
-3. Add a physical writer with verified model/firmware mappings, exclusive writer
-   ownership, durable intent records and commissioning checks. Do not infer
-   register writes from the read-only register decoder.
-4. Connect daily program application, independent charge/export watchdogs, the
-   write auditor, startup supervision and owner notifications. Recovery must
-   remain observe-only unless explicitly commissioned; the captured production
-   recovery job does not automatically clear its STOP latch.
-5. Test power loss, HA restart, stale or unavailable sensors, competing writes,
-   interrupted transactions, network loss and STOP recovery in an isolated lab.
-   Then prove device behaviour on a separately authorized test installation.
-6. Add the owner's live-mode commissioning flow only after those checks pass.
+3. Integrate supervised workers, daily program execution and owner notifications
+   with the HA live lifecycle. Workers exist and run locally, but HA setup starts
+   observation only. Whole-host failure requires a separately proven safeguard.
+4. Test physical command effects, communication loss, reboot and outage behavior.
+   A register readback does not prove that the battery has stopped charging.
+5. Add live commissioning and activation only after those requirements pass.
 
-Matching the captured decision proves a policy comparison at that moment. It
-does not prove a full replacement for the original operating installation.
+Matching captured decisions proves policy agreement for the tested cases. It
+does not yet establish a deployable replacement for the operating installation.

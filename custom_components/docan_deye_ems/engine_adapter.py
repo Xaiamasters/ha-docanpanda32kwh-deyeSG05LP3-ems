@@ -1,7 +1,7 @@
 """Home Assistant observation adapter for the production-policy shadow engine.
 
-Only a supplied state frame is read. This adapter has no equipment write method,
-service call, serial port or network client.
+Accept a supplied state frame or directly read the Deye and independent BMS.
+This adapter never creates command authority or starts a controller session.
 """
 from dataclasses import replace
 from datetime import timedelta
@@ -15,6 +15,8 @@ from .model import InputError,instant,day_bounds
 from .engine.planner import Contract
 from .engine.runtime import ShadowRuntime
 from .engine.storage import MemoryState
+from .control_device import DeyeDevice
+from .control_observation import EquipmentObservation
 
 
 class ProductionShadowAdapter:
@@ -23,6 +25,9 @@ class ProductionShadowAdapter:
         self.settings=settings
         self.store=Store(hass,1,DOMAIN+'.'+settings['installation_id']+'.engine',private=True,atomic_writes=True)
         self.state=MemoryState()
+        self.observation=(EquipmentObservation(DeyeDevice(settings['equipment']),settings['battery'])
+                          if settings.get('connection')=='direct_deye' and settings['battery']['source']=='docan_usb'
+                          and 'controller_snapshot' not in settings['bindings'] else None)
         cfg=settings['plan']
         contract=replace(Contract(),cap_kwh=cfg['capacity_kwh'],floor_min_pct=int(cfg['fallback_reserve_soc']),
                          export_power_w=cfg['export_power_w'],rte=cfg['round_trip_efficiency'],degradation=cfg['wear_cost_per_kwh'],
@@ -30,6 +35,7 @@ class ProductionShadowAdapter:
         self.runtime=ShadowRuntime(self.state,contract)
         # Reconfiguration must not apply old pinned plans to a different source/site.
         context={'plan':cfg,'source':settings['bindings'].get('controller_snapshot'),
+                 'equipment':settings.get('equipment'),'battery':settings['battery'],
                  'prices':{k:v for k,v in settings['pricing'].items() if k!='token'},
                  'time_zone':hass.config.time_zone}
         self.context=hashlib.sha256(json.dumps(context,sort_keys=True).encode()).hexdigest()
@@ -49,9 +55,12 @@ class ProductionShadowAdapter:
     async def save(self):
         await self.store.async_save({'context':self.context,'state':self.state.data})
 
-    async def plan(self,now,state,periods):
-        if state is None or state.state in ('unknown','unavailable'):raise InputError('controller_snapshot_unavailable')
-        attrs=state.attributes
+    async def plan(self,now,state,periods,frame=None):
+        if frame is not None:
+            attrs={'schema':1,'updated_at':frame['at'],'snapshot':frame}
+        else:
+            if state is None or state.state in ('unknown','unavailable'):raise InputError('controller_snapshot_unavailable')
+            attrs=state.attributes
         try:
             updated=instant(attrs['updated_at'])
             age=(now-updated).total_seconds()
