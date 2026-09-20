@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Docan Panda & Deye EMS",
-        "description": "Set up the experimental read-only beta. Connect to a compatible local Deye logger/gateway, or use existing HA sensors. Physical hardware and firmware compatibility are not yet field-verified. This integration cannot operate your equipment.",
+        "description": "Experimental Docan Panda and Deye EMS. Configure your equipment, household tariffs and dashboard. It starts in shadow mode. Direct equipment installations can complete commissioning and enable live control from the dashboard.",
         "data": {},
         "menu_options": {
           "hardware": "Set up a new household",
@@ -136,7 +136,7 @@
       },
       "tariff": {
         "title": "Household taxes and fees",
-        "description": "For spot prices: final import = (spot + tax + supplier fee) × (1 + VAT/100). Enter per-kWh amounts in the selected currency before VAT. For all-in prices, tax, fee and VAT must stay zero to avoid double charging. Fixed monthly charges are excluded. Export fees apply only to a separately supplied export price; import prices are never assumed to be export compensation.",
+        "description": "For spot prices: final import = (spot + tax + supplier fee) Ã— (1 + VAT/100). Enter per-kWh amounts in the selected currency before VAT. For all-in prices, tax, fee and VAT must stay zero to avoid double charging. Fixed monthly charges are excluded. Export fees apply only to a separately supplied export price; import prices are never assumed to be export compensation.",
         "data": {
           "tax": "Energy tax / kWh",
           "fee": "Supplier fee / kWh",
@@ -146,7 +146,7 @@
       },
       "plan": {
         "title": "Where should the plan come from?",
-        "description": "Forecast shadow planning combines solar/load forecasts, separate import/export tariffs, battery losses, wear and reserves. Simple shadow estimate only ranks charging prices. Observed displays an external controller plan. All modes are read-only.",
+        "description": "Choose the automatic charge and export engine for direct equipment control after commissioning, a forecast comparison, a simple charging estimate or a supplied external plan. The automatic engine uses published prices; forecasts and price anticipation remain in the separate comparison.",
         "data": {
           "source": "Plan source"
         }
@@ -166,12 +166,12 @@
           "target_soc": "Target state of charge (%)",
           "charge_power_kw": "Assumed constant charge power (kW)",
           "charge_efficiency": "Assumed charging efficiency (%)",
-          "charge_deadline": "Todayâ€™s charge deadline"
+          "charge_deadline": "TodayÃ¢â‚¬â„¢s charge deadline"
         }
       },
       "finish": {
         "title": "Create the household dashboard",
-        "description": "Create {name} for {model}. Plan source: {plan}. The sidebar dashboard and read-only entities are added automatically. No plant control is enabled.",
+        "description": "Create {name} for {model} with the {plan} planning source. The dashboard opens in shadow mode. Direct equipment users can review commissioning and enable live control there. Settings restores never carry live authority.",
         "data": {}
       },
       "battery": {
@@ -185,14 +185,14 @@
       },
       "battery_check": {
         "title": "Confirm direct battery measurements",
-        "description": "Battery reports {battery_soc}% at {battery_voltage} V, {battery_current} A and {battery_power} W. Temperature: {battery_temperature} °C; cell spread: {battery_cell_delta} V. Positive current/power means discharge. Compare with the BMS display. This decoder does not certify BMS alarms or protections.",
+        "description": "Battery reports {battery_soc}% at {battery_voltage} V, {battery_current} A and {battery_power} W. Temperature: {battery_temperature} Â°C; cell spread: {battery_cell_delta} V. Positive current/power means discharge. Compare with the BMS display. This decoder does not certify BMS alarms or protections.",
         "data": {
           "readings_match": "These values and directions match my battery display"
         }
       },
       "export_tariff": {
         "title": "Separate selling tariff",
-        "description": "Enter NET export compensation per kWh in your contract currency, including applicable selling fees. Zero explicitly means no compensation; negative means you pay to export. It is never inferred from import prices. Curve mode requires a compatible price sensor with export values. Fixed mode does not apply the export fee again.",
+        "description": "Choose your actual selling tariff. Fixed is a net price per kWh. Curve reads explicit export prices from your configured price sensor. Spot uses Nord Pool spot prices minus your entered export fee; it does not include import taxes or fees.",
         "data": {
           "export_mode": "Fixed net price or separate curve values",
           "net_export_price": "Net export compensation / kWh (fixed mode)"
@@ -200,7 +200,7 @@
       },
       "forecast": {
         "title": "Forecast inputs and learning",
-        "description": "Forecast.Solar uses one panel orientation and sends the selected coordinates, tilt, azimuth and kWp to its service after consent. Azimuth: south 0°, east -90°, west 90°. For multiple orientations use an aggregated forecast sensor with updated_at and complete start/end/kwh periods. Enter expected average home load for cold start; a local time-of-day profile learns after 3 complete historical days per interval. Price anticipation needs 3 historical price days and remains labelled estimated. Efficiency learning requires a dedicated battery AC power sensor, positive discharge: never select whole-inverter or grid power.",
+        "description": "Forecast.Solar uses one panel orientation and sends the selected coordinates, tilt, azimuth and kWp to its service after consent. Azimuth: south 0Â°, east -90Â°, west 90Â°. For multiple orientations use an aggregated forecast sensor with updated_at and complete start/end/kwh periods. Enter expected average home load for cold start; a local time-of-day profile learns after 3 complete historical days per interval. Price anticipation needs 3 historical price days and remains labelled estimated. Efficiency learning requires a dedicated battery AC power sensor, positive discharge: never select whole-inverter or grid power.",
         "data": {
           "solar_source": "Solar forecast source",
           "position": "Solar forecast location (separate from map)",
@@ -216,7 +216,7 @@
       },
       "optimizer": {
         "title": "Read-only optimization limits",
-        "description": "These assumptions constrain a simulation; no controls are enabled. Capacity is 32 kWh. Limits must match your installation. Target applies to today’s deadline, terminal charge applies to the horizon end. Export simulation uses your separate compensation. Battery export on estimated prices is off by default. Wear cost is per DC kWh discharged. The planner does not assume that excess solar can be curtailed; impossible limits produce no feasible plan.",
+        "description": "These assumptions constrain a simulation; no controls are enabled. Capacity is 32 kWh. Limits must match your installation. Target applies to todayâ€™s deadline, terminal charge applies to the horizon end. Export simulation uses your separate compensation. Battery export on estimated prices is off by default. Wear cost is per DC kWh discharged. The planner does not assume that excess solar can be curtailed; impossible limits produce no feasible plan.",
         "data": {
           "reserve_soc": "Minimum reserve (%)",
           "target_soc": "Charge target at deadline (%)",
@@ -229,9 +229,42 @@
           "grid_import_limit_kw": "Whole-home grid import limit (kW)",
           "grid_export_limit_kw": "Whole-home grid export limit (kW)",
           "cycle_cost_per_kwh": "Wear cost per DC kWh discharged",
-          "charge_deadline": "Today’s charge-target deadline",
+          "charge_deadline": "Todayâ€™s charge-target deadline",
           "allow_battery_export": "Include battery export in the simulation",
           "export_on_anticipated": "Allow simulated battery export using anticipated prices"
+        }
+      },
+      "production": {
+        "title": "Automatic charge and export engine",
+        "description": "Plan charging from published prices and your actual import and selling tariffs. Overnight reserve starts from your household load estimate and then uses admitted measurements. Solar forecasts remain a separate planning comparison. Control starts inactive and requires dashboard commissioning.",
+        "data": {
+          "controller_snapshot": "Complete controller observation sensor",
+          "capacity_kwh": "Usable battery capacity (kWh)",
+          "fallback_reserve_soc": "Reserve fallback when no dated measurement is available (%)",
+          "export_power_w": "Proposed export power (W)",
+          "round_trip_efficiency": "Round-trip efficiency (0 to 1)",
+          "wear_cost_per_kwh": "Battery wear cost (EUR/kWh)"
+        }
+      },
+      "control_limits": {
+        "title": "Equipment control limits",
+        "description": "These limits apply only after separate dashboard commissioning and live activation. Defaults are bounded for the selected inverter. Check them against your battery, inverter and grid agreement. The household load and delivery factor are estimates until you have measured your own system.",
+        "data": {
+          "charge_current_a": "Maximum charging current (A)",
+          "program_power_w": "Program power limit (W)",
+          "charge_voltage": "Charging setpoint (V)",
+          "idle_voltage": "Idle setpoint and export voltage floor (V)",
+          "hard_voltage": "Charging stop voltage (V)",
+          "max_soc": "Maximum charge (%)",
+          "minimum_soc": "Minimum charge (%)",
+          "export_floor_soc": "Independent export stop (%)",
+          "mos_stop_c": "Battery MOS temperature limit (Â°C)",
+          "probe_stop_c": "Battery probe temperature limit (Â°C)",
+          "environment_stop_c": "Battery environment temperature limit (Â°C)",
+          "baseline_load_kw": "Estimated overnight household load (kW)",
+          "meter_factor": "Estimated pack-to-meter delivery factor",
+          "allow_export": "Permit battery export after commissioning",
+          "export_end": "Latest export end (HH:MM)"
         }
       }
     },
@@ -317,7 +350,23 @@
       "solar_forecast_required": "Solar forecast required. Review the selected inputs.",
       "solar_forecast_retry_pending": "Solar forecast retry pending. Review the selected inputs.",
       "solar_forecast_stale": "Solar forecast stale. Review the selected inputs.",
-      "solar_forecast_unavailable": "Solar forecast unavailable. Review the selected inputs."
+      "solar_forecast_unavailable": "Solar forecast unavailable. Review the selected inputs.",
+      "missing_controller_snapshot": "Use direct Deye plus independent Docan USB, or select a complete observation sensor. Fill in every comparison setting.",
+      "production_policy_requires_eur": "The reference policy comparison currently requires prices in EUR.",
+      "production_profile_requires_10k": "The captured controller profile is for the 10 kW inverter. Other model control profiles still need commissioning.",
+      "controller_snapshot_unavailable": "The selected controller observation sensor is unavailable.",
+      "controller_snapshot_stale": "The controller observation is too old. No current decision can be shown.",
+      "invalid_controller_snapshot": "The observation frame is incomplete or has invalid values. See ENGINE_PORT.md.",
+      "production_policy_requires_96_published_prices": "This reference policy needs 96 published quarter-hour prices. Short and long daylight-saving days are not supported yet.",
+      "invalid_controller_prices": "The published prices must form 96 consecutive quarter-hour intervals.",
+      "published_prices_required": "The production policy comparison only accepts published prices.",
+      "controller_inputs_not_ready": "A controller guard rejected the observation. See the plan reason for details.",
+      "invalid_saved_engine_state": "Saved engine state is unreadable. Review the local state before continuing.",
+      "invalid_control_profile": "Check the equipment limits and their order. Voltage, reserve and power limits must be consistent.",
+      "spot_export_requires_nordpool": "Spot export pricing requires the Nord Pool provider.",
+      "incomplete_published_price_day": "A complete published price day with import and export tariffs is required.",
+      "use_separate_export_tariff": "Enter your export fee in tariff settings instead of the retired planning deduction.",
+      "inconsistent_control_limits": "Check that the minimum state of charge, reserve and maximum charge are in increasing order."
     },
     "abort": {
       "invalid_age": "Invalid age.",
@@ -409,7 +458,11 @@
   "issues": {
     "inputs_not_ready": {
       "title": "Household observations need attention",
-      "description": "{name} has missing, stale or incompatible measurements, prices or a plan. Open its dashboard for the affected inputs, then reconfigure the integration. It remains shadow-only and cannot operate equipment."
+      "description": "{name} has missing, stale or incompatible measurements, prices or planning inputs. Open its dashboard for details. If live control was active, review its stop state before restarting it."
+    },
+    "control_stopped": {
+      "title": "{name} controller stopped",
+      "description": "The controller has latched a stop. Open its dashboard to review the reason and fresh equipment readings. Acknowledging the stop does not restart control. If the host restarted or was restored, check and commission the equipment again first."
     }
   }
 }

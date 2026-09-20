@@ -1,9 +1,10 @@
 # Beta support
 
-This is an experimental read-only integration for observations, a dashboard and
-shadow planning. It cannot commission equipment or replace a controlling EMS.
-The 6/8/10/12 kW hardware profiles require independent field evidence before they
-can be described as verified. This beta has no promised response time or SLA.
+This experimental beta includes observations, shadow planning and explicitly
+commissioned live control. The 6/8/10/12 kW profiles have software test coverage;
+physical compatibility must be established for the exact equipment and firmware.
+There is no promised response time or SLA. Review a stopped controller locally
+before acknowledging it, and retain the equipment's native protections.
 
 Report reproducible software bugs through
 [GitHub Issues](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/issues).

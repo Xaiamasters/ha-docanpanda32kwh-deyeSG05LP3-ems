@@ -18,5 +18,7 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-dev.txt
       - run: python -m pip install -r requirements-dev.txt
+      - name: Create the owned pseudo-terminal fixture directory
+        run: sudo install -d -m 0755 -o "$(id -un)" /dev/serial/by-id
       - run: python -m unittest discover -s tests -v
       - run: python tools/verify_release.py

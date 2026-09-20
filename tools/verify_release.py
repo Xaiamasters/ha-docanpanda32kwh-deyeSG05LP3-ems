@@ -20,20 +20,20 @@ def main():
     assert manifest['config_flow'] is True
     assert manifest['integration_type'] == 'hub'
     assert hacs['name'] == manifest['name'] == 'Docan Panda & Deye EMS'
-    assert hacs['homeassistant'] == '2026.5.3'
+    assert hacs['homeassistant'] == '2026.6.1'
     assert (component / 'brand/icon.png').is_file()
 
     tree = ast.parse((component / 'const.py').read_text(encoding='utf-8'))
     constants = {target.id: node.value for node in tree.body if isinstance(node, ast.Assign)
                  for target in node.targets if isinstance(target, ast.Name)}
-    assert ast.literal_eval(constants['VERSION']) == manifest['version'] == '0.4.0-beta.1'
+    assert ast.literal_eval(constants['VERSION']) == manifest['version'] == '0.5.0-beta.1'
     platforms = constants['PLATFORMS']
     assert isinstance(platforms, ast.List)
     assert {node.attr for node in platforms.elts if isinstance(node, ast.Attribute)} == {'SENSOR', 'BINARY_SENSOR'}
     prohibited_files = {'services.yaml', 'services.yml', 'switch.py', 'button.py', 'number.py', 'select.py', 'climate.py', 'cover.py'}
     assert not any((component / name).exists() for name in prohibited_files)
     forbidden_calls = {'async_call', 'call_service', 'write_register', 'write_registers', 'write_coil', 'write_coils'}
-    for source in component.glob('*.py'):
+    for source in component.rglob('*.py'):
         module = ast.parse(source.read_text(encoding='utf-8'))
         for node in ast.walk(module):
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
@@ -63,7 +63,7 @@ def main():
         assert path.name not in {'.env', 'secrets.yaml', '.storage'}, 'Private configuration entered the release'
         assert not path.name.lower().endswith(('.db', '.sqlite', '.pem', '.key')), 'Private-state file entered the release'
     print(json.dumps({'passed': True, 'version': manifest['version'], 'integrations': integrations,
-                      'dependency_files_verified': len(inventory), 'read_only_static_contract': True,
+                      'dependency_files_verified': len(inventory), 'ha_services_and_control_platforms_absent': True,
                       'scope': 'Offline package checks; not remote HACS validation or physical hardware verification'}))
 
 

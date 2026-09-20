@@ -1,4 +1,4 @@
-"""Poll read-only local telemetry and prices; never register plant services."""
+"""Poll telemetry and prices, plan, and supervise explicitly commissioned control."""
 from datetime import datetime, timedelta, timezone, time
 from zoneinfo import ZoneInfo
 import logging
@@ -16,6 +16,8 @@ from .docan import read_docan, BATTERY_KEYS
 from .learning import Learning
 from .forecast import SolarReader
 from .optimizer import make_slots, optimize
+from .engine_adapter import ProductionShadowAdapter
+from .control_device import DeviceError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,6 +32,8 @@ class HouseholdCoordinator(DataUpdateCoordinator):
         self.learning = Learning()
         self.last_save = None
         self.solar_reader = SolarReader(hass,settings.get('forecast',{}),settings['solar'])
+        self.production_engine=ProductionShadowAdapter(hass,settings) if settings['plan']['source']=='production_shadow' else None
+        self.control=None
 
     async def async_initialize(self):
         saved = await self.store.async_load()
@@ -43,10 +47,24 @@ class HouseholdCoordinator(DataUpdateCoordinator):
             saved=None
         self.learning = Learning(saved)
         self.learning.data['context']=digest
+        if self.production_engine:
+            await self.production_engine.initialize()
+            if self.production_engine.observation:
+                from .control_host import ControlHost
+                from functools import partial
+                path=self.hass.config.path('.storage',DOMAIN+'.'+cfg['installation_id']+'.control','controller.sqlite')
+                self.control=await self.hass.async_add_executor_job(partial(ControlHost,cfg,self.hass.config.time_zone,path,self.production_engine,
+                    lock_dir=self.hass.config.path('.storage',DOMAIN+'.locks')))
+                self.production_engine.observation=self.control.observation
 
     async def async_shutdown(self):
         await super().async_shutdown()
+        if self.control:
+            await self.control.close()
+            self.control=None
         await self.store.async_save(self.learning.data)
+        if self.production_engine:
+            await self.production_engine.save()
 
     async def forecast_plan(self, now, price_data, sources, values):
         d, zone = self.settings, self.hass.config.time_zone
@@ -84,7 +102,16 @@ class HouseholdCoordinator(DataUpdateCoordinator):
         d = self.settings
         values, failures, sources = {}, {}, {}
         keys = direct_keys(d)
-        if keys:
+        controller_frame=None
+        observer=self.production_engine.observation if self.production_engine else None
+        if observer:
+            try:
+                controller_frame=await observer.read(now.astimezone(ZoneInfo(self.hass.config.time_zone)),owner_stop=False)
+                values.update({k:v for k,v in observer.measurements.items() if k in keys or k in BATTERY_KEYS})
+            except (DeviceError,InputError,OSError,TimeoutError,ValueError):
+                values.update({k:None for k in (*keys,*BATTERY_KEYS)})
+                failures['equipment']='controller_observation_unavailable'
+        elif keys:
             try:
                 observed = await read_equipment(d['equipment'])
                 values.update({k: observed[k] for k in keys})
@@ -110,7 +137,7 @@ class HouseholdCoordinator(DataUpdateCoordinator):
             except InputError as err:
                 values[key] = None
                 failures[key] = str(err)
-        if d['battery']['source']=='docan_usb':
+        if d['battery']['source']=='docan_usb' and observer is None:
             try:
                 values.update(await self.hass.async_add_executor_job(read_docan,d['battery']))
             except InputError as err:
@@ -142,6 +169,11 @@ class HouseholdCoordinator(DataUpdateCoordinator):
                 plan = observed_plan(state.state, state.attributes, now, self.hass.config.time_zone, d['max_age'])
             elif d['plan']['source']=='forecast_shadow':
                 plan, price_data = await self.forecast_plan(now,price_data,sources,values)
+            elif d['plan']['source']=='production_shadow':
+                periods=await self.prices.horizon(now,price_data,sources.get('price_curve'))
+                plan=await self.production_engine.plan(now,sources.get('controller_snapshot'),periods,controller_frame)
+                if not plan['inputs_valid']:
+                    failures['plan']='controller_inputs_not_ready'
             else:
                 plan = shadow_plan(price_data['periods'], values['battery_soc'], d['plan'], now, self.hass.config.time_zone)
         except InputError as err:
@@ -157,6 +189,17 @@ class HouseholdCoordinator(DataUpdateCoordinator):
             self.store.async_delay_save(lambda:self.learning.data,10)
             self.last_save=now
         ready = core_ready and not any(k in failures for k in ('prices', 'plan'))
+        if self.control:
+            await self.control.tick(inputs_ready=ready)
+        control=self.control.status() if self.control else {'mode':'shadow','active':False,'commissioned':False,'available':False}
+        control['available']=self.control is not None
+        from .control_host import reported_plan
+        plan=reported_plan(plan,control)
+        if control.get('stop'):
+            ir.async_create_issue(self.hass,DOMAIN,f'{self.entry.entry_id}_control_stop',is_fixable=False,
+                severity=ir.IssueSeverity.ERROR,translation_key='control_stopped',
+                translation_placeholders={'name':d['name']})
+        else:ir.async_delete_issue(self.hass,DOMAIN,f'{self.entry.entry_id}_control_stop')
         begin, end = day_bounds(now.astimezone(ZoneInfo(self.hass.config.time_zone)).date(), self.hass.config.time_zone)
         issue = f'{self.entry.entry_id}_inputs'
         if not ready:
@@ -166,8 +209,8 @@ class HouseholdCoordinator(DataUpdateCoordinator):
             ir.async_delete_issue(self.hass, DOMAIN, issue)
         # Explicit allowlist: token, address, provider home ID and source identities never enter the panel payload.
         return {'version': VERSION, 'name': d['name'], 'updated_at': now.isoformat(),
-                'time_zone': self.hass.config.time_zone, 'day': {'start': begin.isoformat(), 'end': end.isoformat()}, 'ready': ready, 'mode': 'shadow_only',
-                'physical_authority': False, 'model': d['model'], 'capacity_kwh': CAPACITY_KWH,
+                'time_zone': self.hass.config.time_zone, 'day': {'start': begin.isoformat(), 'end': end.isoformat()}, 'ready': ready, 'mode': control['mode'],
+                'physical_authority':control['active'],'control':control, 'model': d['model'], 'capacity_kwh':d['plan'].get('capacity_kwh',CAPACITY_KWH),
                 'values': values, 'errors': failures, 'prices': price_data, 'plan': plan,
                 'metrics':metrics,'battery_source':d['battery']['source'],
                 'solar': dict(d['solar']), 'location': {k: v for k, v in d['location'].items() if k != 'address'},

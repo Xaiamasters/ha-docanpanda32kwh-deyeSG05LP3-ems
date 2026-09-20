@@ -333,20 +333,76 @@ class HouseholdFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self.d['plan'] = {'source': source}
             if source == 'forecast_shadow':
                 return await self.async_step_forecast()
+            if source == 'production_shadow':
+                return await self.async_step_production()
             return await (self.async_step_observed() if source == 'observed' else self.async_step_limits())
-        return self.form('plan', {vol.Required('source', default=self.d['plan'].get('source', 'forecast_shadow')): choice(['forecast_shadow','shadow_estimate', 'observed'])})
+        options=[{'value':'forecast_shadow','label':'Forecast optimizer (shadow)'},
+                 {'value':'shadow_estimate','label':'Charging estimate'},
+                 {'value':'observed','label':'Supplied controller plan'},
+                 {'value':'production_shadow','label':'Automatic charge and export engine'}]
+        default='production_shadow' if self.d.get('connection')=='direct_deye' and self.d.get('battery',{}).get('source')=='docan_usb' else 'forecast_shadow'
+        return self.form('plan', {vol.Required('source', default=self.d['plan'].get('source',default)): choice(options)})
+
+    async def async_step_production(self, user_input=None):
+        error=None
+        direct_frame=self.d.get('connection')=='direct_deye' and self.d.get('battery',{}).get('source')=='docan_usb'
+        if user_input:
+            try:
+                values=dict(user_input)
+                if direct_frame:
+                    self.d['bindings'].pop('controller_snapshot',None)
+                    values.pop('controller_snapshot',None)
+                else:
+                    self.d['bindings']['controller_snapshot']=binding(self.hass,values.pop('controller_snapshot'))
+                self.d['plan']={'source':'production_shadow','export_price_deduction':0,**values}
+                validate_document(self.d)
+                return await self.async_step_control_limits()
+            except InputError as err:
+                error=str(err)
+        old=self.d['plan']
+        entity=resolve(self.hass,self.d['bindings'].get('controller_snapshot'))
+        schema={} if direct_frame else {vol.Required('controller_snapshot',**({'default':entity} if entity else {})):SENSOR}
+        fields={'capacity_kwh':(32.0,20,40,.01),'fallback_reserve_soc':(64,25,70,1),
+                'export_power_w':(min(7900,MODELS[self.d['model']]*1000),10,min(10000,MODELS[self.d['model']]*1000),10),
+                'round_trip_efficiency':(.87,.01,1,.01),'wear_cost_per_kwh':(.04,0,1,.001)}
+        for key,(default,low,high,step) in fields.items():
+            schema[vol.Required(key,default=old.get(key,default))]=numeric(low,high,step)
+        return self.form('production',schema,error)
+
+    async def async_step_control_limits(self,user_input=None):
+        from .control_profile import defaults,validate_control
+        error=None
+        if user_input:
+            try:
+                self.d['control']=validate_control(user_input,self.d['model'])
+                validate_document(self.d)
+                return await self.async_step_finish()
+            except (ValueError,InputError):error='invalid_control_profile'
+        cfg={**defaults(self.d['model']),**self.d.get('control',{})}
+        max_w=MODELS[self.d['model']]*1000
+        fields={'charge_current_a':(1,min(160,int(max_w/55.2)),1),'program_power_w':(100,min(10000,max_w),10),
+                'charge_voltage':(50,55.2,.01),'idle_voltage':(48,52,.01),'hard_voltage':(50.1,55.3,.01),
+                'max_soc':(50,95,1),'minimum_soc':(25,70,1),'export_floor_soc':(25,90,1),
+                'mos_stop_c':(35,80,1),'probe_stop_c':(30,45,1),'environment_stop_c':(30,50,1),
+                'baseline_load_kw':(.05,10,.05),'meter_factor':(.5,1,.01)}
+        schema={vol.Required(key,default=cfg[key]):numeric(*bounds) for key,bounds in fields.items()}
+        schema.update({vol.Required('allow_export',default=cfg['allow_export']):bool,
+                       vol.Required('export_end',default=cfg['export_end']):str})
+        return self.form('control_limits',schema,error)
 
     async def async_step_export_tariff(self, user_input=None):
         error = None
         if user_input:
             if user_input['export_mode'] == 'curve' and self.d['pricing']['provider'] != 'sensor':
                 error = 'export_curve_requires_sensor'
+            elif user_input['export_mode']=='spot' and self.d['pricing']['provider']!='nordpool':
+                error='spot_export_requires_nordpool'
             else:
                 self.d['pricing'].update(user_input)
                 return await self.async_step_plan()
         old = self.d['pricing']
         return self.form('export_tariff', {
-            vol.Required('export_mode', default=old.get('export_mode','fixed')): choice(['fixed','curve']),
+            vol.Required('export_mode', default=old.get('export_mode','fixed')): choice(['fixed','curve','spot']),
             vol.Required('net_export_price', default=old.get('net_export_price',0)): numeric(-10,10,.001)
         }, error)
 
@@ -459,6 +515,9 @@ class HouseholdFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason=str(err))
         if user_input is not None:
             if self.reconfigure_entry:
+                current=getattr(self.reconfigure_entry,'runtime_data',None)
+                if current and current.control:
+                    await current.control.command('stop',{})
                 return self.async_update_reload_and_abort(self.reconfigure_entry, data=data)
             await self.async_set_unique_id(data['installation_id'])
             self._abort_if_unique_id_configured()

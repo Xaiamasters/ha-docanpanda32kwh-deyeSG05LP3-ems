@@ -9,7 +9,7 @@ from .docan import BATTERY_KEYS
 async def async_setup_entry(hass, entry, async_add_entities):
     c = entry.runtime_data
     async_add_entities([Measurement(c, key, name, unit) for key, (name, unit) in MEASUREMENTS.items() if key in c.settings['bindings'] or key in direct_keys(c.settings) or (c.settings['battery']['source']=='docan_usb' and key in BATTERY_KEYS)]
-                       + [Measurement(c, 'import_price', 'Electricity import price', c.settings['pricing']['currency'] + '/kWh'), Plan(c)]
+                       + [Measurement(c, 'import_price', 'Electricity import price', c.settings['pricing']['currency'] + '/kWh'), Plan(c),OperatingMode(c)]
                        + ([Estimate(c,key,name,unit,path) for key,name,unit,path in ESTIMATES]+[DailyStatistics(c)] if c.settings['plan']['source']=='forecast_shadow' else []))
 
 
@@ -30,9 +30,9 @@ class Measurement(HouseholdEntity, SensorEntity):
 
 
 class Plan(HouseholdEntity, SensorEntity):
-    _unrecorded_attributes = frozenset({'horizon','windows','assumptions'})
+    _unrecorded_attributes = frozenset({'horizon','windows','assumptions','decision','scheduled_jobs'})
     def __init__(self, coordinator):
-        super().__init__(coordinator, 'plan', 'Observed or shadow plan')
+        super().__init__(coordinator, 'plan', 'Energy plan')
 
     @property
     def native_value(self):
@@ -93,3 +93,15 @@ class DailyStatistics(HouseholdEntity, SensorEntity):
     @property
     def extra_state_attributes(self):
         return self.coordinator.data['metrics']
+
+
+class OperatingMode(HouseholdEntity,SensorEntity):
+    def __init__(self,c):super().__init__(c,'operating_mode','Operating mode')
+
+    @property
+    def native_value(self):return self.coordinator.data['mode']
+
+    @property
+    def extra_state_attributes(self):
+        control=self.coordinator.data.get('control',{})
+        return {key:control.get(key) for key in ('active','commissioned','stop','programmed_day','watchdogs','last_error')}
