@@ -9,6 +9,7 @@ class DeadmanLimits:
     charge_voltage: float = 55.3
     mos_temperature: float = 80.0
     probe_temperature: float = 45.0
+    environment_temperature: float = 50.0
     export_soc: float = 42.3
     export_voltage: float = 49.0
     export_end: str = '22:30'
@@ -33,6 +34,8 @@ def charge_stop(snapshot,charge_power,limits=DeadmanLimits()):
     if snapshot.get('alarm')!='OK':return 'inverter_alarm'
     if mos>=limits.mos_temperature:return 'mos_temperature_bound'
     if any(v>=limits.probe_temperature for v in probes):return 'probe_temperature_bound'
+    environment=numeric(temps.get('environment_temperature'))
+    if environment is not None and environment>=limits.environment_temperature:return 'environment_temperature_bound'
     return None
 
 

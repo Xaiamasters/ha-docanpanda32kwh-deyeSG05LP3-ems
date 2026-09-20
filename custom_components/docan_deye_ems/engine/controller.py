@@ -5,6 +5,7 @@ import re
 from dataclasses import replace
 from .planner import CHARGE, EXPORT, Contract, plan_day
 from .context import PolicyContext
+from .market import exports
 
 class ConvergeError(RuntimeError):
     pass
@@ -33,6 +34,7 @@ class Controller(PolicyContext):
     NEVER_EMPTY = 25.0
     SOC_STOP = 90.0
     SOC_MAX = 95.0
+    PROGRAM_W = 8000.0
     MIN_RUN_MIN = 5
     CEILING_BAND_POINTS = 2.0
 
@@ -115,10 +117,10 @@ class Controller(PolicyContext):
 
     def marginal_value(self, s, k, floor_pct_now, slot=0):
         prices = s['prices']
-        ex = prices[k.export_start_slot:]
+        ex = exports(prices)[k.export_start_slot:]
         if not ex:
             return (0.0, 'no export slots remain')
-        net = max((self.net_export_value(x, k) for x in ex))
+        net = max((x-k.degradation if hasattr(prices,'exports') else self.net_export_value(x,k) for x in ex))
         ahead = [p for p in prices[slot:k.export_start_slot] if p is not None]
         ceiling = min(ahead) / k.rte if ahead and k.rte else None
 
@@ -143,13 +145,15 @@ class Controller(PolicyContext):
     def decide(self, s, k):
         if s['prices'] is None:
             return (self.IDLE, 'prices unavailable ; planner admission denied (never a physical veto)')
-        slot = min(95, (self.now().hour * 60 + self.now().minute) // 15)
+        if hasattr(s['prices'],'contract'):k=s['prices'].contract(k)
+        slot = s['prices'].slot_at(self.now()) if hasattr(s['prices'],'slot_at') else min(95, (self.now().hour * 60 + self.now().minute) // 15)
         p_now = s['prices'][slot]
-        if s['discharge_now']:
+        if s['discharge_now'] and k.allow_export:
             return (EXPORT, 'owner SELL NOW')
         soc_stop, ceiling_src = self.plan_ceiling()
         plan = plan_day(s['prices'], s['soc'], self.ask_contract(k, soc_stop), now_slot=slot)
         clusters, pin_src = self.pinned_export(self.DAY_PLAN)
+        if not k.allow_export:clusters=[]
         if clusters is not None:
             for st_slot, en_slot, fl in clusters:
                 if st_slot <= slot < en_slot:
@@ -195,6 +199,8 @@ class Controller(PolicyContext):
         if s['soc'] is not None and s['soc'] >= self.SOC_MAX and charging:
             veto.append(f"SoC {s['soc']}% >= A9 max {self.SOC_MAX}%")
         for ent, derate, stop in self.THERMAL:
+            name='MOS_STOP_C' if ent=='mos_temperature' else 'ENVIRONMENT_STOP_C' if ent=='environment_temperature' else 'PROBE_STOP_C'
+            stop=min(stop,getattr(self,name,stop));derate=min(derate,stop)
             t = s['temps'].get(ent)
             if t is None or not math.isfinite(t):
                 veto.append(f"{ent.rsplit('_', 2)[-2]} temperature unreadable")
@@ -213,11 +219,11 @@ class Controller(PolicyContext):
         pv = f'program_{active}_voltage'
         off = {self.E_SOLAR_SELL: 'off', self.E_WORK_MODE: self.SAFE_WORK_MODE, self.E_ENERGY_PATTERN: self.SAFE_ENERGY_PATTERN}
         if action == CHARGE:
-            return ({**off, self.E_GRID_CHARGE: 'on', self.E_GRID_CHARGE_A: float(self.CHARGE_A), pv: self.CHARGE_V, f'program_{active}_power': 8000.0}, None)
+            return ({**off, self.E_GRID_CHARGE: 'on', self.E_GRID_CHARGE_A: float(self.CHARGE_A), pv: self.CHARGE_V, f'program_{active}_power': self.PROGRAM_W}, None)
         if action == self.HOLD:
-            return ({**off, self.E_GRID_CHARGE: 'off', self.E_GRID_CHARGE_A: float(self.IDLE_A), pv: self.CHARGE_V, f'program_{active}_power': 8000.0}, None)
+            return ({**off, self.E_GRID_CHARGE: 'off', self.E_GRID_CHARGE_A: float(self.IDLE_A), pv: self.CHARGE_V, f'program_{active}_power': self.PROGRAM_W}, None)
         if action == self.IDLE:
-            return ({**off, self.E_GRID_CHARGE: 'off', self.E_GRID_CHARGE_A: float(self.IDLE_A), pv: self.IDLE_V, f'program_{active}_power': 8000.0}, None)
+            return ({**off, self.E_GRID_CHARGE: 'off', self.E_GRID_CHARGE_A: float(self.IDLE_A), pv: self.IDLE_V, f'program_{active}_power': self.PROGRAM_W}, None)
         if action == EXPORT:
             return ({self.E_GRID_CHARGE: 'off', self.E_GRID_CHARGE_A: float(self.IDLE_A), self.E_EXPORT_W: float(self.EXPORT_W), self.E_GRID_EXPORT_W: float(self.EXPORT_W), self.E_ENERGY_PATTERN: self.SAFE_ENERGY_PATTERN, self.E_WORK_MODE: self.EXPORT_WORK_MODE, self.E_SOLAR_SELL: 'on'}, None)
         return (None, f'unknown action {action}')

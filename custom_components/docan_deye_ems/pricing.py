@@ -90,7 +90,7 @@ class PriceReader:
             rows=attrs.get('periods')
             if not isinstance(rows,list) or len(rows)>400:raise InputError('invalid_price_rows')
             periods=normalize_periods(rows,day,self.zone,currency=cfg['currency'],unit=attrs.get('unit_of_measurement',''),basis=cfg['basis'],tax=cfg['tax'],fee=cfg['fee'],vat=cfg['vat'],export_fee=cfg['export_fee'])
-            return {'provider':provider,'date':str(day),'currency':cfg['currency'],'periods':periods,'basis':cfg['basis']}
+            return {'provider':provider,'date':str(day),'currency':cfg['currency'],'periods':self.export_prices(periods),'basis':cfg['basis']}
         if day in self.cache:return self.cache[day]
         if self.retry_at and now<self.retry_at:raise InputError('provider_retry_pending')
         self.retry_at=now+timedelta(minutes=5)
@@ -113,7 +113,8 @@ class PriceReader:
                     delivery_day=datetime.combine(day,time(12),tzinfo=ZoneInfo(self.zone))
                     result=await NordPoolClient(async_get_clientsession(self.hass)).async_get_delivery_period(delivery_day,Currency(cfg['currency']),[cfg['area']])
                 if not result.prices_final or result.currency!=cfg['currency']:raise InputError('prices_not_final')
-                rows=[{'start':r.start.isoformat(),'end':r.end.isoformat(),'value':r.entry.get(cfg['area'])} for r in result.entries]
+                rows=[{'start':r.start.isoformat(),'end':r.end.isoformat(),'value':r.entry.get(cfg['area']),
+                       **({'export':r.entry.get(cfg['area'])} if cfg.get('export_mode')=='spot' else {})} for r in result.entries]
                 periods=normalize_periods(rows,day,self.zone,currency=cfg['currency'],unit=cfg['currency']+'/MWh',basis='spot',tax=cfg['tax'],fee=cfg['fee'],vat=cfg['vat'],export_fee=cfg['export_fee'])
                 self.cache[day]={'provider':provider,'date':str(day),'currency':cfg['currency'],'periods':periods,'basis':'spot_plus_household_tariff'}
             except InputError:raise
@@ -121,4 +122,5 @@ class PriceReader:
         else:raise InputError('unsupported_provider')
         self.cache={d:v for d,v in self.cache.items() if d>=day}
         if day not in self.cache:raise InputError('prices_unavailable')
+        for cached in self.cache.values():cached['periods']=self.export_prices(cached['periods'])
         return self.cache[day]

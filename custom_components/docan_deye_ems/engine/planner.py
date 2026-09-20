@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 from typing import Sequence
+from .market import exports as export_tariffs
 SLOTS_PER_DAY = 96
 SLOT_H = 0.25
 CHARGE = 'charge'
@@ -15,6 +16,15 @@ def _hhmm_to_slot(hhmm: str, slot_min: int=15) -> int:
 
 @dataclass(frozen=True)
 class Contract:
+    household_profile: bool = False
+    maximum_soc: float = 95.0
+    program_power_w: int = 8000
+    baseline_load_kw: float = 1.0
+    meter_factor: float = .95
+    day_slots: int = 96
+    earliest_charge_slot: int = 0
+    window_end_slot: int = 65
+    allow_export: bool = True
     max_periods: int = 3
     export_via_tou: bool = False
     max_charge_runs: int = 1
@@ -31,6 +41,8 @@ class Contract:
     export_power_w: float = 7900.0
     cap_kwh: float = 32.15
     export_start_slot: int = 72
+    export_end_slot: int = 96
+    export_end_hhmm: str = '24:00'
     export_cap_kwh: float = 12.0
     never_empty_pct: float = 25.0
     charge_setpoint_v: float = 55.2
@@ -154,7 +166,7 @@ def floor_pct(slot_end: int, next_charge_start: int | None, k: Contract) -> int:
     if next_charge_start is None:
         hours = k.overnight_reference_hours
     else:
-        gap_slots = (next_charge_start - slot_end) % SLOTS_PER_DAY
+        gap_slots = (next_charge_start - slot_end) % k.day_slots
         hours = gap_slots * SLOT_H
     frac = min(1.0, hours / k.overnight_reference_hours) if k.overnight_reference_hours else 1.0
     l_overn = k.l_overn_kwh * frac
@@ -168,6 +180,7 @@ HOLD_GAP_SLOTS = 1
 DEFAULT_WINDOW_END_SLOT = 65
 
 def armed_window(plan, prices: Sequence, k: Contract, default_end: int=DEFAULT_WINDOW_END_SLOT) -> tuple:
+    if default_end == DEFAULT_WINDOW_END_SLOT:default_end = k.window_end_slot
     charges = [p for p in plan.periods if p.action == CHARGE]
     if not charges:
         return (None, None, 'no charge block ; nothing to arm')
@@ -181,7 +194,7 @@ def armed_window(plan, prices: Sequence, k: Contract, default_end: int=DEFAULT_W
     if limit <= block_end:
         return (start, block_end, f'first sell {_slot_hhmm(sells[0])} leaves no room after the charge block ends {_slot_hhmm(block_end)} ; no hold')
     hold_slots = range(max(block_end, default_end), limit)
-    sell_px = [prices[i] for p in plan.periods if p.action == EXPORT for i in range(p.start_slot, p.end_slot)]
+    sell_px = [export_tariffs(prices)[i] for p in plan.periods if p.action == EXPORT for i in range(p.start_slot, p.end_slot)]
     imp_px = [prices[i] for i in hold_slots] or [prices[min(limit, len(prices) - 1)]]
     sell_mean, imp_mean = (_mean(sell_px), _mean(imp_px))
     if sell_mean <= imp_mean:
@@ -245,7 +258,8 @@ def percentile(xs: Sequence, q: float) -> float:
     return s[lo] + (s[hi] - s[lo]) * (pos - lo)
 
 def run_mean(r: Run, prices: Sequence) -> float:
-    return _mean((prices[i] for i in r.slots))
+    rates = export_tariffs(prices) if r.action == EXPORT else prices
+    return _mean((rates[i] for i in r.slots))
 CHARGE_FALLBACK_FLOOR_PCT = 50.0
 CHARGE_FLOOR_CEILING_PCT = 95.0
 
@@ -277,7 +291,7 @@ def select_charge_slots(prices: Sequence, soc0: float, k: Contract, now_slot: in
     if soc0 >= k.chg_soc_target:
         return ([], float(soc0), True)
     limit = min(k.deadline_slot, len(prices))
-    start = max(0, int(now_slot))
+    start = max(k.earliest_charge_slot, int(now_slot))
     if start >= limit:
         return ([], float(soc0), False)
     order = sorted(range(start, limit), key=lambda i: (prices[i], i))
@@ -330,14 +344,15 @@ def _select_charge_slots_gated(prices, soc0, k, order, floor_soc, floor_provenan
     return (sorted(pruned), soc, soc >= k.chg_soc_target - 1e-09)
 
 def select_export_slots(prices: Sequence, charge_slots: Sequence, k: Contract, soc_start: float, floor_pct_binding: float | None=None, now_slot: int=0):
-    if not prices:
+    if not prices or not k.allow_export:
         return []
     cset = set(charge_slots)
     charge_mean = _mean((prices[i] for i in cset)) if cset else 0.0
+    prices = export_tariffs(prices)
     breakeven = charge_mean / k.rte + k.degradation + k.min_margin
     threshold = max(percentile(prices, 75), breakeven)
     earliest = max(k.export_start_slot, max(0, int(now_slot)))
-    eligible = [i for i, c in enumerate(prices) if c >= threshold and i not in cset and (i >= earliest)]
+    eligible = [i for i, c in enumerate(prices) if c >= threshold and i not in cset and earliest <= i < k.export_end_slot]
     binding = k.never_empty_pct if floor_pct_binding is None else max(k.never_empty_pct, floor_pct_binding)
     budget_kwh = max(0.0, (soc_start - binding) / 100.0 * k.cap_kwh)
     affordable = math.ceil(budget_kwh / k.export_kwh_per_slot) if k.export_kwh_per_slot else 0
@@ -392,8 +407,9 @@ def merge_runs(runs: list, prices: Sequence, k: Contract) -> list:
             gap = list(range(r1.end, r2.start))
             if not gap or len(gap) > k.merge_gap_max:
                 continue
-            mg = _mean((prices[i] for i in gap))
-            mu = _mean((prices[i] for i in list(r1.slots) + list(r2.slots)))
+            rates = export_tariffs(prices) if r1.action == EXPORT else prices
+            mg = _mean((rates[i] for i in gap))
+            mu = _mean((rates[i] for i in list(r1.slots) + list(r2.slots)))
             ok = mg <= mu + k.merge_price_tol if r1.action == CHARGE else mg >= mu - k.merge_price_tol
             if ok:
                 runs[a:a + 2] = [Run(r1.start, r2.end, r1.action)]
@@ -455,8 +471,9 @@ def _force_merge_once(runs: list, prices: Sequence, k: Contract, only: str | Non
         gap = list(range(r1.end, r2.start))
         if not gap:
             continue
-        mg = _mean((prices[i] for i in gap))
-        mu = _mean((prices[i] for i in list(r1.slots) + list(r2.slots)))
+        rates = export_tariffs(prices) if r1.action == EXPORT else prices
+        mg = _mean((rates[i] for i in gap))
+        mu = _mean((rates[i] for i in list(r1.slots) + list(r2.slots)))
         penalty = mg - mu if r1.action == CHARGE else mu - mg
         penalty *= len(gap)
         if best is None or penalty < best[0]:
@@ -473,7 +490,7 @@ def export_set_value(runs: list, prices: Sequence, budget_kwh: float, k: Contrac
     if per <= 0:
         return 0.0
     total, left = (0.0, max(0.0, budget_kwh))
-    for p in sorted((prices[i] for r in runs if r.action == EXPORT for i in r.slots), reverse=True):
+    for p in sorted((export_tariffs(prices)[i] for r in runs if r.action == EXPORT for i in r.slots), reverse=True):
         if left <= 1e-09:
             break
         take = min(per, left)
@@ -496,7 +513,7 @@ def cap_export_clusters(runs: list, prices: Sequence, budget_kwh: float, k: Cont
 def drop_to_limit(runs: list, prices: Sequence, soc0: float, floors: dict, k: Contract):
     runs = list(runs)
     warnings = []
-    export_prices = sorted((prices[i] for i in range(len(prices))), reverse=True)[:8]
+    export_prices = sorted(export_tariffs(prices), reverse=True)[:8]
     peak_mean = _mean(export_prices)
     budget_kwh = max(0.0, (soc0 - max(k.never_empty_pct, k.reserve_floor_pct)) / 100.0 * k.cap_kwh)
     runs, cap_warn = cap_export_clusters(runs, prices, budget_kwh, k)
@@ -575,21 +592,21 @@ def assert_invariants(periods: list, k: Contract):
             raise ValueError(f'P{p.index} is empty or inverted')
         if p.start_slot < prev_end:
             raise ValueError(f'P{p.index} overlaps the previous period')
-        if p.start_slot > SLOTS_PER_DAY or p.end_slot > SLOTS_PER_DAY:
+        if p.start_slot > k.day_slots or p.end_slot > k.day_slots:
             raise ValueError(f'P{p.index} crosses 00:00 without being split')
         prev_end = p.end_slot
 
 def plan_day(prices: Sequence, soc0: float, k: Contract, now_slot: int=0) -> Plan:
-    if len(prices) != SLOTS_PER_DAY:
-        raise ValueError(f'expected {SLOTS_PER_DAY} prices, got {len(prices)}')
+    if len(prices) != k.day_slots:
+        raise ValueError(f'expected {k.day_slots} prices, got {len(prices)}')
     warnings = []
     charge_slots, soc_after_charge, reached = select_charge_slots(prices, soc0, k, now_slot=now_slot)
     if not reached:
         warnings.append(f'023-E UNREACHABLE from slot {now_slot}: remaining pre-deadline slots reach only {soc_after_charge:.1f}%, target {k.chg_soc_target:.0f}%')
     first_charge = min(charge_slots) if charge_slots else None
-    binding_floor = floor_pct(SLOTS_PER_DAY, first_charge, k)
+    binding_floor = floor_pct(k.day_slots, first_charge, k)
     export_slots = select_export_slots(prices, charge_slots, k, soc_after_charge, floor_pct_binding=binding_floor, now_slot=now_slot)
-    actions = [PASS] * SLOTS_PER_DAY
+    actions = [PASS] * k.day_slots
     for i in charge_slots:
         actions[i] = CHARGE
     for i in export_slots:

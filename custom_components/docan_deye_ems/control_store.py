@@ -12,8 +12,9 @@ from uuid import uuid4
 
 
 class ControlStore:
-    def __init__(self, path):
+    def __init__(self, path,lock_dir=None):
         self.path = Path(path)
+        self.lock_dir=Path(lock_dir) if lock_dir is not None else self.path.parent
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock()
         self.db = sqlite3.connect(self.path, timeout=2, isolation_level=None, check_same_thread=False)
@@ -50,6 +51,8 @@ class ControlStore:
         with self.transaction():
             cur = self.db.execute('INSERT INTO events(at,actor,payload) VALUES(?,?,?)',
                                   (time.time(), actor, json.dumps(payload, allow_nan=False)))
+            if cur.lastrowid%1000==0:
+                self.db.execute('DELETE FROM events WHERE id<?',(cur.lastrowid-20000,))
             return cur.lastrowid
 
     def events(self, after=0):

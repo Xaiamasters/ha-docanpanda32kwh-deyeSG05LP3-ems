@@ -17,4 +17,4 @@ class Ready(HouseholdEntity, BinarySensorEntity):
 
     @property
     def extra_state_attributes(self):
-        return {'physical_authority': False, 'mode': 'shadow_only', 'errors': self.coordinator.data['errors']}
+        return {'physical_authority':self.coordinator.data['physical_authority'], 'mode':self.coordinator.data['mode'], 'errors': self.coordinator.data['errors']}

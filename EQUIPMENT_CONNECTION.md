@@ -23,7 +23,8 @@ required for the three supported network protocols.
 
 The battery BMS CAN/RS485 link belongs between battery and inverter. It is not
 the HA telemetry connection. The integration does not configure a gateway's
-baud rate, parity, wiring, BMS protocol, CT direction or inverter settings. Use
+baud rate, parity, wiring, BMS protocol or CT direction. After commissioning,
+live mode can change the bounded inverter settings in [the control contract](CONTROL_ADAPTER.md). Use
 the manufacturer's manual for the exact hardware revision; do not repurpose
 the battery BMS port. Existing pollers should use the existing-sensor path to
 avoid competing requests on a single-client gateway or serial bus.

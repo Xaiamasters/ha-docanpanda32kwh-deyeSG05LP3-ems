@@ -19,7 +19,7 @@ def pinned_exports(plan: dict | None, day: str):
             start, end, floor = int(cluster[0]), int(cluster[1]), int(cluster[2])
         except (TypeError, ValueError, IndexError):
             return None, 'day plan has a malformed export cluster'
-        if not 0 <= start < end <= SLOTS_PER_DAY:
+        if not 0 <= start < end <= plan.get('slot_count',SLOTS_PER_DAY):
             return None, 'day plan cluster is out of range'
         rows.append((start, end, floor))
     if any(a[1] > b[0] for a, b in zip(rows, rows[1:])):
@@ -35,7 +35,8 @@ def dated_contract(plan: dict | None, day: str, base: Contract | None = None):
         floor = int(plan['reserve']['pct'])
     except (KeyError, TypeError, ValueError):
         return contract, f'pinned {contract.floor_min_pct}%: no reserve.pct'
-    return replace(contract, nightly_reserve_pct=floor), f'measured overnight reserve {floor}%'
+    estimated=plan.get('measured') is False or plan.get('reserve_basis',plan.get('basis'))=='configured_household_load_assumption'
+    return replace(contract, nightly_reserve_pct=floor), f'{"estimated" if estimated else "measured"} overnight reserve {floor}%'
 
 
 class PolicyContext:
@@ -57,7 +58,8 @@ class PolicyContext:
         self.allow_writes = allow_writes
         for key, value in (limits or {}).items():
             if key not in {'CHARGE_A', 'IDLE_A', 'EXPORT_W', 'CHARGE_V', 'IDLE_V',
-                           'HARD_V', 'PACK_LOW_V', 'NEVER_EMPTY', 'SOC_MAX'}:
+                           'HARD_V', 'PACK_LOW_V', 'NEVER_EMPTY', 'SOC_MAX', 'PROGRAM_W',
+                           'MOS_STOP_C','PROBE_STOP_C','ENVIRONMENT_STOP_C'}:
                 raise ValueError('unsupported_controller_limit')
             if isinstance(value, bool) or not math.isfinite(float(value)):
                 raise ValueError('invalid_controller_limit')
@@ -71,18 +73,20 @@ class PolicyContext:
 
     def plan_ceiling(self):
         plan = self.DAY_PLAN
+        maximum=min(95,self.base_contract.maximum_soc)
+        fallback=min(90,maximum)
         if not isinstance(plan, dict) or str(plan.get('for_date')) != self.at.date().isoformat():
-            return 90.0, 'ceiling 90%: no current day plan'
+            return fallback, f'ceiling {fallback:g}%: no current day plan'
         raw = plan.get('ceiling_pct')
         if raw is None:
-            return 90.0, 'ceiling 90%: plan pins no ceiling'
+            return fallback, f'ceiling {fallback:g}%: plan pins no ceiling'
         try:
             value = float(raw)
         except (TypeError, ValueError):
             raise ValueError('INVALID_CEILING_NUMBER') from None
         if isinstance(raw, bool) or not math.isfinite(value):
             raise ValueError('INVALID_CEILING_FINITE')
-        if not 0 <= value <= 95:
+        if not 0 <= value <= maximum:
             raise ValueError('INVALID_CEILING_RANGE')
         return value, f"ceiling {value:.0f}% (pinned {plan.get('pinned_at', '?')})"
 

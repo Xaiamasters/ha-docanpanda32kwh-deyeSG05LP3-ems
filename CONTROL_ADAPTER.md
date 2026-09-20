@@ -1,28 +1,28 @@
-# Control adapter and local validation
+# Commissioning and equipment control
 
-Version **0.5.0.dev2** is a development candidate. The Home Assistant integration
-only observes and simulates. Command transport rejects every non-loopback
-destination, independently of the session's authority checks. There is no HA
-live-mode toggle, control service or automatic commissioning.
+Version 0.5.0-beta.1 includes the HA control lifecycle and dashboard. Creating
+or restoring an entry cannot activate equipment. Only an authenticated HA
+administrator can confirm commissioning and enable live control.
 
-## What the adapter does
+## Approval and identity
 
-`DeyeDevice` reads a complete frame: telemetry, control settings, all six TOU
-programs, battery alarm, device alarms and faults, battery operating mode and
-TOU weekday flags. It supports Modbus TCP, RTU-over-TCP and Solarman V5 framing.
-Requests have bounded lengths and timeouts. Reply identities, functions, lengths,
-CRC/checksum and write echoes are checked before using data.
+The preview reads the inverter identity, rated power and firmware, and requires
+three fresh independent BMS observations. The selected model must match rated
+power. An expiring confirmation binds the device, endpoint, battery source,
+tariffs, timezone and limits. The owner confirms equipment readings, BMS wiring,
+sole-writer operation, limits, export permission and whole-host failure limits.
 
-The independent Docan reader supplies pack current/voltage, SoC, cell spread,
-cell-voltage sum, MOS temperature, environment temperature and four probes.
-Unsupported probe layouts fail closed. Controller admission needs three
-consecutive coherent frames; missing data is never replaced with a healthy value.
+Confirmation starts four independent processes but leaves control inactive.
+Enable live is a separate action. Every actual command reads and matches the
+commissioned identity on the same connection before sending the write. Firmware
+or device changes revoke the session. A settings change, restart or restore
+requires fresh commissioning. An imported settings file cannot carry authority.
 
-With direct Deye and Docan USB selected, HA's production shadow policy uses this
-frame itself. Existing-sensor setups can still supply a complete frame. Normal
-telemetry and controller observations share one poll, including the BMS read.
-The direct grid value comes from the Deye grid-power register. It has not been
-shown to match an independent fiscal meter on a real installation.
+The adapter has named bounded fields, not a register editor or general command
+service. The dashboard has authenticated admin-only operations for preview,
+confirmation, enable, stop and acknowledgement. No HA control services are
+registered. The loopback-only authority used by low-level tests cannot target a
+physical host; installed control uses the separate commissioned authority.
 
 ## Register contract
 
@@ -39,94 +39,67 @@ SG05LP3 firmware. No upstream implementation was copied into the command adapter
 | Work mode | 142 | 0 export, 1 zero-export load, 2 zero-export CT |
 | Export limit / solar sell | 143 / 145 | W / off-on |
 | TOU | 146 | Enable bit 0; weekday bits preserved |
-| Six program starts | 148–153 | HHMM |
-| Six program power limits | 154–159 | W |
-| Six program voltages | 160–165 | 0.01 V |
-| Six program SoC limits | 166–171 | % |
-| Six charging selectors | 172–177 | Disabled, grid, generator, both |
+| Six program starts | 148-153 | HHMM |
+| Six program power limits | 154-159 | W |
+| Six program voltages | 160-165 | 0.01 V |
+| Six program SoC limits | 166-171 | % |
+| Six charging selectors | 172-177 | Disabled, grid, generator, both |
 | Battery alarm | 220 | Nonzero is an alarm |
 | Grid export limit | 231 | 10 W |
-| Device alarms / faults | 553–558 | Any nonzero value rejects healthy status |
+| Device alarms / faults | 553-558 | Any nonzero value rejects healthy status |
 
-Read requests use function 03. Lab commands use function 16 with one register,
+Read requests use function 03. Commissioned commands use function 16 with one register,
 then an independent readback. The wire format follows the
 [Modbus application specification, section 6.12](https://www.modbus.org/file/secure/modbusprotocolspecification.pdf).
 Solarman envelopes follow the
 [V5 protocol description](https://pysolarmanv5.readthedocs.io/en/latest/solarmanv5_protocol.html).
 Actual firmware acceptance of these commands remains unverified.
 
-## Execution and STOP
+## Transactions and stopping
 
-The lab interface accepts named fields, with explicit bounds and resolution.
-It has no register editor. A session must acquire exclusive ownership, collect
-valid observations and be explicitly armed. It starts disarmed after a clean
-restart. Persisted activity at restart causes a STOP latch and minimal reductions.
+Six-program application requires fresh idle equipment: absolute grid power
+at most 500 W, absolute battery power at most 300 W, healthy alarms, grid charge
+and solar sell off, zero export to CT and load-first. TOU is disabled while every
+period is staged, then the complete block is verified before restoring its
+previous enable bit. Weekday bits are preserved. Generator charging and
+duplicate or unproven midnight boundaries are refused.
 
-SQLite stores intent, verified outcomes, state and the STOP latch with full
-synchronization. Commands are never retried after a missing acknowledgement or
-unverified readback. A shared wire lock orders controller and watchdog traffic.
-Command authority is checked again after taking that lock, immediately before
-sending. Another process's STOP revokes queued commands. Serial readers also
-share ownership; cancelling an asynchronous call does not release ownership
-while its serial thread is still running.
+Commands record intent in SQLite with full synchronization before transmission.
+Write echoes and independent readback are checked. Missing acknowledgement or
+readback latches STOP without retrying the command. OS locks serialize device
+roles, wire access and serial reads. A physical identity lock prevents two
+commissioned entries on the same HA host owning the same inverter. This cannot
+detect every writer on a different host; sole-writer confirmation remains a
+commissioning requirement.
 
-The six-program transaction requires fresh idle measurements and inactive
-controls. It disables TOU and charging selectors, stages every bounded field,
-verifies the complete block and restores the previous TOU enable state only on
-success. Failure latches STOP and never restores prior activity. Weekday bits
-are retained. Duplicate or unproven midnight boundaries are refused.
+STOP attempts all four reductions: solar sell off, grid charge off, zero export
+to CT and load-first. One failed reduction does not suppress the remaining
+attempts. Failure to persist the stop is reported separately. Register readback
+does not prove stopped physical energy flow and is not an electrical disconnect.
 
-Minimal STOP attempts solar-sell off, grid-charge off, zero-export-to-CT and
-load-first, including when another reduction fails. Storage failure does not
-suppress these reductions, but the result reports that the durable record failed.
-Register readback is recorded separately from physical completion. It never
-claims that electricity flow has stopped.
+Acknowledgement requires the current latch ID and fresh healthy idle readings.
+It clears only that reviewed stop and leaves the controller inactive. A policy
+thread still running after cancellation blocks acknowledgement and retains
+ownership until it exits. Normal unload is refused when stop readback remains
+unverified, preserving the available guards for recovery.
 
-Acknowledgement needs the current latch ID, owner STOP cleared, three fresh
-observations, healthy alarms, inactive controls and idle power readings. It
-clears the reviewed latch but remains disarmed. Activation is a separate step.
-A controller thread still running after cancellation blocks acknowledgement.
+## Independent guards
 
-## Independent watchdogs
+The charge and export guards read their own fresh equipment observations. The
+supervisor checks controller and peer heartbeats. The auditor compares observed
+settings with verified command outcomes, never with intentions or shadow
+proposals. Unattributed changes stop control. The auditor cannot detect writing
+the same value, or a setting changed and restored entirely between polls.
 
-Charge, export, supervisor and auditor workers use the durable store and their
-own adapter. They do not depend on planner prices. Each role has an OS-backed
-ownership lock. Charge/export workers obtain fresh equipment observations. The
-supervisor checks controller and watchdog heartbeats. The auditor accepts actual
-verified outcomes as attribution; an intent or a shadow proposal is insufficient.
-Worker loops require an explicit installation-local, timezone-aware clock for
-the export cutoff. They do not silently choose a server timezone.
+Guards run as separate Python processes with fixed roles and no command server.
+They share durable stop state. Another process's STOP revokes queued commands
+at the wire boundary. Lost guard heartbeats also prevent further activating
+commands. Charge/export poll every 10 seconds, audit every 15 and supervision
+every 5, with bounded transport operations and a 75-second heartbeat limit.
 
-The auditor detects unexplained *setting changes*. Polling cannot detect an
-outside writer that writes the same value or changes and restores it between
-polls. Exclusivity only covers participating processes sharing the same state
-directory. It cannot exclude a second EMS, the inverter app or another computer.
-
-The process test starts separate planner and supervisor interpreters, terminates
-only that test planner and verifies that the supervisor stops the emulator. This
-proves independence from that planner process. It does not prove safety after an
-HA host failure, network loss or power outage. Firmware or a separate protection
-system must cover those failure modes before live use.
-
-## Reproduce the tests
-
-Use an isolated development environment with `requirements-dev.txt` installed:
-
-```sh
-python -B -m unittest discover -s tests -p 'test_control*.py' -v
-python -B -m unittest discover -s tests -p 'test_engine_adapter.py' -v
-```
-
-Tests bind loopback sockets and use synthetic BMS frames. They neither discover
-devices nor accept production credentials. Faults include invalid frames,
-timeouts, disconnects, lost replies after applied commands, refused writes,
-controller death, cancellation, conflicting changes, missing telemetry, storage
-failure, stale plans, DST days, restart and manual STOP review.
-
-## Release boundary
-
-The software needed for local execution and fault tests is present. The live HA
-lifecycle, notifications, per-installation calibration, tariff generalization,
-DST support and independently verified physical commissioning remain release
-requirements. The reference profile is limited to the 10 kW model. This branch
-must not be advertised as a production-ready live EMS.
+This separation covers a stalled or failed controller while its guard processes
+and equipment connections remain alive. It does not cover complete HA
+container/host power loss, dead networking, or unreachable equipment. Native
+inverter/BMS protections must remain in force. Software tests use emulators;
+actual acceptance by a particular firmware remains commissioning evidence
+that cannot be inferred from passing simulation.

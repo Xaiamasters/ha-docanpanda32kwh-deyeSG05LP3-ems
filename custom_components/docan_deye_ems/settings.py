@@ -38,11 +38,13 @@ def _validate_document(data):
     """Strict shape at import/runtime; direct endpoints use the bounded reader."""
     if not isinstance(data,dict):raise InputError('invalid_document')
     d=copy.deepcopy(data)
-    allowed={'schema','installation_id','name','model','bms_link','diagram_reserve_soc','connection','equipment','bindings','location','solar','pricing','plan','signs','max_age','battery','forecast'}
+    allowed={'schema','installation_id','name','model','bms_link','diagram_reserve_soc','connection','equipment','bindings','location','solar','pricing','plan','signs','max_age','battery','forecast','control'}
     if set(d)-allowed or d.get('schema')!=1:raise InputError('invalid_document')
     if not re.fullmatch(r'[a-f0-9]{32}',d.get('installation_id','')):raise InputError('invalid_document')
     if not isinstance(d.get('name'),str) or not 1<=len(d['name'].strip())<=80:raise InputError('invalid_name')
     if d.get('model') not in MODELS or d.get('connection') not in ('existing_ha_sensors','direct_deye'):raise InputError('invalid_profile')
+    from .control_profile import validate_control
+    d['control']=validate_control(d.get('control'),d['model'])
     direct=d['connection']=='direct_deye'
     d['battery']=validate_docan(d.get('battery',{'source':'inverter'}))
     independent=d['battery']['source']=='docan_usb'
@@ -77,9 +79,10 @@ def _validate_document(data):
     p=d.get('pricing',{})
     if set(p)-{'provider','currency','area','token','home_id','basis','tax','fee','vat','export_fee','export_mode','net_export_price'}:raise InputError('invalid_tariff')
     if 'export_mode' in p:
-        if p['export_mode'] not in ('fixed','curve'):raise InputError('invalid_tariff')
+        if p['export_mode'] not in ('fixed','curve','spot'):raise InputError('invalid_tariff')
         if p['export_mode']=='fixed' and not -10<=number(p.get('net_export_price'))<=10:raise InputError('invalid_tariff')
         if p['export_mode']=='curve' and p.get('provider')!='sensor':raise InputError('invalid_tariff')
+        if p['export_mode']=='spot' and p.get('provider')!='nordpool':raise InputError('invalid_tariff')
     if p.get('provider') not in ('tibber','nordpool','sensor') or p.get('currency') not in [c.value for c in Currency]:raise InputError('invalid_tariff')
     if p.get('basis') not in ('all_in','spot'):raise InputError('invalid_tariff')
     if any(not 0<=number(p.get(k))<=10 for k in ('tax','fee','export_fee')) or not 0<=number(p.get('vat'))<=100:raise InputError('invalid_tariff')
@@ -100,7 +103,9 @@ def _validate_document(data):
         if not 0<number(k['round_trip_efficiency'])<=1 or not 0<=number(k['wear_cost_per_kwh'])<=1:raise InputError('invalid_planning_limits')
         if p['currency']!='EUR':raise InputError('production_policy_requires_eur')
         if not -2<=number(k['export_price_deduction'])<=2:raise InputError('invalid_planning_limits')
-        if d['model']!='SUN-10K-SG05LP3-EU-SM2':raise InputError('production_profile_requires_10k')
+        if k['export_power_w']>10000 or k['export_power_w']%10:raise InputError('invalid_planning_limits')
+        if k['export_price_deduction']!=0:raise InputError('use_separate_export_tariff')
+        if not d['control']['minimum_soc']<=k['fallback_reserve_soc']<d['control']['max_soc']:raise InputError('inconsistent_control_limits')
     elif k['source']=='observed':
         if set(k)!={'source'} or 'observed_plan' not in bindings:raise InputError('missing_plan_source')
     elif k['source']=='shadow_estimate':
@@ -129,7 +134,7 @@ def _validate_document(data):
         try:t=time.fromisoformat(k['charge_deadline'])
         except (ValueError,TypeError):raise InputError('invalid_deadline') from None
         if t.tzinfo or t.second:raise InputError('invalid_deadline')
-        if p.get('export_mode') not in ('fixed','curve'):raise InputError('export_price_required')
+        if p.get('export_mode') not in ('fixed','curve','spot'):raise InputError('export_price_required')
         f=d.get('forecast',{})
         permitted={'solar_source','latitude','longitude','tilt','azimuth','consent','baseline_load_kw','anticipate_prices','learn_efficiency'}
         if set(f)-permitted or f.get('solar_source') not in ('none','sensor','forecast_solar'):raise InputError('invalid_forecast_settings')

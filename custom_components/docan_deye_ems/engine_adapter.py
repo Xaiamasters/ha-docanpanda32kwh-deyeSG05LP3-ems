@@ -12,7 +12,8 @@ from zoneinfo import ZoneInfo
 from homeassistant.helpers.storage import Store
 from .const import DOMAIN
 from .model import InputError,instant,day_bounds
-from .engine.planner import Contract
+from .engine.market import DeliveryPrices
+from .control_profile import contract,policy_limits,context_digest,validate_control
 from .engine.runtime import ShadowRuntime
 from .engine.storage import MemoryState
 from .control_device import DeyeDevice
@@ -21,6 +22,7 @@ from .control_observation import EquipmentObservation
 
 class ProductionShadowAdapter:
     def __init__(self,hass,settings):
+        settings={**settings,'control':validate_control(settings.get('control'),settings['model'])}
         self.hass=hass
         self.settings=settings
         self.store=Store(hass,1,DOMAIN+'.'+settings['installation_id']+'.engine',private=True,atomic_writes=True)
@@ -28,17 +30,9 @@ class ProductionShadowAdapter:
         self.observation=(EquipmentObservation(DeyeDevice(settings['equipment']),settings['battery'])
                           if settings.get('connection')=='direct_deye' and settings['battery']['source']=='docan_usb'
                           and 'controller_snapshot' not in settings['bindings'] else None)
-        cfg=settings['plan']
-        contract=replace(Contract(),cap_kwh=cfg['capacity_kwh'],floor_min_pct=int(cfg['fallback_reserve_soc']),
-                         export_power_w=cfg['export_power_w'],rte=cfg['round_trip_efficiency'],degradation=cfg['wear_cost_per_kwh'],
-                         export_price_deduction=cfg['export_price_deduction'])
-        self.runtime=ShadowRuntime(self.state,contract)
-        # Reconfiguration must not apply old pinned plans to a different source/site.
-        context={'plan':cfg,'source':settings['bindings'].get('controller_snapshot'),
-                 'equipment':settings.get('equipment'),'battery':settings['battery'],
-                 'prices':{k:v for k,v in settings['pricing'].items() if k!='token'},
-                 'time_zone':hass.config.time_zone}
-        self.context=hashlib.sha256(json.dumps(context,sort_keys=True).encode()).hexdigest()
+        self.runtime=ShadowRuntime(self.state,contract(settings),policy_limits(settings['control']))
+        self.context=context_digest(settings,hass.config.time_zone)
+        self.today=None;self.tomorrow=None;self.latest_frame=None
 
     async def initialize(self):
         saved=await self.store.async_load()
@@ -72,20 +66,12 @@ class ProductionShadowAdapter:
                            for k,v in frame.get('ages',{}).items()}
             local=now.astimezone(ZoneInfo(self.hass.config.time_zone))
             def curve(day,required):
-                start,end=day_bounds(day,self.hass.config.time_zone)
-                if (end-start).total_seconds()!=86400:
-                    if required:raise InputError('production_policy_requires_96_published_prices')
+                try:return DeliveryPrices(periods,day,self.hass.config.time_zone,allow_export=self.settings['control']['allow_export'])
+                except ValueError:
+                    if required:raise InputError('incomplete_published_price_day') from None
                     return None
-                rows=[r for r in periods if start<=instant(r['start'])<end]
-                if len(rows)!=96:
-                    if required:raise InputError('production_policy_requires_96_published_prices')
-                    return None
-                for i,row in enumerate(rows):
-                    if instant(row['start'])!=start+timedelta(minutes=15*i) or instant(row['end'])!=start+timedelta(minutes=15*(i+1)):
-                        raise InputError('invalid_controller_prices')
-                    if row.get('origin','published')!='published':raise InputError('published_prices_required')
-                return [r['import'] for r in rows]
             today=curve(local.date(),True);tomorrow=curve(local.date()+timedelta(days=1),False)
+            self.today=today;self.tomorrow=tomorrow;self.latest_frame=frame
             result=await self.hass.async_add_executor_job(self.runtime.run,frame,local,today,tomorrow,
                                                         attrs.get('day_plan'),attrs.get('overnight_draws'))
             await self.save()

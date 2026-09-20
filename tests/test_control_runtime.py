@@ -49,7 +49,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
 
     async def arm(self):
         await self.session.observe(AT);await self.session.observe(AT)
-        await self.session.enable_lab(AT)
+        await self.session.enable(AT)
 
     def guard(self,kind):
         device=DeyeDevice(self.peer.connection(),timeout=.2)
@@ -58,11 +58,32 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_cold_start_cannot_write_or_arm_before_truth_warmup(self):
         self.assertEqual(self.peer.writes,[])
-        with self.assertRaises(WriteDenied):await self.session.enable_lab(AT)
+        with self.assertRaises(WriteDenied):await self.session.enable(AT)
         with self.assertRaises(WriteDenied):await self.session.tick(AT,[.3]*96,PIN)
         self.assertEqual(self.peer.writes,[])
         await self.arm()
         self.assertTrue(self.store.get('active'))
+
+    async def test_shutdown_releases_ownership_after_pending_worker_failure(self):
+        async def failure():
+            await asyncio.sleep(.01)
+            raise RuntimeError('policy_failed')
+        self.session.worker=asyncio.create_task(failure())
+        with self.assertRaisesRegex(RuntimeError,'policy_failed'):
+            await self.session.close()
+        self.assertIsNone(self.session.lease)
+
+    async def test_cancelled_shutdown_keeps_ownership_until_worker_exits(self):
+        release=asyncio.Event()
+        self.session.worker=asyncio.create_task(release.wait())
+        pending=asyncio.create_task(self.session.close())
+        await asyncio.sleep(.01)
+        pending.cancel()
+        with self.assertRaises(asyncio.CancelledError):await pending
+        self.assertIsNotNone(self.session.lease)
+        release.set();await self.session.worker
+        await self.session.close()
+        self.assertIsNone(self.session.lease)
 
     async def test_real_controller_charges_and_auditor_accepts_only_verified_writes(self):
         await self.arm()
@@ -86,7 +107,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.peer.writes.count((128,160)),1)
         self.assertNotIn((130,1),self.peer.writes)
         self.peer.fault=None
-        with self.assertRaises(WriteDenied):await self.session.enable_lab(AT)
+        with self.assertRaises(WriteDenied):await self.session.enable(AT)
         with self.assertRaises(WriteDenied):await self.session.tick(AT,[.3]*96,PIN)
 
     async def test_stop_attempts_all_four_fields_despite_one_failed_transport(self):
@@ -117,7 +138,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
         await self.session.acknowledge_stop(latch['id'],AT)
         self.assertIsNone(self.store.latch);self.assertFalse(self.store.get('active'))
         with self.assertRaises(WriteDenied):await self.session.tick(AT,[.3]*96,PIN)
-        await self.session.enable_lab(AT)
+        await self.session.enable(AT)
         self.assertTrue(self.store.get('active'))
 
     async def test_unclean_restart_reduces_controls_and_latches(self):

@@ -13,13 +13,15 @@ from .repin import reserve_verdict, without_pinnable_floor
 
 def build_day(prices, soc, at: datetime, target: date, draws, base=None):
     """Return the production plan and proposed firmware block, without applying it."""
-    if len(prices) != 96 or any(isinstance(p, bool) or not math.isfinite(p) for p in prices):
+    expected = len(prices) if hasattr(prices,'contract') else 96
+    if len(prices) != expected or any(isinstance(p, bool) or not math.isfinite(p) for p in prices):
         raise ValueError('production_policy_requires_96_published_prices')
     if not math.isfinite(soc) or not 0 <= soc <= 100:
         raise ValueError('invalid_soc')
     if target not in (at.date(), at.date()+timedelta(days=1)):
         raise ValueError('invalid_plan_day')
     contract, source = dated_contract(draws, target.isoformat(), base)
+    if hasattr(prices,'contract'):contract=prices.contract(contract)
     stats = (draws or {}).get('reserve', {})
     try:
         p50, p90 = float(stats['p50']), float(stats['p90'])
@@ -30,25 +32,34 @@ def build_day(prices, soc, at: datetime, target: date, draws, base=None):
     tomorrow = target != at.date()
     opening, _, basis = arming.forecast_morning_soc(soc,p50,p90) if tomorrow else (soc,soc,'current battery state of charge')
     arming.opening_guard(opening,soc,p50,p90,tomorrow)
-    plan = plan_day(prices,opening,contract)
-    trial = plan_day(prices,opening,replace(contract,chg_soc_target=arming.CEILING_TRIAL))
-    ceiling, reason = arming.choose_ceiling(prices,opening,contract,plan,trial)
-    if ceiling == arming.CEILING_TRIAL:
-        plan,contract = trial,replace(contract,chg_soc_target=ceiling)
+    # An installed profile may lower the maximum below the original 90/95 policy.
+    contract=replace(contract,chg_soc_target=min(contract.chg_soc_target,contract.maximum_soc))
+    now_slot=(min(len(prices),prices.slot_at(at)+1) if hasattr(prices,'slot_at') else (at.hour*60+at.minute+14)//15) if contract.household_profile and not tomorrow else 0
+    plan = plan_day(prices,opening,contract,now_slot=now_slot)
+    if contract.maximum_soc < arming.CEILING_TRIAL:
+        ceiling,reason=contract.chg_soc_target,'Configured maximum limits the charge target.'
+    else:
+        trial = plan_day(prices,opening,replace(contract,chg_soc_target=arming.CEILING_TRIAL),now_slot=now_slot)
+        ceiling, reason = arming.choose_ceiling(prices,opening,contract,plan,trial)
+        if ceiling == arming.CEILING_TRIAL:
+            plan,contract = trial,replace(contract,chg_soc_target=ceiling)
     start,end,window_reason = arming.stretch_to_armed_window(plan,prices,contract)
     programs.validate(plan,contract,charge_only=True)
-    desired = programs.plan_to_programs(plan,contract,charge_only=True)
+    desired = programs.plan_to_programs(plan,contract,charge_only=True,prices=prices)
     payload = {'date':target.isoformat(),'for_date':target.isoformat(),'pinned_at':at.isoformat(),
                'soc0':opening,'soc_at_plan':opening,'soc_basis':basis,'ceiling_pct':ceiling,
                'ceiling_reason':reason,'reserve_source':source,
-               'charge_window_hhmm':[programs.slot_to_hhmm(x) if x is not None else None for x in (start,end)],
+               'charge_window_hhmm':[programs.slot_to_hhmm(x,prices) if x is not None else None for x in (start,end)],
                'armed_window_reason':window_reason,
-               'periods':[{'i':p.index,'start':p.start_hhmm,'end':p.end_hhmm,'action':p.action,'soc_target':p.soc_target} for p in plan.periods],
+               'periods':[{'i':p.index,'start':programs.slot_to_hhmm(p.start_slot,prices)[:5],'end':programs.slot_to_hhmm(p.end_slot,prices)[:5],'action':p.action,'soc_target':p.soc_target} for p in plan.periods],
                'export_clusters':[[p.start_slot,p.end_slot,int(max(plan.floors.get(p.end_slot,contract.reserve_floor_pct),contract.never_empty_pct))] for p in plan.periods if p.action==EXPORT],
                'charge_window':arming.charge_window(plan),
                'reserve':copy.deepcopy(stats) if (draws or {}).get('for_date')==target.isoformat() else {},
                'warnings':list(plan.warnings), 'programs':desired}
     arming.schema_v2_extend(payload,prices,contract)
+    if hasattr(prices,'starts'):
+        payload.update(slot_count=len(prices),interval_starts=[x.isoformat() for x in prices.starts],
+                       interval_end=prices.end.isoformat(),transition_day=prices.transition)
     return payload
 
 
@@ -62,7 +73,10 @@ def measure_draws(history, at: datetime, target: date, previous=None, days=12):
     start=end-timedelta(days=days)
     soc=[]; exp=[]; chg=[]
     for row in history:
-        stamp=datetime.fromisoformat(row['at']).replace(tzinfo=None)
+        stamp=datetime.fromisoformat(row['at'])
+        if stamp.tzinfo is not None and at.tzinfo is not None:
+            stamp=stamp.astimezone(at.tzinfo)
+        stamp=stamp.replace(tzinfo=None)
         if not start<=stamp<=end:continue
         value=row.get('soc')
         if isinstance(value,(float,int)) and not isinstance(value,bool) and math.isfinite(value) and 0<=value<=100:soc.append((stamp,value))
@@ -90,10 +104,14 @@ def measure_draws(history, at: datetime, target: date, previous=None, days=12):
                            'hours':round((opening-close).total_seconds()/3600,1),
                            'soc_close':initial,'soc_low':low,'low_at':low_at.strftime('%H:%M'),
                            'soc_open':last,'draw_trough':round(initial-low,1),'draw_endpoint':round(initial-last,1),
-                           'samples':len(window),'switch_delta_min':delta})
+                           'samples':len(window),'switch_delta_min':delta,
+                           'clock_transition':bool(at.tzinfo is not None and
+                               close.replace(tzinfo=at.tzinfo).utcoffset()!=opening.replace(tzinfo=at.tzinfo).utcoffset())})
         day+=timedelta(days=1)
     for row in nights:
-        row['refused_reason']=reserve.classify_night(row,reserve.SLOPE_EXPORT)
+        # The captured estimator uses wall-clock slopes and durations. Exclude
+        # transition nights instead of treating a repeated/skipped hour as data.
+        row['refused_reason']='clock_transition_night' if row['clock_transition'] else reserve.classify_night(row,reserve.SLOPE_EXPORT)
         row['admitted']=row['refused_reason'] is None
     admitted=[r for r in nights if r['admitted']]; refused=[r for r in nights if not r['admitted']]
     draws=[r['draw_trough'] for r in admitted]

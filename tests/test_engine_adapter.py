@@ -114,7 +114,7 @@ class AdapterTests(unittest.IsolatedAsyncioTestCase):
         supplied={k:v for k,v in self.settings['plan'].items() if k!='source'}
         supplied['controller_snapshot']='sensor.test_controller_snapshot'
         result=await flow.async_step_production(supplied)
-        self.assertEqual(result['step_id'],'finish')
+        self.assertEqual(result['step_id'],'control_limits')
         self.assertFalse(result['errors'])
         self.assertEqual(portable_export(flow.d)['settings']['plan']['source'],'production_shadow')
 
@@ -129,13 +129,14 @@ class AdapterTests(unittest.IsolatedAsyncioTestCase):
         with self.assertRaisesRegex(InputError,'invalid_saved_engine_state'):
             await adapter.initialize()
 
-    async def test_reference_control_profile_not_claimed_for_other_models(self):
+    async def test_model_profiles_bound_currents_and_program_power(self):
         for n in (6,8,12):
             data=copy.deepcopy(self.settings)
             data['model']=f'SUN-{n}K-SG05LP3-EU-SM2'
             data['plan']['export_power_w']=min(n*1000,7900)
-            with self.assertRaisesRegex(InputError,'production_profile_requires_10k'):
-                validate_document(data)
+            validated=validate_document(data)
+            self.assertLessEqual(validated['control']['program_power_w'],n*1000)
+            self.assertLessEqual(validated['control']['charge_current_a']*55.2,n*1000)
 
     async def test_direct_adapter_builds_frame_without_supplied_sensor_or_writes(self):
         peer=await ControlPeer('modbus_tcp').start()
@@ -170,7 +171,7 @@ class AdapterTests(unittest.IsolatedAsyncioTestCase):
         form=await flow.async_step_production()
         self.assertNotIn('controller_snapshot',{str(k) for k in form['data_schema'].schema})
         result=await flow.async_step_production({k:v for k,v in self.settings['plan'].items() if k!='source'})
-        self.assertEqual(result['step_id'],'finish')
+        self.assertEqual(result['step_id'],'control_limits')
         self.assertNotIn('controller_snapshot',flow.d['bindings'])
 
 

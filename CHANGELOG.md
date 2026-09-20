@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0-beta.1
+
+- Adds the complete automatic charge/export engine, direct observations, six-program transactions and authenticated commissioning/live controls.
+- Starts inactive and requires new commissioning after restart or restore. STOP is persistent; acknowledgement stays disarmed.
+- Runs independent charge, export, heartbeat and settings-auditor processes.
+- Uses separate household import/export tariffs, bounded 6/8/10/12 kW profiles, explicit cold-start reserve assumptions and actual DST delivery intervals.
+- Adds controller state, guard health and local Repairs reporting to the automatic dashboard.
+- Physical firmware compatibility is not established by the software and disposable HA tests.
+
+
 ## 0.5.0.dev2 (development candidate)
 
 - Read the full Deye control/program/alarm frame and six independent BMS temperatures.

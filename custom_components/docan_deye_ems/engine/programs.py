@@ -6,11 +6,12 @@ N_PROGRAMS = 6
 def prog(n: int) -> dict:
     return {'time': f'program_{n}_time', 'power': f'program_{n}_power', 'soc': f'program_{n}_soc', 'voltage': f'program_{n}_voltage', 'charging': f'program_{n}_charging'}
 
-def slot_to_hhmm(slot: int) -> str:
+def slot_to_hhmm(slot: int, prices=None) -> str:
+    if hasattr(prices,'label'):return prices.label(slot)
     slot %= SLOTS_PER_DAY
     return f'{slot * 15 // 60:02d}:{slot * 15 % 60:02d}:00'
 
-def plan_to_programs(plan: Plan, k: Contract, charge_only: bool=False) -> dict:
+def plan_to_programs(plan: Plan, k: Contract, charge_only: bool=False, prices=None) -> dict:
     exports = [p for p in plan.periods if p.action == EXPORT]
     if exports and (not charge_only):
         raise ValueError(f"{len(exports)} export period(s) in plan: native-TOU export is unavailable while work_mode is not 'Export First'. Export stays on EXPORT_RECIPE. Pass charge_only=True to write the charge half and leave export alone.")
@@ -19,22 +20,22 @@ def plan_to_programs(plan: Plan, k: Contract, charge_only: bool=False) -> dict:
     bounds = []
     for p in plan.periods:
         if p.action == CHARGE:
-            bounds.append((p.start_slot, {'charging': 'Grid', 'soc': int(p.soc_target), 'power': 8000, 'voltage': k.charge_setpoint_v}))
-            bounds.append((p.end_slot, {'charging': 'Disabled', 'soc': int(k.never_empty_pct), 'power': 8000, 'voltage': k.idle_voltage_v}))
+            bounds.append((p.start_slot, {'charging': 'Grid', 'soc': int(p.soc_target), 'power': k.program_power_w, 'voltage': k.charge_setpoint_v}))
+            bounds.append((p.end_slot, {'charging': 'Disabled', 'soc': int(k.never_empty_pct), 'power': k.program_power_w, 'voltage': k.idle_voltage_v}))
     bounds.sort(key=lambda b: b[0])
     if len(bounds) > N_PROGRAMS:
         raise ValueError(f'plan needs {len(bounds)} TOU boundaries, hardware has {N_PROGRAMS}: at most {N_PROGRAMS // 2} separated windows')
-    idle = {'charging': 'Disabled', 'soc': int(k.never_empty_pct), 'power': 8000, 'voltage': k.idle_voltage_v}
-    spare_slot = SLOTS_PER_DAY - 1
+    idle = {'charging': 'Disabled', 'soc': int(k.never_empty_pct), 'power': k.program_power_w, 'voltage': k.idle_voltage_v}
+    spare_slot = k.day_slots - 1
     while len(bounds) < N_PROGRAMS:
-        bounds.append((spare_slot, dict(idle)))
+        if spare_slot not in {slot for slot,_ in bounds}:bounds.append((spare_slot, dict(idle)))
         spare_slot -= 1
     bounds.sort(key=lambda b: b[0])
     out = {}
     for i, (slot, cfg) in enumerate(bounds, start=1):
         if slot == 0:
             raise ValueError('period starts at 00:00; TOU Time range is documented 01:00-24:00 and 00:00 is UNPROVEN ; refusing')
-        out[i] = dict(cfg, time=slot_to_hhmm(slot))
+        out[i] = dict(cfg, time=slot_to_hhmm(slot,prices))
     return out
 
 def validate(plan: Plan, k: Contract, charge_only: bool=False):
@@ -48,7 +49,7 @@ def validate(plan: Plan, k: Contract, charge_only: bool=False):
             raise ValueError(f'P{p.index} empty or inverted')
         if p.start_slot < prev_end:
             raise ValueError(f'P{p.index} overlaps the previous period')
-        if not (0 <= p.start_slot < SLOTS_PER_DAY and 0 < p.end_slot <= SLOTS_PER_DAY):
+        if not (0 <= p.start_slot < k.day_slots and 0 < p.end_slot <= k.day_slots):
             raise ValueError(f'P{p.index} out of range / crosses 00:00 unsplit')
         if p.action == CHARGE and (not 0 <= p.soc_target <= 100):
             raise ValueError(f'P{p.index} SoC target {p.soc_target} out of range')

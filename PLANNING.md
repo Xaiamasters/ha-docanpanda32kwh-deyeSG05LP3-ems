@@ -1,10 +1,10 @@
 # Forecasts and read-only planning
 
-The development branch also contains a separate [production policy comparison](ENGINE_PORT.md).
+The integration also includes a separate [automatic charge and export engine](ENGINE_PORT.md).
 The forecast, anticipation and learning behaviour described below does not apply
 to that policy.
 
-The default forecast mode simulates a feasible energy schedule. It cannot execute
+The forecast mode simulates a feasible energy schedule. It cannot execute
 that schedule. The other modes display a structured external controller plan or
 calculate the simpler price-only charging estimate.
 

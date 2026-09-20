@@ -1,7 +1,6 @@
 """Controller execution and independent local watchdog loops.
 
-The only execution authority available in this build is for loopback emulators.
-Watchdogs do not depend on prices or the planner and can run in another process
+Watchdogs do not depend on prices or the planner and run in another process
 against the same durable store. A whole-host power failure is outside this model.
 """
 from __future__ import annotations
@@ -11,6 +10,7 @@ from datetime import datetime, timezone, timedelta
 import hashlib
 import json
 import time
+from pathlib import Path
 
 from .control_device import FIELDS, STOP_VALUES, LabAuthority, DeviceError, WriteDenied
 from .control_store import DeviceLease
@@ -22,6 +22,11 @@ from .engine.safety import charge_stop, export_stop, DeadmanLimits
 
 def identity(connection):
     return hashlib.sha256(json.dumps(connection,sort_keys=True).encode()).hexdigest()
+
+
+def battery_identity(connection):
+    # Serial aliases and different BMS addresses still share the same wire.
+    return identity({'port':str(Path(connection['port']).resolve())}) if connection.get('port') else identity(connection)
 
 
 class StoredAuthority(LabAuthority):
@@ -92,15 +97,16 @@ async def minimal_stop(device, authority, store, reason, actor):
 
 
 class ControlSession:
-    """Explicit lab commissioning, captured policy ticks, and manual STOP review."""
-    def __init__(self, device, observation, store, contract=None):
+    """Explicit session activation, policy ticks and manual STOP review."""
+    def __init__(self, device, observation, store, contract=None, *, authority=None, limits=None):
         self.device = device
         self.observation = observation
         self.store = store
         self.contract = contract or Contract()
-        self.authority = StoredAuthority(device.connection, store)
-        device.wire_lock = store.path.parent/(identity(device.connection)+'.wire.lock')
-        observation.source_lock = store.path.parent/(identity(observation.battery_config)+'.battery.lock')
+        self.authority = authority or StoredAuthority(device.connection, store)
+        self.limits=limits
+        device.wire_lock = store.lock_dir/(identity(device.connection)+'.wire.lock')
+        observation.source_lock = store.lock_dir/(battery_identity(observation.battery_config)+'.battery.lock')
         self.loop = asyncio.get_running_loop()
         self.lock = asyncio.Lock()
         self.lease = None
@@ -109,7 +115,8 @@ class ControlSession:
 
     async def start(self):
         if self.lease is not None:raise WriteDenied('controller_already_started')
-        self.lease = DeviceLease(self.store.path.parent/(identity(self.device.connection)+'.controller.lock'))
+        physical=getattr(self.authority,'record',{}).get('device',{}).get('digest')
+        self.lease = DeviceLease(self.store.lock_dir/((physical or identity(self.device.connection))+'.controller.lock'))
         try:
             recorded = self.store.get('equipment_identity')
             if recorded and recorded != identity(self.device.connection):
@@ -132,11 +139,11 @@ class ControlSession:
         self.store.save('heartbeat',time.time())
         return frame
 
-    async def enable_lab(self, at):
+    async def enable(self, at):
         if self.lease is None or self.store.latch is not None or (self.worker and not self.worker.done()):
             raise WriteDenied('startup_or_stop_review_required')
         frame = await self.observe(at)
-        controller = Controller(at,None,self.store,contract=self.contract)
+        controller = Controller(at,None,self.store,contract=self.contract,limits=self.limits)
         if controller.validity(frame) or controller.action_gate(frame,'charge'):
             raise WriteDenied('commissioning_observations_not_ready')
         fields = (await self.device.observe())['fields']
@@ -156,20 +163,22 @@ class ControlSession:
                 self.authority.revoke()
                 raise WriteDenied('controller_not_armed')
             try:
-                if (at.tzinfo is None or len(prices)!=96 or not all(finite(x) for x in prices)
-                    or (tomorrow is not None and (len(tomorrow)!=96 or not all(finite(x) for x in tomorrow)))):
+                count=len(prices) if hasattr(prices,'contract') else 96
+                future_count=len(tomorrow) if hasattr(tomorrow,'contract') else 96
+                if (at.tzinfo is None or len(prices)!=count or not all(finite(x) for x in prices)
+                    or (tomorrow is not None and (len(tomorrow)!=future_count or not all(finite(x) for x in tomorrow)))):
                     raise ValueError('invalid_price_day')
                 midnight=at.replace(hour=0,minute=0,second=0,microsecond=0)
-                if (midnight+timedelta(days=1)).timestamp()-midnight.timestamp()!=86400:
+                if not hasattr(prices,'contract') and (midnight+timedelta(days=1)).timestamp()-midnight.timestamp()!=86400:
                     raise ValueError('unsupported_clock_change_day')
                 pin=validate_pin(plan)
-                if pin is None or pin['for_date']!=at.date().isoformat():
+                if pin is None or pin['for_date']!=at.date().isoformat() or pin['slot_count']!=len(prices):
                     raise ValueError('current_pinned_plan_required')
                 frame=await self.observe(at)
                 frame.update(prices=prices,prices_tomorrow=tomorrow)
                 self.store.save('controller_busy_until',time.time()+90)
                 transport=ThreadTransport(self,frame,self.authority.generation)
-                policy=Controller(at,transport,self.store,pin,self.contract,allow_writes=True)
+                policy=Controller(at,transport,self.store,pin,self.contract,limits=self.limits,allow_writes=True)
                 self.worker=asyncio.create_task(asyncio.to_thread(policy.tick,True))
                 await asyncio.shield(self.worker)
                 if self.store.latch:
@@ -260,17 +269,26 @@ class ControlSession:
             if self.store.get('active',False):await self.stop('controller_shutdown')
         finally:
             self.authority.revoke()
-            if self.lease:self.lease.close();self.lease=None
+            # A cancelled coroutine does not terminate its policy thread. Keep
+            # ownership and the store open until that bounded worker has exited.
+            try:
+                if self.worker and not self.worker.done():
+                    await asyncio.shield(self.worker)
+            finally:
+                # Release after a failed worker has exited, but retain ownership
+                # if shutdown itself was cancelled while the thread still runs.
+                if (not self.worker or self.worker.done()) and self.lease:
+                    self.lease.close();self.lease=None
 
 
 class Watchdog:
     """A separate worker with fresh observations and durable stop-only authority."""
-    def __init__(self, kind, device, observation, store, *, limits=None, max_heartbeat_age=75, require_watchdogs=True):
+    def __init__(self, kind, device, observation, store, *, limits=None, max_heartbeat_age=75, require_watchdogs=True, authority=None):
         if kind not in ('charge','export','supervisor','auditor'):raise ValueError('invalid_watchdog_role')
         self.kind=kind;self.device=device;self.observation=observation;self.store=store
-        self.authority=LabAuthority(device.connection)
-        device.wire_lock=store.path.parent/(identity(device.connection)+'.wire.lock')
-        if observation:observation.source_lock=store.path.parent/(identity(observation.battery_config)+'.battery.lock')
+        self.authority=authority or LabAuthority(device.connection)
+        device.wire_lock=store.lock_dir/(identity(device.connection)+'.wire.lock')
+        if observation:observation.source_lock=store.lock_dir/(battery_identity(observation.battery_config)+'.battery.lock')
         self.limits=limits or DeadmanLimits()
         self.max_heartbeat_age=max_heartbeat_age
         self.require_watchdogs=require_watchdogs
@@ -324,7 +342,7 @@ class Watchdog:
 
     async def run(self, stop_event, *, clock, interval=1):
         """The host must supply its installation-local, timezone-aware clock."""
-        lease=DeviceLease(self.store.path.parent/(identity(self.device.connection)+'.'+self.kind+'.lock'))
+        lease=DeviceLease(self.store.lock_dir/(identity(self.device.connection)+'.'+self.kind+'.lock'))
         try:
             while not stop_event.is_set():
                 await self.once(clock())
