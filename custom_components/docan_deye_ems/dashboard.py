@@ -34,7 +34,10 @@ class HouseholdView(HomeAssistantView):
             result=await coordinator.control.command(body['action'],body['data'])
             # Activation already runs a policy tick. Do not run another just to
             # render the response; the next scheduled poll refreshes all inputs.
-            coordinator.async_set_updated_data({**coordinator.data,'control':coordinator.control.status(),
+            from .control_host import reported_plan
+            status=coordinator.control.status()
+            coordinator.async_set_updated_data({**coordinator.data,'control':status,
+                'plan':reported_plan(coordinator.data.get('plan',{}),status),
                 'mode':coordinator.control.mode,'physical_authority':coordinator.control.store.get('active',False)})
             return self.json(result,headers={'Cache-Control':'no-store'})
         except DeviceError as exc:return self.json({'error':str(exc)},status_code=409)

@@ -28,6 +28,13 @@ def pin(**kwargs):
 
 
 class EngineTests(unittest.TestCase):
+    def test_live_pin_retains_estimated_reserve_and_timestamp(self):
+        stamp=AT.isoformat()
+        result=validate_pin(pin(reserve_basis='configured_household_load_assumption',pinned_at=stamp))
+        self.assertEqual(result['pinned_at'],stamp)
+        self.assertEqual(result['reserve_basis'],'configured_household_load_assumption')
+        self.assertIn('estimated overnight reserve',dated_contract(result,AT.date().isoformat())[1])
+
     def controller(self,**changes):
         snapshot=example_snapshot(AT);snapshot.update(changes)
         plant=SimulatedPlant(snapshot);state=MemoryState()

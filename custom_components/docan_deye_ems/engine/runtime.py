@@ -71,6 +71,13 @@ def validate_pin(plan):
     count=plan.get('slot_count',96)
     if type(count) is not int or count not in (92,94,96,98,100):raise ValueError('invalid_controller_plan')
     result={'for_date':day,'date':day,'slot_count':count}
+    if 'reserve_basis' in plan:
+        if plan['reserve_basis'] not in ('configured_household_load_assumption','measured_overnight_history','supplied_plan'):
+            raise ValueError('invalid_reserve_basis')
+        result['reserve_basis']=plan['reserve_basis']
+    if 'pinned_at' in plan:
+        datetime.fromisoformat(plan['pinned_at'])
+        result['pinned_at']=plan['pinned_at']
     if 'ceiling_pct' in plan:
         value=plan['ceiling_pct']
         if not finite(value) or not 0<=value<=95:raise ValueError('invalid_controller_plan')

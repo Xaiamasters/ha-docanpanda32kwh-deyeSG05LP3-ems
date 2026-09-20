@@ -26,6 +26,28 @@ CHECKS=('equipment_readings_match','bms_link_checked','sole_controller',
         'limits_checked','grid_export_permission','host_failure_understood')
 
 
+def reported_plan(plan,control):
+    """Keep scheduled windows, but report the real controller's current decision."""
+    if not control.get('available'):
+        return plan
+    if not (control.get('active') or control.get('stop')):
+        if 'preview' not in plan:return plan
+        row=dict(plan);row.update(row.pop('preview'));row['physical_authority']=False
+        return row
+    row=dict(plan)
+    row['preview']=plan.get('preview') or {key:plan.get(key) for key in ('mode','status','reason','assumptions')}
+    active=bool(control.get('active'))
+    state=control.get('controller') or {}
+    row.update(mode='production_live' if active else 'production_stopped',
+               status=state.get('action','waiting') if active else 'stopped',
+               reason=state.get('reason') if active else control['stop'].get('why'),
+               physical_authority=active,
+               assumptions=['The timeline shows planned windows. The status above is the actual controller decision.',
+                            'Last verified firmware program date: '+str(control.get('programmed_day') or 'none')+'.',
+                            'Solar forecasts and anticipated prices do not authorize this controller.'])
+    return row
+
+
 class GuardProcesses:
     def __init__(self,store,settings,context,zone):
         self.store=store;self.settings=settings;self.context=context;self.zone=zone

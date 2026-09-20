@@ -193,6 +193,8 @@ class HouseholdCoordinator(DataUpdateCoordinator):
             await self.control.tick(inputs_ready=ready)
         control=self.control.status() if self.control else {'mode':'shadow','active':False,'commissioned':False,'available':False}
         control['available']=self.control is not None
+        from .control_host import reported_plan
+        plan=reported_plan(plan,control)
         if control.get('stop'):
             ir.async_create_issue(self.hass,DOMAIN,f'{self.entry.entry_id}_control_stop',is_fixable=False,
                 severity=ir.IssueSeverity.ERROR,translation_key='control_stopped',

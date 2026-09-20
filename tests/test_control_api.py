@@ -46,6 +46,22 @@ class ControlApiTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.headers['Cache-Control'],'no-store')
         self.assertFalse(self.coordinator.async_set_updated_data.call_args.args[0]['physical_authority'])
 
+    async def test_live_stop_and_ack_report_actual_decision_then_restore_preview(self):
+        status={'available':True,'active':True,'mode':'live','controller':{'action':'idle','reason':'outside current window'},'stop':None,'programmed_day':'2026-09-20'}
+        self.control.status=lambda:status
+        self.control.store.get=lambda *_:status['active']
+        self.coordinator.data['plan']={'mode':'production_shadow','status':'charge','reason':'preview charge','assumptions':['preview'],'windows':[]}
+        for action,expected,mode in [('enable_live','idle','production_live'),('stop','stopped','production_stopped'),('acknowledge_stop','charge','production_shadow')]:
+            if action=='stop':status.update(active=False,mode='stopped',stop={'why':'owner_requested_stop'})
+            if action=='acknowledge_stop':status.update(active=False,mode='shadow',stop=None)
+            self.control.mode=status['mode']
+            response=await self.view.post(Request(self.entry,{'action':action,'data':{}}),'test','control')
+            self.assertEqual(response.status,200)
+            self.coordinator.data=self.coordinator.async_set_updated_data.call_args.args[0]
+            self.assertEqual(self.coordinator.data['plan']['status'],expected)
+            self.assertEqual(self.coordinator.data['plan']['mode'],mode)
+            if status['active']:self.assertEqual(self.coordinator.data['plan']['reason'],status['controller']['reason'])
+
     async def test_rejections_and_unexpected_errors_do_not_expose_exception_details(self):
         self.control.command.side_effect=WriteDenied('commissioning_required')
         response=await self.view.post(Request(self.entry,{'action':'enable_live','data':{}}),'test','control')
