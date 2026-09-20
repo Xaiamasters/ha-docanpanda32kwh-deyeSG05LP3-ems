@@ -1,0 +1,2553 @@
+{
+  "ASSET_MANIFEST.json": {
+    "assets": [
+      {
+        "path": "vendor/helios.js",
+        "sha256": "2a9794240d9a40123905471ea754649f9630bb19b16ace53f49e40c4364fb348",
+        "size": 3014886,
+        "url": "https://github.com/ReikanYsora/Helios/releases/download/2026.6.1/helios.js"
+      },
+      {
+        "path": "vendor/sunsynk-power-flow-card.js",
+        "sha256": "155ce5f2a2011e6fd416a2c69fdfdded91de6f8ce18c3fa7fb32e53f44d18965",
+        "size": 796809,
+        "url": "https://github.com/slipx06/sunsynk-power-flow-card/releases/download/v7.3.3/sunsynk-power-flow-card.js"
+      },
+      {
+        "path": "licenses/helios.txt",
+        "sha256": "1a0280a0ab6c6813a4c8b90cefebd9df319eb6527e0ec6e58104171ad7d4b9c0",
+        "size": 35751,
+        "url": "https://raw.githubusercontent.com/ReikanYsora/Helios/4dd597bcb856fdfa7c4c2c2f31cf72f344fe32c3/LICENSE"
+      },
+      {
+        "path": "sources/helios-4dd597bcb856fdfa7c4c2c2f31cf72f344fe32c3.zip",
+        "sha256": "bb6174bda02c46ac1570dd5e32c6cc3ed54ae63d5cfcd2a8c65c1bbce2297eb5",
+        "size": 3122117,
+        "url": "https://codeload.github.com/ReikanYsora/Helios/zip/4dd597bcb856fdfa7c4c2c2f31cf72f344fe32c3"
+      },
+      {
+        "path": "licenses/sunsynk.txt",
+        "sha256": "e595b64632d9456d1a42a0dbe114ef6c100f55f532de14bfb63a47329f0b2506",
+        "size": 1064,
+        "url": "https://raw.githubusercontent.com/slipx06/sunsynk-power-flow-card/51b2fd8715df9e967acd8c7e095246e0b544d7e3/LICENSE"
+      },
+      {
+        "path": "sources/sunsynk-51b2fd8715df9e967acd8c7e095246e0b544d7e3.zip",
+        "sha256": "8002db4a78d4ff139a1109c3087737a9a3b25b2e887b69649a880cbc72232855",
+        "size": 1376485,
+        "url": "https://codeload.github.com/slipx06/sunsynk-power-flow-card/zip/51b2fd8715df9e967acd8c7e095246e0b544d7e3"
+      },
+      {
+        "path": "licenses/chartjs.txt",
+        "sha256": "41a84aa2caba645f966a18d9c2056b73e6d3a81d80bc0046bc0011a2634d4cce",
+        "size": 1093,
+        "url": "https://raw.githubusercontent.com/chartjs/Chart.js/9c5cf9fac7ec04a71b516e2aff3f7d76876be369/LICENSE.md"
+      },
+      {
+        "path": "sources/chartjs-9c5cf9fac7ec04a71b516e2aff3f7d76876be369.zip",
+        "sha256": "91bd591359a9386c6a65b688b77d99d3a45d27be765975687dcb0d621f7779ef",
+        "size": 13400785,
+        "url": "https://codeload.github.com/chartjs/Chart.js/zip/9c5cf9fac7ec04a71b516e2aff3f7d76876be369"
+      },
+      {
+        "path": "vendor/chart.umd.js",
+        "sha256": "ecc3cd1eeb8c34d2178e3f59fd63ec5a3d84358c11730af0b9958dc886d7652a",
+        "size": 208518,
+        "url": "https://registry.npmjs.org/chart.js/-/chart.js-4.5.1.tgz"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "@lit-labs/ssr-dom-shim",
+        "version": "1.6.0",
+        "license": "BSD-3-Clause",
+        "notices": [],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/lit/lit.git",
+          "directory": "packages/labs/ssr-dom-shim"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@lit-labs/ssr-dom-shim/-/ssr-dom-shim-1.6.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_lit-labs_ssr-dom-shim-1.6.0.tgz",
+            "sha256": "e5259bcfc8d6162049157ab76ec09c3cd7a56b5cbb92695ba27d9a036e0f3390",
+            "size": 34910
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@lit/reactive-element",
+        "version": "2.1.2",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/_lit_reactive-element-2.1.2/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/lit/lit.git",
+          "directory": "packages/reactive-element"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@lit/reactive-element/-/reactive-element-2.1.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_lit_reactive-element-2.1.2.tgz",
+            "sha256": "1fdaf29e5284fc7ffeab352c51edb3c017d73c4e98f0cd3dc53fb8dd555775e5",
+            "size": 176182
+          },
+          {
+            "path": "licenses/npm/_lit_reactive-element-2.1.2/LICENSE",
+            "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1",
+            "size": 1517
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@mapbox/jsonlint-lines-primitives",
+        "version": "2.0.2",
+        "license": null,
+        "notices": [],
+        "repository": {
+          "type": "git",
+          "url": "git://github.com/mapbox/jsonlint.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@mapbox/jsonlint-lines-primitives/-/jsonlint-lines-primitives-2.0.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_mapbox_jsonlint-lines-primitives-2.0.2.tgz",
+            "sha256": "96ce93290857e2bd50880fffd1620305702ad0e2a97a1dca21fa1504b0960540",
+            "size": 19740
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@mapbox/point-geometry",
+        "version": "1.1.0",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/_mapbox_point-geometry-1.1.0/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git@github.com:mapbox/point-geometry.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@mapbox/point-geometry/-/point-geometry-1.1.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_mapbox_point-geometry-1.1.0.tgz",
+            "sha256": "9bf202082ba414ef99d82ca466445bfeddff3631922cfa74f9b4ce5caafde038",
+            "size": 4300
+          },
+          {
+            "path": "licenses/npm/_mapbox_point-geometry-1.1.0/LICENSE",
+            "sha256": "0c0ede0036a425ff8b2d49341ea9aa8eccbeeae1ac4eb59874c9dd8bcf5186d3",
+            "size": 725
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@mapbox/tiny-sdf",
+        "version": "2.1.0",
+        "license": "BSD-2-Clause",
+        "notices": [
+          "licenses/npm/_mapbox_tiny-sdf-2.1.0/LICENSE.txt"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/mapbox/tiny-sdf.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@mapbox/tiny-sdf/-/tiny-sdf-2.1.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_mapbox_tiny-sdf-2.1.0.tgz",
+            "sha256": "4011baf79e43f74470d254f7e39ec84cb4dbb0ad61bfa5fb43527ee22d6ad7b9",
+            "size": 4976
+          },
+          {
+            "path": "licenses/npm/_mapbox_tiny-sdf-2.1.0/LICENSE.txt",
+            "sha256": "4f78063c6c0757df950aa3440cef9a2a6bd1c552c994c32237c3acc283e72ee6",
+            "size": 1290
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@mapbox/unitbezier",
+        "version": "0.0.1",
+        "license": "BSD-2-Clause",
+        "notices": [
+          "licenses/npm/_mapbox_unitbezier-0.0.1/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git@github.com:mapbox/unitbezier.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@mapbox/unitbezier/-/unitbezier-0.0.1.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_mapbox_unitbezier-0.0.1.tgz",
+            "sha256": "6eb1a3d9b5caa2a7685ae212e0a65c5e7e353c11ad78f439f2bbb2fc22296016",
+            "size": 2273
+          },
+          {
+            "path": "licenses/npm/_mapbox_unitbezier-0.0.1/LICENSE",
+            "sha256": "f0dc305ad097eddbc66eebb79288c92d8a5043818ace81206383a4c1a3268fe3",
+            "size": 1387
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@mapbox/vector-tile",
+        "version": "3.0.0",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/_mapbox_vector-tile-3.0.0/LICENSE.txt"
+        ],
+        "repository": {
+          "url": "git+https://github.com/mapbox/vector-tile-js.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@mapbox/vector-tile/-/vector-tile-3.0.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_mapbox_vector-tile-3.0.0.tgz",
+            "sha256": "08f01e39d143cad5b106a7561394663b0a020d6a068acac6fa74de465739edb6",
+            "size": 5008
+          },
+          {
+            "path": "licenses/npm/_mapbox_vector-tile-3.0.0/LICENSE.txt",
+            "sha256": "5b09a507df6f21d6c2112c46dcaf2927b9dbd8b580a08b542d8ec2f9191d783d",
+            "size": 1500
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@mapbox/whoots-js",
+        "version": "3.1.0",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/_mapbox_whoots-js-3.1.0/LICENSE.md"
+        ],
+        "repository": "mapbox/whoots-js",
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_mapbox_whoots-js-3.1.0.tgz",
+            "sha256": "025d7251769c7e74ba754a33fe95927726eaacc7192dd96f76c0b06a1d8ec1fc",
+            "size": 3595
+          },
+          {
+            "path": "licenses/npm/_mapbox_whoots-js-3.1.0/LICENSE.md",
+            "sha256": "27043d1a6a0e1985fde12660decbbd3b23c67de900b00609c90d4f0aa492f425",
+            "size": 738
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@maplibre/geojson-vt",
+        "version": "6.1.0",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/_maplibre_geojson-vt-6.1.0/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/maplibre/geojson-vt"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@maplibre/geojson-vt/-/geojson-vt-6.1.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_maplibre_geojson-vt-6.1.0.tgz",
+            "sha256": "838b70a994d0e43b998a45ff6748352ad7ecc3763d880020b4ab105f8df02a7e",
+            "size": 110091
+          },
+          {
+            "path": "licenses/npm/_maplibre_geojson-vt-6.1.0/LICENSE",
+            "sha256": "9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3",
+            "size": 1909
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@maplibre/maplibre-gl-style-spec",
+        "version": "24.8.3",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/_maplibre_maplibre-gl-style-spec-24.8.3/LICENSE.txt"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/maplibre/maplibre-style-spec"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@maplibre/maplibre-gl-style-spec/-/maplibre-gl-style-spec-24.8.3.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_maplibre_maplibre-gl-style-spec-24.8.3.tgz",
+            "sha256": "b561911b8f4654eb4e61eba1fa198ba88367d0057809c02fbdf7bd625c4d13b6",
+            "size": 1417635
+          },
+          {
+            "path": "licenses/npm/_maplibre_maplibre-gl-style-spec-24.8.3/LICENSE.txt",
+            "sha256": "bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890",
+            "size": 5984
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@maplibre/mlt",
+        "version": "1.1.9",
+        "license": "(MIT OR Apache-2.0)",
+        "notices": [
+          "licenses/npm/_maplibre_mlt-1.1.9/LICENSE.txt"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/maplibre/maplibre-tile-spec"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@maplibre/mlt/-/mlt-1.1.9.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_maplibre_mlt-1.1.9.tgz",
+            "sha256": "782f9a0952bb7a1e4af89408b099b9ad52bb1e400f7ecb51020e07d4dc45d959",
+            "size": 171092
+          },
+          {
+            "path": "licenses/npm/_maplibre_mlt-1.1.9/LICENSE.txt",
+            "sha256": "c7baf90e18cffdef7f97486b441170ca4c4228d3cd42ab34e6aa4d883a24624b",
+            "size": 11975
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@maplibre/vt-pbf",
+        "version": "4.3.0",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/_maplibre_vt-pbf-4.3.0/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/maplibre/vt-pbf"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@maplibre/vt-pbf/-/vt-pbf-4.3.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_maplibre_vt-pbf-4.3.0.tgz",
+            "sha256": "85e6cd954072a4db80409e34ce96ecee9b166961f88c77c59f97a70b8a2aa65e",
+            "size": 8531
+          },
+          {
+            "path": "licenses/npm/_maplibre_vt-pbf-4.3.0/LICENSE",
+            "sha256": "4c61c5753d4b021bc3b07f21d2a830506974ce200c19cfadf3d4a25e747fc853",
+            "size": 2785
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@mapbox/vector-tile",
+        "version": "2.0.5",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/_mapbox_vector-tile-2.0.5/LICENSE.txt"
+        ],
+        "repository": {
+          "url": "git+https://github.com/mapbox/vector-tile-js.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@mapbox/vector-tile/-/vector-tile-2.0.5.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_mapbox_vector-tile-2.0.5.tgz",
+            "sha256": "e2b3741560e42f87364ff7a1145e37bce904ff6a8bc163dcfbd784d80198d9fb",
+            "size": 5007
+          },
+          {
+            "path": "licenses/npm/_mapbox_vector-tile-2.0.5/LICENSE.txt",
+            "sha256": "5b09a507df6f21d6c2112c46dcaf2927b9dbd8b580a08b542d8ec2f9191d783d",
+            "size": 1500
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@maplibre/geojson-vt",
+        "version": "5.0.4",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/_maplibre_geojson-vt-5.0.4/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/maplibre/geojson-vt"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@maplibre/geojson-vt/-/geojson-vt-5.0.4.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_maplibre_geojson-vt-5.0.4.tgz",
+            "sha256": "09c282ec6dd3d0d2f1211915c55008600bcc1e155360f87947e151dd859db165",
+            "size": 63266
+          },
+          {
+            "path": "licenses/npm/_maplibre_geojson-vt-5.0.4/LICENSE",
+            "sha256": "9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3",
+            "size": 1909
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "pbf",
+        "version": "4.0.2",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/pbf-4.0.2/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+ssh://git@github.com/mapbox/pbf.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/pbf/-/pbf-4.0.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/pbf-4.0.2.tgz",
+            "sha256": "e15669276c4a7b9da1ba46ef21a64ed0c2030875e5234c4657ad67b23b770bfa",
+            "size": 15300
+          },
+          {
+            "path": "licenses/npm/pbf-4.0.2/LICENSE",
+            "sha256": "85a46bda3ddc8bb2fe2a6c361ed8ab75898c81b5d054a57a0722f1fa364c0136",
+            "size": 1467
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@petamoriken/float16",
+        "version": "3.9.3",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/_petamoriken_float16-3.9.3/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/petamoriken/float16.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@petamoriken/float16/-/float16-3.9.3.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_petamoriken_float16-3.9.3.tgz",
+            "sha256": "350ec2b8bc20dbb5f09f6a39eb58e2137803dd57b7e013dbbd7a4f36b71a9c7d",
+            "size": 40656
+          },
+          {
+            "path": "licenses/npm/_petamoriken_float16-3.9.3/LICENSE",
+            "sha256": "3b833441ea7e5766f591a927e9f26960be46670a8fbc302732b72afd5623c0e9",
+            "size": 1076
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@types/geojson",
+        "version": "7946.0.16",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/_types_geojson-7946.0.16/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/geojson"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.16.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_types_geojson-7946.0.16.tgz",
+            "sha256": "5275058028351e9656972a31295f81b61637c641df6cc13766f48a5fdab1b39e",
+            "size": 3385
+          },
+          {
+            "path": "licenses/npm/_types_geojson-7946.0.16/LICENSE",
+            "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+            "size": 1141
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@types/supercluster",
+        "version": "7.1.3",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/_types_supercluster-7.1.3/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/supercluster"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@types/supercluster/-/supercluster-7.1.3.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_types_supercluster-7.1.3.tgz",
+            "sha256": "1f1e21362bfee9ff4f9917ce2f136f7fc1e7c7d18452954c80a77b55a216819e",
+            "size": 3294
+          },
+          {
+            "path": "licenses/npm/_types_supercluster-7.1.3/LICENSE",
+            "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+            "size": 1141
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@types/trusted-types",
+        "version": "2.0.7",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/_types_trusted-types-2.0.7/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/trusted-types"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.7.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_types_trusted-types-2.0.7.tgz",
+            "sha256": "28521d6d9bcb45f9527cf45b9346e9e2142e81b17c6518229973df04044941d3",
+            "size": 2997
+          },
+          {
+            "path": "licenses/npm/_types_trusted-types-2.0.7/LICENSE",
+            "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+            "size": 1141
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "earcut",
+        "version": "3.0.2",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/earcut-3.0.2/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git://github.com/mapbox/earcut.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/earcut/-/earcut-3.0.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/earcut-3.0.2.tgz",
+            "sha256": "546b92493d021b05b5c3832edbae292ad3686848a3f434697b6338d4d74c8253",
+            "size": 12780
+          },
+          {
+            "path": "licenses/npm/earcut-3.0.2/LICENSE",
+            "sha256": "324139c19d87af03fda38afea1590e00ca354c4159bdb2ae9e9cec070cfa46a8",
+            "size": 738
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "geotiff",
+        "version": "3.0.5",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/geotiff-3.0.5/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/geotiffjs/geotiff.js.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/geotiff/-/geotiff-3.0.5.tgz",
+        "files": [
+          {
+            "path": "sources/npm/geotiff-3.0.5.tgz",
+            "sha256": "9b3628c4fd2357cddef76a511fc4df3c054ad3a2a9393a0d79797a052f888355",
+            "size": 970842
+          },
+          {
+            "path": "licenses/npm/geotiff-3.0.5/LICENSE",
+            "sha256": "da0811089f254e909f69f75fa496ca97e5167a8eaa945d9a6bffdd8499b47a49",
+            "size": 1088
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "gl-matrix",
+        "version": "3.4.4",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/gl-matrix-3.4.4/LICENSE.md"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/toji/gl-matrix.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/gl-matrix/-/gl-matrix-3.4.4.tgz",
+        "files": [
+          {
+            "path": "sources/npm/gl-matrix-3.4.4.tgz",
+            "sha256": "e08f1f9fc56d91d2aa1392e51cbc3db00d3eb9572dcb352acd9e187fc1a7e63a",
+            "size": 101775
+          },
+          {
+            "path": "licenses/npm/gl-matrix-3.4.4/LICENSE.md",
+            "sha256": "af62d31a0cdc1bf95d5e19428c3e0de368b727d9d5b6b6cdb466f8a52e68ad06",
+            "size": 1083
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "json-stringify-pretty-compact",
+        "version": "4.0.0",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/json-stringify-pretty-compact-4.0.0/LICENSE"
+        ],
+        "repository": "lydell/json-stringify-pretty-compact",
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/json-stringify-pretty-compact/-/json-stringify-pretty-compact-4.0.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/json-stringify-pretty-compact-4.0.0.tgz",
+            "sha256": "f15336163c9de2e2d9b820516be061235f4eed93a0a4d5bc9593700799c25f4f",
+            "size": 3406
+          },
+          {
+            "path": "licenses/npm/json-stringify-pretty-compact-4.0.0/LICENSE",
+            "sha256": "2d51145876dda3dd13253463b852aa83b78aa598b90fca1709f39f1740ff9a2f",
+            "size": 1109
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "kdbush",
+        "version": "4.0.2",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/kdbush-4.0.2/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git://github.com/mourner/kdbush.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/kdbush/-/kdbush-4.0.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/kdbush-4.0.2.tgz",
+            "sha256": "2b1cbfbb969a4aaca7eb0c3c783eaa0f0cdfab3c2be77b42c3bb1f26dc8a77b8",
+            "size": 7179
+          },
+          {
+            "path": "licenses/npm/kdbush-4.0.2/LICENSE",
+            "sha256": "597034cb7c11c916ad407344ea99a0b08e3c443a6b4421460f1d23c411c69707",
+            "size": 750
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "lerc",
+        "version": "3.0.0",
+        "license": "Apache-2.0",
+        "notices": [],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/Esri/lerc.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/lerc/-/lerc-3.0.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/lerc-3.0.0.tgz",
+            "sha256": "5c927cdc5d70387b2f4215f99595f8c119157eacc3cf0fec9a7c4db2da3e784d",
+            "size": 28759
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "lit",
+        "version": "3.3.3",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/lit-3.3.3/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/lit/lit.git",
+          "directory": "packages/lit"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/lit/-/lit-3.3.3.tgz",
+        "files": [
+          {
+            "path": "sources/npm/lit-3.3.3.tgz",
+            "sha256": "92f8d5bcd63e2d5efc41afd0a3d58a0a0f554ef826af9c8e368887c71949fd4d",
+            "size": 23860
+          },
+          {
+            "path": "licenses/npm/lit-3.3.3/LICENSE",
+            "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1",
+            "size": 1517
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "lit-element",
+        "version": "4.2.2",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/lit-element-4.2.2/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/lit/lit.git",
+          "directory": "packages/lit-element"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/lit-element/-/lit-element-4.2.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/lit-element-4.2.2.tgz",
+            "sha256": "436004379d2f0ce912435c9cbcf9cabb28a3cfd9fb6823c7a7c6d686124b162e",
+            "size": 28471
+          },
+          {
+            "path": "licenses/npm/lit-element-4.2.2/LICENSE",
+            "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1",
+            "size": 1517
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "lit-html",
+        "version": "3.3.2",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/lit-html-3.3.2/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/lit/lit.git",
+          "directory": "packages/lit-html"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/lit-html/-/lit-html-3.3.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/lit-html-3.3.2.tgz",
+            "sha256": "82b5e0feacc17112dc35c73cc9ea0bce438201344b3a5b4e016e4d039fb339ba",
+            "size": 314485
+          },
+          {
+            "path": "licenses/npm/lit-html-3.3.2/LICENSE",
+            "sha256": "2b66f9390afde29edfe4314daff93f01fb182e1178053e228120178987e5db75",
+            "size": 1518
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "maplibre-gl",
+        "version": "5.24.0",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/maplibre-gl-5.24.0/dist/LICENSE.txt",
+          "licenses/npm/maplibre-gl-5.24.0/LICENSE.txt"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/maplibre/maplibre-gl-js"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/maplibre-gl/-/maplibre-gl-5.24.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/maplibre-gl-5.24.0.tgz",
+            "sha256": "5cbf83c328c9d39cb24e3f2cefc9b407d69dd104ba0b41e84c0bfbb31c44e283",
+            "size": 8810495
+          },
+          {
+            "path": "licenses/npm/maplibre-gl-5.24.0/dist/LICENSE.txt",
+            "sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2",
+            "size": 5984
+          },
+          {
+            "path": "licenses/npm/maplibre-gl-5.24.0/LICENSE.txt",
+            "sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2",
+            "size": 5984
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "minimist",
+        "version": "1.2.8",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/minimist-1.2.8/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git://github.com/minimistjs/minimist.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz",
+        "files": [
+          {
+            "path": "sources/npm/minimist-1.2.8.tgz",
+            "sha256": "350a76c115b393c19d24654834261e5dc9f0e8cc5e08f3937fa80140f3e4ce83",
+            "size": 15520
+          },
+          {
+            "path": "licenses/npm/minimist-1.2.8/LICENSE",
+            "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b",
+            "size": 1073
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "murmurhash-js",
+        "version": "1.0.0",
+        "license": "MIT",
+        "notices": [],
+        "repository": {
+          "type": "git",
+          "url": "git://github.com/mikolalysenko/murmurhash-js.git"
+        },
+        "gitHead": "72aabce3f52cb8f16245692a69fd35951e165af0",
+        "url": "https://registry.npmjs.org/murmurhash-js/-/murmurhash-js-1.0.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/murmurhash-js-1.0.0.tgz",
+            "sha256": "0807f0738886929c36e3274e6bf0721efe9ba81d6edbe5ad9ec11ab5cb8ecc12",
+            "size": 2544
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "pako",
+        "version": "2.1.0",
+        "license": "(MIT AND Zlib)",
+        "notices": [
+          "licenses/npm/pako-2.1.0/LICENSE"
+        ],
+        "repository": "nodeca/pako",
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/pako/-/pako-2.1.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/pako-2.1.0.tgz",
+            "sha256": "49fedc8866b4abfc8e71dc7fe75ad4ef1ff1ac9601b0642cff88ee5bf2338709",
+            "size": 412482
+          },
+          {
+            "path": "licenses/npm/pako-2.1.0/LICENSE",
+            "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539",
+            "size": 1104
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "parse-headers",
+        "version": "2.0.6",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/parse-headers-2.0.6/LICENCE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/kesla/parse-headers.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/parse-headers/-/parse-headers-2.0.6.tgz",
+        "files": [
+          {
+            "path": "sources/npm/parse-headers-2.0.6.tgz",
+            "sha256": "baf17b489c3b1c5c05b21a1299db0cbf09b5b0ff294891f3245c4ac00db55528",
+            "size": 2377
+          },
+          {
+            "path": "licenses/npm/parse-headers-2.0.6/LICENCE",
+            "sha256": "b1c5db90de223cc6ca40bab4ade764220f86c5b0335f56f1ab3baa6e62fe18bd",
+            "size": 1110
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "pbf",
+        "version": "5.1.0",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/pbf-5.1.0/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+ssh://git@github.com/mapbox/pbf.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/pbf/-/pbf-5.1.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/pbf-5.1.0.tgz",
+            "sha256": "f8c47453932249b5006329fdb8611155afae9cc702f5a85b4420766560a324f4",
+            "size": 16082
+          },
+          {
+            "path": "licenses/npm/pbf-5.1.0/LICENSE",
+            "sha256": "fdf1d5279107d760c7df8c6edab1faab2b72ba17528273a8b417b08f1e12ebbe",
+            "size": 1467
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "potpack",
+        "version": "2.1.0",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/potpack-2.1.0/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/mapbox/potpack.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/potpack/-/potpack-2.1.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/potpack-2.1.0.tgz",
+            "sha256": "dac2dd4009e2fad0862b723423c8333162e8a6f4d87604af1de23fdec490587c",
+            "size": 3079
+          },
+          {
+            "path": "licenses/npm/potpack-2.1.0/LICENSE",
+            "sha256": "cfec0482fb785fe27e3b368a2d9e84bf7a61b275e83ec582bf288e98cd530bb0",
+            "size": 738
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "protocol-buffers-schema",
+        "version": "3.6.1",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/protocol-buffers-schema-3.6.1/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/mafintosh/protocol-buffers-schema"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/protocol-buffers-schema/-/protocol-buffers-schema-3.6.1.tgz",
+        "files": [
+          {
+            "path": "sources/npm/protocol-buffers-schema-3.6.1.tgz",
+            "sha256": "907f8fd7d60cc2a96875b128e161b0013bdef8c2523012d3041a0f72f20de852",
+            "size": 13572
+          },
+          {
+            "path": "licenses/npm/protocol-buffers-schema-3.6.1/LICENSE",
+            "sha256": "3fe8d55a98dbf260eace67c00cf9bc53edb46234e840098a0b93df3096b97fb6",
+            "size": 1078
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "quick-lru",
+        "version": "6.1.2",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/quick-lru-6.1.2/license"
+        ],
+        "repository": "sindresorhus/quick-lru",
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/quick-lru/-/quick-lru-6.1.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/quick-lru-6.1.2.tgz",
+            "sha256": "bc8de1866874dbbbe5efcdc41d7c8fe762658b80155bbe6671637ddb8ef08563",
+            "size": 4775
+          },
+          {
+            "path": "licenses/npm/quick-lru-6.1.2/license",
+            "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+            "size": 1117
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "quickselect",
+        "version": "3.0.0",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/quickselect-3.0.0/LICENSE"
+        ],
+        "repository": "github:mourner/quickselect",
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/quickselect/-/quickselect-3.0.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/quickselect-3.0.0.tgz",
+            "sha256": "2cf90a3c6f9eb7ccb618bc31e362a615f9f46de593b8465176d883e66b5f8c84",
+            "size": 2206
+          },
+          {
+            "path": "licenses/npm/quickselect-3.0.0/LICENSE",
+            "sha256": "238ddb00e12a420a54e060afa19bdab4f70bf49e0e2a8ebb1a5e851f9ef447df",
+            "size": 750
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "resolve-protobuf-schema",
+        "version": "2.1.0",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/resolve-protobuf-schema-2.1.0/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/mafintosh/resolve-protobuf-schema.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/resolve-protobuf-schema/-/resolve-protobuf-schema-2.1.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/resolve-protobuf-schema-2.1.0.tgz",
+            "sha256": "3e80010114da31a6f2a09345c62b7b9d67640d816df0f5099cecdeb9342517c5",
+            "size": 2269
+          },
+          {
+            "path": "licenses/npm/resolve-protobuf-schema-2.1.0/LICENSE",
+            "sha256": "c0993ca46cd47c09710a977d3a3d51602cff96f19e8d2eb8d5887aa20a7beead",
+            "size": 1079
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "rw",
+        "version": "1.3.3",
+        "license": "BSD-3-Clause",
+        "notices": [
+          "licenses/npm/rw-1.3.3/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "http://github.com/mbostock/rw.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/rw/-/rw-1.3.3.tgz",
+        "files": [
+          {
+            "path": "sources/npm/rw-1.3.3.tgz",
+            "sha256": "2dcde28200167d3774d1f0f2b66942790c762dc37ad211fb1135959e87fb85fb",
+            "size": 6737
+          },
+          {
+            "path": "licenses/npm/rw-1.3.3/LICENSE",
+            "sha256": "e273680c43c2ab5bb3b50af28de6a08000b333396834db7bf6129cd6f130c9cd",
+            "size": 1429
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "supercluster",
+        "version": "8.0.1",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/supercluster-8.0.1/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git://github.com/mapbox/supercluster.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/supercluster/-/supercluster-8.0.1.tgz",
+        "files": [
+          {
+            "path": "sources/npm/supercluster-8.0.1.tgz",
+            "sha256": "9cc3a18707e07453270c5e0b1d2ec2419af03f1794b8c8ca7ac4e33d61f78673",
+            "size": 13185
+          },
+          {
+            "path": "licenses/npm/supercluster-8.0.1/LICENSE",
+            "sha256": "b8878372a0d7d1c303f48659ddbd6881807cd2196e4af2f548d8da0c0f7c4d71",
+            "size": 738
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "tinyqueue",
+        "version": "3.0.0",
+        "license": "ISC",
+        "notices": [
+          "licenses/npm/tinyqueue-3.0.0/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/mourner/tinyqueue.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/tinyqueue/-/tinyqueue-3.0.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/tinyqueue-3.0.0.tgz",
+            "sha256": "64d0414e61332c1ee6a2a99a26d42e847d8650d32b2bea232b563e01bbe643ae",
+            "size": 2267
+          },
+          {
+            "path": "licenses/npm/tinyqueue-3.0.0/LICENSE",
+            "sha256": "780453e05abdc22307ee01c706a2e73f508d3e484fc4c804485ebf6fe0964694",
+            "size": 750
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "web-worker",
+        "version": "1.5.0",
+        "license": "Apache-2.0",
+        "notices": [
+          "licenses/npm/web-worker-1.5.0/LICENSE"
+        ],
+        "repository": "developit/web-worker",
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/web-worker/-/web-worker-1.5.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/web-worker-1.5.0.tgz",
+            "sha256": "00ef32e02fce57085539e99cb8ea8afa4fa53bfc30e38d7742ed431869c0c47c",
+            "size": 9923
+          },
+          {
+            "path": "licenses/npm/web-worker-1.5.0/LICENSE",
+            "sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+            "size": 11356
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "xml-utils",
+        "version": "1.10.2",
+        "license": "CC0-1.0",
+        "notices": [
+          "licenses/npm/xml-utils-1.10.2/LICENSE"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/DanielJDufour/xml-utils.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/xml-utils/-/xml-utils-1.10.2.tgz",
+        "files": [
+          {
+            "path": "sources/npm/xml-utils-1.10.2.tgz",
+            "sha256": "f7b2e31a2f80b092bcea191f5d486864e00689458c2b90d99c53ba5fdf6c3423",
+            "size": 7961
+          },
+          {
+            "path": "licenses/npm/xml-utils-1.10.2/LICENSE",
+            "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+            "size": 7048
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "zstddec",
+        "version": "0.2.0",
+        "license": "MIT AND BSD-3-Clause",
+        "notices": [
+          "licenses/npm/zstddec-0.2.0/LICENSE"
+        ],
+        "repository": "github:donmccurdy/zstddec",
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/zstddec/-/zstddec-0.2.0.tgz",
+        "files": [
+          {
+            "path": "sources/npm/zstddec-0.2.0.tgz",
+            "sha256": "4708fc2e97b5ae6e8c2545ceabdd965bfe8858a5064fce30380eeb4c6ba3f41d",
+            "size": 466602
+          },
+          {
+            "path": "licenses/npm/zstddec-0.2.0/LICENSE",
+            "sha256": "8d078b49fc02bd63c1beaf4ddc629a8b48e4ba6a435415408c8209e2a5c3aacf",
+            "size": 2617
+          }
+        ],
+        "used_by": "helios"
+      },
+      {
+        "name": "@kurkle/color",
+        "version": "0.3.4",
+        "license": "MIT",
+        "notices": [
+          "licenses/npm/_kurkle_color-0.3.4/LICENSE.md"
+        ],
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/kurkle/color.git"
+        },
+        "gitHead": null,
+        "url": "https://registry.npmjs.org/@kurkle/color/-/color-0.3.4.tgz",
+        "files": [
+          {
+            "path": "sources/npm/_kurkle_color-0.3.4.tgz",
+            "sha256": "35076f10eb04bd3ddfa41aa3a5ea3d4107feaec333299aa722fbfbde85043e37",
+            "size": 20813
+          },
+          {
+            "path": "licenses/npm/_kurkle_color-0.3.4/LICENSE.md",
+            "sha256": "89ba0032731489153d552db918b727feb05128cf9eca20092875a9ad14147671",
+            "size": 1085
+          }
+        ],
+        "used_by": "chartjs"
+      }
+    ]
+  },
+  "PREFERRED_SOURCE_MANIFEST.json": [
+    {
+      "name": "@mapbox/tiny-sdf",
+      "version": "2.1.0",
+      "url": "https://codeload.github.com/mapbox/tiny-sdf/zip/e9144ae64cc780021b7c95e87cdf2938e38690a5",
+      "path": "sources/upstream/mapbox_tiny-sdf-6e579ea3a668544b.zip",
+      "sha256": "6e579ea3a668544b51dff1d0097361b9407f80c84fe6af725a694d2a8b067063"
+    },
+    {
+      "name": "@mapbox/point-geometry",
+      "version": "1.1.0",
+      "url": "https://codeload.github.com/mapbox/point-geometry/zip/88a80c38af4be41ee5ec5bdfb8b1e2bbf2304355",
+      "path": "sources/upstream/mapbox_point-geometry-6a5489574dd670e8.zip",
+      "sha256": "6a5489574dd670e8f3bbacab47c365f174824cae87c5a26d87d384908e4184a3"
+    },
+    {
+      "name": "@mapbox/unitbezier",
+      "version": "0.0.1",
+      "url": "https://codeload.github.com/mapbox/unitbezier/zip/3961002a8b6341c146252c1c240f5db4f9bd21f4",
+      "path": "sources/upstream/mapbox_unitbezier-aefcc31993155506.zip",
+      "sha256": "aefcc31993155506d89315c863a43141245492c271f0c74270936276cdb7c52c"
+    },
+    {
+      "name": "@mapbox/jsonlint-lines-primitives",
+      "version": "2.0.2",
+      "url": "https://codeload.github.com/mapbox/jsonlint/zip/1272a5add2d731a4892319ed556a15852792d2b8",
+      "path": "sources/upstream/mapbox_jsonlint-4476dcd3f8c8bbce.zip",
+      "sha256": "4476dcd3f8c8bbcef9748f373704866f790860c28b01c339494ac65183518405",
+      "additional_notice_files": [],
+      "readme_license_evidence": "licenses/source/_mapbox_jsonlint-lines-primitives-2.0.2/README.md"
+    },
+    {
+      "name": "@mapbox/vector-tile",
+      "version": "3.0.0",
+      "url": "https://codeload.github.com/mapbox/vector-tile-js/zip/7606208872f1e4410ca262273ce7f991f85d9453",
+      "path": "sources/upstream/mapbox_vector-tile-js-e1ca2737a3be25ac.zip",
+      "sha256": "e1ca2737a3be25acf34afcff63d5546a300f61db8cee94a98edf509ec287eeb0"
+    },
+    {
+      "name": "@mapbox/vector-tile",
+      "version": "2.0.5",
+      "url": "https://codeload.github.com/mapbox/vector-tile-js/zip/73fc6cec4624fe19bef9b707655b5b29be31a3f1",
+      "path": "sources/upstream/mapbox_vector-tile-js-673422b938c0e444.zip",
+      "sha256": "673422b938c0e444a0bbbd7f1d5ea57f3a6814f5f8c93fbb879288a949cfc937"
+    },
+    {
+      "name": "pbf",
+      "version": "4.0.2",
+      "url": "https://codeload.github.com/mapbox/pbf/zip/aa96d917c801c1b83375ba99d0ff17acb04147f3",
+      "path": "sources/upstream/mapbox_pbf-3c0c2beaeb576cc7.zip",
+      "sha256": "3c0c2beaeb576cc70ca475f8fb72a1f17a9328b4e0763d876ef7a879891bec17"
+    },
+    {
+      "name": "@petamoriken/float16",
+      "version": "3.9.3",
+      "url": "https://codeload.github.com/petamoriken/float16/zip/da2b248d485b6815a8e4adf3e6b0a4594ebd0ec6",
+      "path": "sources/upstream/petamoriken_float16-48895832b66ad65a.zip",
+      "sha256": "48895832b66ad65a41f841ebff76fc27f4403b8133a98115eb60dacb18d087bf"
+    },
+    {
+      "name": "@types/geojson",
+      "version": "7946.0.16",
+      "unresolved": "Exact-version source archive unavailable"
+    },
+    {
+      "name": "earcut",
+      "version": "3.0.2",
+      "url": "https://codeload.github.com/mapbox/earcut/zip/1b942f01f4093afe8f9ba729c3850b229f69eb12",
+      "path": "sources/upstream/mapbox_earcut-534076a03e0e78a6.zip",
+      "sha256": "534076a03e0e78a6f959a6b72a75053efef15ca102f56f9be04652ec4e80c7e2"
+    },
+    {
+      "name": "@maplibre/geojson-vt",
+      "version": "6.1.0",
+      "url": "https://codeload.github.com/maplibre/geojson-vt/zip/ec36d07fa6a809690b232ff759127ac96915f080",
+      "path": "sources/upstream/maplibre_geojson-vt-0dbc25590663de5f.zip",
+      "sha256": "0dbc25590663de5fa62e26b4292261a631eec42c14b6be8a9e62fa371f0b38b4"
+    },
+    {
+      "name": "@types/supercluster",
+      "version": "7.1.3",
+      "unresolved": "Exact-version source archive unavailable"
+    },
+    {
+      "name": "@types/trusted-types",
+      "version": "2.0.7",
+      "unresolved": "Exact-version source archive unavailable"
+    },
+    {
+      "name": "@maplibre/geojson-vt",
+      "version": "5.0.4",
+      "url": "https://codeload.github.com/maplibre/geojson-vt/zip/9d99765f483b3d506add031de720f085decf940b",
+      "path": "sources/upstream/maplibre_geojson-vt-969df84216183452.zip",
+      "sha256": "969df842161834526eef55e71f1b71eb699f0a6b1f1456babb766ef1b2d8826b"
+    },
+    {
+      "name": "geotiff",
+      "version": "3.0.5",
+      "url": "https://codeload.github.com/geotiffjs/geotiff.js/zip/4a296052fb90aa2cc673f573d6f95d14167a8fbc",
+      "path": "sources/upstream/geotiffjs_geotiff.js-9617f60c4414585c.zip",
+      "sha256": "9617f60c4414585c8536597237fc94142346e0e36a60b1aa334e340b272670e3"
+    },
+    {
+      "name": "kdbush",
+      "version": "4.0.2",
+      "url": "https://codeload.github.com/mourner/kdbush/zip/f14ff0b3dafee83ee8b1ca67d2701a25b83b6b47",
+      "path": "sources/upstream/mourner_kdbush-f77f2fd1eea1493b.zip",
+      "sha256": "f77f2fd1eea1493b6414b4bd07da5ca00d743aff0e2c58456d46541932e70682"
+    },
+    {
+      "name": "json-stringify-pretty-compact",
+      "version": "4.0.0",
+      "url": "https://codeload.github.com/lydell/json-stringify-pretty-compact/zip/4001a1217b358f1d2aff2654fe1593d62d131195",
+      "path": "sources/upstream/lydell_json-stringify-pretty-compact-f72766a33cfefa77.zip",
+      "sha256": "f72766a33cfefa778a34b4422dc665077d7122331a739c05cf6307a5c83af229"
+    },
+    {
+      "name": "@maplibre/vt-pbf",
+      "version": "4.3.0",
+      "url": "https://codeload.github.com/maplibre/vt-pbf/zip/1f1887e2cd16a6043603ae6baf2f328aede3f70c",
+      "path": "sources/upstream/maplibre_vt-pbf-f213cb37e0f2df96.zip",
+      "sha256": "f213cb37e0f2df966488080f0359042db752c3f92e127a0b1721b6e42ea39488"
+    },
+    {
+      "name": "gl-matrix",
+      "version": "3.4.4",
+      "url": "https://codeload.github.com/toji/gl-matrix/zip/b2fc422a5e291e1b574ae0d403575b0e602a6084",
+      "path": "sources/upstream/toji_gl-matrix-42f5e2ba6be866c6.zip",
+      "sha256": "42f5e2ba6be866c6ddd17b7f325585916a44afc03532e0e25dbad3c064e266d4"
+    },
+    {
+      "name": "lerc",
+      "version": "3.0.0",
+      "unresolved": "Exact-version source archive unavailable"
+    },
+    {
+      "name": "minimist",
+      "version": "1.2.8",
+      "url": "https://codeload.github.com/minimistjs/minimist/zip/6901ee286bc4c16da6830b48b46ce1574703cea1",
+      "path": "sources/upstream/minimistjs_minimist-2e2133cae1a1839f.zip",
+      "sha256": "2e2133cae1a1839f21e1e53436f45223f42ddacebe7a2995dbef9f00620fe1cb"
+    },
+    {
+      "name": "murmurhash-js",
+      "version": "1.0.0",
+      "url": "https://codeload.github.com/mikolalysenko/murmurhash-js/zip/72aabce3f52cb8f16245692a69fd35951e165af0",
+      "path": "sources/upstream/mikolalysenko_murmurhash-js-f592f721c06dd407.zip",
+      "sha256": "f592f721c06dd407e1bb7a05cfabd04139d8e83acf3873270b23e6a65f627877",
+      "additional_notice_files": [],
+      "readme_license_evidence": "licenses/source/murmurhash-js-1.0.0/README.md"
+    },
+    {
+      "name": "@maplibre/maplibre-gl-style-spec",
+      "version": "24.8.3",
+      "url": "https://codeload.github.com/maplibre/maplibre-style-spec/zip/df0b1f32246f6e14aa4d4210258c4f112120d60e",
+      "path": "sources/upstream/maplibre_maplibre-style-spec-dadf27f0135776f2.zip",
+      "sha256": "dadf27f0135776f2124107d99ac392f3662fef0acda36b040e4ad1562389bb0a"
+    },
+    {
+      "name": "potpack",
+      "version": "2.1.0",
+      "url": "https://codeload.github.com/mapbox/potpack/zip/e06ed5c8808b1ab91942ac2ff7df7a9bfcfb3f30",
+      "path": "sources/upstream/mapbox_potpack-1e7b86b72dd452a5.zip",
+      "sha256": "1e7b86b72dd452a50972d5774862217d6a79bb8e380397b49caf5619846fda2d"
+    },
+    {
+      "name": "protocol-buffers-schema",
+      "version": "3.6.1",
+      "url": "https://codeload.github.com/mafintosh/protocol-buffers-schema/zip/46c34bd3199aa1e32374a1af59d02413b9ea197a",
+      "path": "sources/upstream/mafintosh_protocol-buffers-schema-8338c8ac9f55a012.zip",
+      "sha256": "8338c8ac9f55a0122f4107e2f68c04916e7df94df5fde6b2261c716e914d0244"
+    },
+    {
+      "name": "quick-lru",
+      "version": "6.1.2",
+      "url": "https://codeload.github.com/sindresorhus/quick-lru/zip/b552634391f442540ccec95646d26df03529eb05",
+      "path": "sources/upstream/sindresorhus_quick-lru-5a5ba53d35cf628d.zip",
+      "sha256": "5a5ba53d35cf628d9c7cafbb1e9ada2413d233d3870e0d22a30af50edb5b0b50"
+    },
+    {
+      "name": "pbf",
+      "version": "5.1.0",
+      "url": "https://codeload.github.com/mapbox/pbf/zip/f85f99053933b9b55141201e98f9e0aa661aa6d6",
+      "path": "sources/upstream/mapbox_pbf-aef71555fe088ce9.zip",
+      "sha256": "aef71555fe088ce9bbd5eb14d90cce85ed722547cf92a5041fb6fd5a4c6ce9d8"
+    },
+    {
+      "name": "resolve-protobuf-schema",
+      "version": "2.1.0",
+      "url": "https://codeload.github.com/mafintosh/resolve-protobuf-schema/zip/a1cc27799461a4bd5445717422655a73d9fcb0b7",
+      "path": "sources/upstream/mafintosh_resolve-protobuf-schema-8434c21fd21d4aca.zip",
+      "sha256": "8434c21fd21d4acab92bf37df884c6a0aff06b63d4930f43df3df99f5ba20bf3"
+    },
+    {
+      "name": "@mapbox/whoots-js",
+      "version": "3.1.0",
+      "url": "https://codeload.github.com/mapbox/whoots-js/zip/1eac5ecde1fd4c89ada697685accde5e93f33fea",
+      "path": "sources/upstream/mapbox_whoots-js-96eda756765486b1.zip",
+      "sha256": "96eda756765486b19486ebc22fc6f69a5c26572c84afc45517d497d1c7cf3036"
+    },
+    {
+      "name": "rw",
+      "version": "1.3.3",
+      "url": "https://codeload.github.com/mbostock/rw/zip/59819802cb6718a44aad42bb75ccb4f93f6efad5",
+      "path": "sources/upstream/mbostock_rw-23a41919d5cc98fa.zip",
+      "sha256": "23a41919d5cc98fa9586a22561d474a417b4e2ee89f49c8ef66290031ec1d76a"
+    },
+    {
+      "name": "quickselect",
+      "version": "3.0.0",
+      "url": "https://codeload.github.com/mourner/quickselect/zip/c26429fd0a6f7b63b48a269e04748c34e8c0c5f4",
+      "path": "sources/upstream/mourner_quickselect-5e235b6be2a1290f.zip",
+      "sha256": "5e235b6be2a1290ff8f2169f939583dc9273af95994895689bc285d35c450344"
+    },
+    {
+      "name": "tinyqueue",
+      "version": "3.0.0",
+      "url": "https://codeload.github.com/mourner/tinyqueue/zip/1f818719f6b048be781642f04bd84e061e0ecfd3",
+      "path": "sources/upstream/mourner_tinyqueue-009ff978995bf1c9.zip",
+      "sha256": "009ff978995bf1c95c90cdf066440cbfac3e92ddbc2cffc69667008a6f1c26d1"
+    },
+    {
+      "name": "supercluster",
+      "version": "8.0.1",
+      "url": "https://codeload.github.com/mapbox/supercluster/zip/41bb4ac392df64e6260ada6608f76709b0d54a8f",
+      "path": "sources/upstream/mapbox_supercluster-5ee722b91217f5e0.zip",
+      "sha256": "5ee722b91217f5e047997d2487f86591fd3a926089a275765f92aa5044c3724f"
+    },
+    {
+      "name": "web-worker",
+      "version": "1.5.0",
+      "url": "https://codeload.github.com/developit/web-worker/zip/9d20474a7d7cefa98add3d59dba8293f01ab70bc",
+      "path": "sources/upstream/developit_web-worker-bb27b6dc6b707300.zip",
+      "sha256": "bb27b6dc6b707300e53b1d5e22a7575c25b6c63f4213049bbfb6dcaf1c7e5d1e"
+    },
+    {
+      "name": "xml-utils",
+      "version": "1.10.2",
+      "url": "https://codeload.github.com/DanielJDufour/xml-utils/zip/b2a86bed0224c4f08aeaaad4d5b50e4e68fb1786",
+      "path": "sources/upstream/DanielJDufour_xml-utils-cf0a53ae840eb924.zip",
+      "sha256": "cf0a53ae840eb924b87c81ca523d51b92baf3954614de2270b10cf2fbf043d63"
+    },
+    {
+      "name": "zstddec",
+      "version": "0.2.0",
+      "unresolved": "No GitHub source repository"
+    },
+    {
+      "name": "@kurkle/color",
+      "version": "0.3.4",
+      "url": "https://codeload.github.com/kurkle/color/zip/a0c1acd578abdff7918fcd4365a9651639872412",
+      "path": "sources/upstream/kurkle_color-7f53ccc7bb71999c.zip",
+      "sha256": "7f53ccc7bb71999ce25eb793140e44f2b8787f7a739b306028bad14d429ac9c1"
+    },
+    {
+      "name": "parse-headers",
+      "version": "2.0.6",
+      "url": "https://codeload.github.com/kesla/parse-headers/zip/14245cce12d46bb98ecbbc681b63ef831302a6d1",
+      "path": "sources/upstream/kesla_parse-headers-62650483119aa1a6.zip",
+      "sha256": "62650483119aa1a639cae26296779614153eb20c57a2942e62d20b2b208406d9"
+    },
+    {
+      "name": "pako",
+      "version": "2.1.0",
+      "url": "https://codeload.github.com/nodeca/pako/zip/3c06216518c259b569a5168dee867e6dabbe5160",
+      "path": "sources/upstream/nodeca_pako-758409f159edd79f.zip",
+      "sha256": "758409f159edd79f8cdc4430c27dacf8ea255df9646001c5b3e2342098aad34e"
+    },
+    {
+      "name": "lit",
+      "version": "3.3.3",
+      "url": "https://codeload.github.com/lit/lit/zip/20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6",
+      "path": "sources/upstream/lit_lit-1a6fc88cb1196444.zip",
+      "sha256": "1a6fc88cb11964444d54abc3b0e169ee1bb9c986ed5779730b0fbc52851ff457"
+    },
+    {
+      "name": "@lit/reactive-element",
+      "version": "2.1.2",
+      "url": "https://codeload.github.com/lit/lit/zip/0fc671bc390cac3b9900fc3616347eeeecd91d5a",
+      "path": "sources/upstream/lit_lit-4a20bae278a6da90.zip",
+      "sha256": "4a20bae278a6da90681fd9d69cc8605cbc70ecd46646ca329d6885120544b6b0"
+    },
+    {
+      "name": "lit-element",
+      "version": "4.2.2",
+      "url": "https://codeload.github.com/lit/lit/zip/0fc671bc390cac3b9900fc3616347eeeecd91d5a",
+      "path": "sources/upstream/lit_lit-4a20bae278a6da90.zip",
+      "sha256": "4a20bae278a6da90681fd9d69cc8605cbc70ecd46646ca329d6885120544b6b0"
+    },
+    {
+      "name": "@lit-labs/ssr-dom-shim",
+      "version": "1.6.0",
+      "url": "https://codeload.github.com/lit/lit/zip/20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6",
+      "path": "sources/upstream/lit_lit-1a6fc88cb1196444.zip",
+      "sha256": "1a6fc88cb11964444d54abc3b0e169ee1bb9c986ed5779730b0fbc52851ff457",
+      "additional_notice_files": [
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/context/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/analyzer/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/context/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/eleventy-plugin-lit/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/eslint-plugin/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/forms/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/motion/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/nextjs/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/observers/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/preact-signals/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/react/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/rollup-plugin-minify-html-literals/LICENSE.md",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/router/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/scoped-registry-mixin/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/signals/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/ssr-client/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/ssr/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/task/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/testing/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/tsserver-plugin/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/virtualizer/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/virtualizer/src/polyfills/resize-observer-polyfill/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/vscode-extension/syntaxes/vscode-lit-html/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/vscode-extension/syntaxes/vscode-styled-components/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/vue-utils/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit-element/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit-html/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit-starter-js/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit-starter-ts/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/localize-tools/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/localize/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/react/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/reactive-element/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/task/LICENSE",
+        "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/ts-transformers/LICENSE"
+      ]
+    },
+    {
+      "name": "lit-html",
+      "version": "3.3.2",
+      "url": "https://codeload.github.com/lit/lit/zip/0fc671bc390cac3b9900fc3616347eeeecd91d5a",
+      "path": "sources/upstream/lit_lit-4a20bae278a6da90.zip",
+      "sha256": "4a20bae278a6da90681fd9d69cc8605cbc70ecd46646ca329d6885120544b6b0"
+    }
+  ],
+  "EXTRA_NOTICES.json": [
+    {
+      "name": "lit",
+      "version": "3.1.3",
+      "url": "https://registry.npmjs.org/lit/-/lit-3.1.3.tgz",
+      "sha256": "9fb63c10f6854d251c3fc3cdc9324ccb5f0043bb42b7bcbc98adcfa1225d21d3",
+      "path": "sources/sunsynk-dependencies/lit-3.1.3.tgz",
+      "notices": [
+        "licenses/sunsynk-dependencies/lit-3.1.3/LICENSE"
+      ],
+      "license": "BSD-3-Clause",
+      "scope": "Attribution/reference sources. Upstream release has no lockfile; these are not a claim of its exact resolved dependency graph."
+    },
+    {
+      "name": "@lit-labs/scoped-registry-mixin",
+      "version": "1.0.3",
+      "url": "https://registry.npmjs.org/@lit-labs/scoped-registry-mixin/-/scoped-registry-mixin-1.0.3.tgz",
+      "sha256": "fa8994caf0a8341aa8d014eff355e5d503fa50601951462eb413b3e3e95bfaca",
+      "path": "sources/sunsynk-dependencies/_lit-labs_scoped-registry-mixin-1.0.3.tgz",
+      "notices": [
+        "licenses/sunsynk-dependencies/_lit-labs_scoped-registry-mixin-1.0.3/LICENSE"
+      ],
+      "license": "BSD-3-Clause",
+      "scope": "Attribution/reference sources. Upstream release has no lockfile; these are not a claim of its exact resolved dependency graph."
+    },
+    {
+      "name": "custom-card-helpers",
+      "version": "1.9.0",
+      "url": "https://registry.npmjs.org/custom-card-helpers/-/custom-card-helpers-1.9.0.tgz",
+      "sha256": "95d40374fbd113f45ef28d384595cfe072201becdaa7649a2e53f106335426d4",
+      "path": "sources/sunsynk-dependencies/custom-card-helpers-1.9.0.tgz",
+      "notices": [
+        "licenses/sunsynk-dependencies/custom-card-helpers-1.9.0/LICENSE"
+      ],
+      "license": "MIT",
+      "scope": "Attribution/reference sources. Upstream release has no lockfile; these are not a claim of its exact resolved dependency graph."
+    },
+    {
+      "name": "lodash.merge",
+      "version": "4.6.2",
+      "url": "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.2.tgz",
+      "sha256": "a34e27a950d64a15ee31c652ff1f29c29b42eadaace1d203c680ca314959ef96",
+      "path": "sources/sunsynk-dependencies/lodash.merge-4.6.2.tgz",
+      "notices": [
+        "licenses/sunsynk-dependencies/lodash.merge-4.6.2/LICENSE"
+      ],
+      "license": "MIT",
+      "scope": "Attribution/reference sources. Upstream release has no lockfile; these are not a claim of its exact resolved dependency graph."
+    },
+    {
+      "name": "lodash",
+      "version": "4.17.23",
+      "url": "https://registry.npmjs.org/lodash/-/lodash-4.17.23.tgz",
+      "sha256": "9aba685f4b44d7a8e778cdf7085e9512143dabd78812df40e258375e1e8dceb4",
+      "path": "sources/sunsynk-dependencies/lodash-4.17.23.tgz",
+      "notices": [
+        "licenses/sunsynk-dependencies/lodash-4.17.23/LICENSE"
+      ],
+      "license": "MIT",
+      "scope": "Attribution/reference sources. Upstream release has no lockfile; these are not a claim of its exact resolved dependency graph."
+    },
+    {
+      "name": "@lit/reactive-element",
+      "version": "2.0.4",
+      "url": "https://registry.npmjs.org/@lit/reactive-element/-/reactive-element-2.0.4.tgz",
+      "sha256": "2a6262e93a2b88ad11a690ea43068a8d50d1148110908f4d6bd78ec2ac995fa2",
+      "path": "sources/sunsynk-dependencies/_lit_reactive-element-2.0.4.tgz",
+      "notices": [
+        "licenses/sunsynk-dependencies/_lit_reactive-element-2.0.4/LICENSE"
+      ],
+      "license": "BSD-3-Clause",
+      "scope": "Attribution/reference sources. Upstream release has no lockfile; these are not a claim of its exact resolved dependency graph."
+    },
+    {
+      "name": "lit-element",
+      "version": "4.0.5",
+      "url": "https://registry.npmjs.org/lit-element/-/lit-element-4.0.5.tgz",
+      "sha256": "d0cc8b2cb1a10f6de16ca15e242e150122e750d09b9b757838da457aaf0467c5",
+      "path": "sources/sunsynk-dependencies/lit-element-4.0.5.tgz",
+      "notices": [
+        "licenses/sunsynk-dependencies/lit-element-4.0.5/LICENSE"
+      ],
+      "license": "BSD-3-Clause",
+      "scope": "Attribution/reference sources. Upstream release has no lockfile; these are not a claim of its exact resolved dependency graph."
+    },
+    {
+      "name": "lit-html",
+      "version": "3.1.3",
+      "url": "https://registry.npmjs.org/lit-html/-/lit-html-3.1.3.tgz",
+      "sha256": "5ff1df1e4566a9cb561f0c52532da4a1c1549b036745a57e6bc23e3beb631702",
+      "path": "sources/sunsynk-dependencies/lit-html-3.1.3.tgz",
+      "notices": [
+        "licenses/sunsynk-dependencies/lit-html-3.1.3/LICENSE"
+      ],
+      "license": "BSD-3-Clause",
+      "scope": "Attribution/reference sources. Upstream release has no lockfile; these are not a claim of its exact resolved dependency graph."
+    }
+  ],
+  "SOURCE_EXCEPTIONS.json": [
+    {
+      "path": "sources/upstream/zstddec-858fe7f7890f618f85c38b330d2cb37457a6333f.zip",
+      "url": "https://codeload.github.com/donmccurdy/zstddec/zip/858fe7f7890f618f85c38b330d2cb37457a6333f",
+      "sha256": "71b1a643158c256c3d4ea14d601371c25ddfa9c0df2a8f07809a1b6562d08636"
+    },
+    {
+      "path": "licenses/source/lerc/LICENSE",
+      "url": "https://raw.githubusercontent.com/Esri/lerc/master/LICENSE",
+      "sha256": "77a8b761727c75e2167b15bfdf61b2c0bcf8792271228bebe80779106ad00671"
+    },
+    {
+      "path": "licenses/source/lerc/NOTICE",
+      "url": "https://raw.githubusercontent.com/Esri/lerc/master/NOTICE",
+      "sha256": "f222a70d24e261b9b4b238df4fe9132e669d7776f137753c6cbbc5be4701124d"
+    },
+    {
+      "resolution": "The three @types packages ship editable declaration source in the original npm archives; no additional compiled implementation needs an upstream archive."
+    },
+    {
+      "resolution": "lerc 3.0.0 ships preferred unminified JavaScript (LercDecode.js) in its npm archive. Copyright header retained; Apache license and notice supplied separately."
+    }
+  ],
+  "SOURCE_FINALIZATION.json": [
+    {
+      "path": "sources/upstream/zstd-f8745da6.zip",
+      "sha256": "410ee89c5a00723739fcb84d6549fa146c2763a0ab14fb1b88869830e51604c5",
+      "url": "https://codeload.github.com/facebook/zstd/zip/f8745da6"
+    },
+    {
+      "path": "sources/upstream/mlt-1.1.9-preferred-source.zip",
+      "sha256": "1b1664273bb8d5049a696624496abfb2832b84e4d95aaf97208d728a56261839",
+      "source": "Exact npm source-map sourcesContent, plus build configuration at npm gitHead 1f43fc0f86ae8e078c20d9fc1ab7f586fe5bdc21",
+      "files": 81
+    },
+    {
+      "package": "maplibre-gl 5.24.0",
+      "resolution": "The npm archive contains original src TypeScript, shaders, CSS, package.json and build tools; this is the preferred source. Full unrelated repository test-data archive is omitted."
+    },
+    {
+      "path": "licenses/source/jsonlint/UPSTREAM_README.md",
+      "sha256": "bfa3f4d86658f2c9fb739a67aa675774e78d28706a1ff7f04f3fb1cdb48c098b",
+      "source": "https://raw.githubusercontent.com/zaach/jsonlint/master/README.md"
+    }
+  ],
+  "UPSTREAM_SANITIZATION.json": {
+    "file": "chartjs-9c5cf9fac7ec04a71b516e2aff3f7d76876be369.zip",
+    "original_sha256": "91bd591359a9386c6a65b688b77d99d3a45d27be765975687dcb0d621f7779ef",
+    "sanitized_sha256": "30e8df09d673c80797c20b9ea71b49459cae1ad7f4800ed79f8f9e6f3e610a48",
+    "findings": [
+      {
+        "member": "Chart.js-9c5cf9fac7ec04a71b516e2aff3f7d76876be369/docs/getting-started/usage.md",
+        "category": "upstream_demo_credential_shape",
+        "count": 1,
+        "disposition": "Removed from documentation; user-supplied placeholder. Runtime/source code unchanged."
+      }
+    ]
+  },
+  "current_files": [
+    {
+      "path": "vendor/chart.umd.js",
+      "sha256": "ecc3cd1eeb8c34d2178e3f59fd63ec5a3d84358c11730af0b9958dc886d7652a"
+    },
+    {
+      "path": "vendor/helios.js",
+      "sha256": "2a9794240d9a40123905471ea754649f9630bb19b16ace53f49e40c4364fb348"
+    },
+    {
+      "path": "vendor/sunsynk-power-flow-card.js",
+      "sha256": "155ce5f2a2011e6fd416a2c69fdfdded91de6f8ce18c3fa7fb32e53f44d18965"
+    },
+    {
+      "path": "sources/chartjs-9c5cf9fac7ec04a71b516e2aff3f7d76876be369.zip",
+      "sha256": "30e8df09d673c80797c20b9ea71b49459cae1ad7f4800ed79f8f9e6f3e610a48"
+    },
+    {
+      "path": "sources/helios-4dd597bcb856fdfa7c4c2c2f31cf72f344fe32c3.zip",
+      "sha256": "bb6174bda02c46ac1570dd5e32c6cc3ed54ae63d5cfcd2a8c65c1bbce2297eb5"
+    },
+    {
+      "path": "sources/npm/_kurkle_color-0.3.4.tgz",
+      "sha256": "35076f10eb04bd3ddfa41aa3a5ea3d4107feaec333299aa722fbfbde85043e37"
+    },
+    {
+      "path": "sources/npm/_lit-labs_ssr-dom-shim-1.6.0.tgz",
+      "sha256": "e5259bcfc8d6162049157ab76ec09c3cd7a56b5cbb92695ba27d9a036e0f3390"
+    },
+    {
+      "path": "sources/npm/_lit_reactive-element-2.1.2.tgz",
+      "sha256": "1fdaf29e5284fc7ffeab352c51edb3c017d73c4e98f0cd3dc53fb8dd555775e5"
+    },
+    {
+      "path": "sources/npm/_mapbox_jsonlint-lines-primitives-2.0.2.tgz",
+      "sha256": "96ce93290857e2bd50880fffd1620305702ad0e2a97a1dca21fa1504b0960540"
+    },
+    {
+      "path": "sources/npm/_mapbox_point-geometry-1.1.0.tgz",
+      "sha256": "9bf202082ba414ef99d82ca466445bfeddff3631922cfa74f9b4ce5caafde038"
+    },
+    {
+      "path": "sources/npm/_mapbox_tiny-sdf-2.1.0.tgz",
+      "sha256": "4011baf79e43f74470d254f7e39ec84cb4dbb0ad61bfa5fb43527ee22d6ad7b9"
+    },
+    {
+      "path": "sources/npm/_mapbox_unitbezier-0.0.1.tgz",
+      "sha256": "6eb1a3d9b5caa2a7685ae212e0a65c5e7e353c11ad78f439f2bbb2fc22296016"
+    },
+    {
+      "path": "sources/npm/_mapbox_vector-tile-2.0.5.tgz",
+      "sha256": "e2b3741560e42f87364ff7a1145e37bce904ff6a8bc163dcfbd784d80198d9fb"
+    },
+    {
+      "path": "sources/npm/_mapbox_vector-tile-3.0.0.tgz",
+      "sha256": "08f01e39d143cad5b106a7561394663b0a020d6a068acac6fa74de465739edb6"
+    },
+    {
+      "path": "sources/npm/_mapbox_whoots-js-3.1.0.tgz",
+      "sha256": "025d7251769c7e74ba754a33fe95927726eaacc7192dd96f76c0b06a1d8ec1fc"
+    },
+    {
+      "path": "sources/npm/_maplibre_geojson-vt-5.0.4.tgz",
+      "sha256": "09c282ec6dd3d0d2f1211915c55008600bcc1e155360f87947e151dd859db165"
+    },
+    {
+      "path": "sources/npm/_maplibre_geojson-vt-6.1.0.tgz",
+      "sha256": "838b70a994d0e43b998a45ff6748352ad7ecc3763d880020b4ab105f8df02a7e"
+    },
+    {
+      "path": "sources/npm/_maplibre_maplibre-gl-style-spec-24.8.3.tgz",
+      "sha256": "b561911b8f4654eb4e61eba1fa198ba88367d0057809c02fbdf7bd625c4d13b6"
+    },
+    {
+      "path": "sources/npm/_maplibre_mlt-1.1.9.tgz",
+      "sha256": "782f9a0952bb7a1e4af89408b099b9ad52bb1e400f7ecb51020e07d4dc45d959"
+    },
+    {
+      "path": "sources/npm/_maplibre_vt-pbf-4.3.0.tgz",
+      "sha256": "85e6cd954072a4db80409e34ce96ecee9b166961f88c77c59f97a70b8a2aa65e"
+    },
+    {
+      "path": "sources/npm/_petamoriken_float16-3.9.3.tgz",
+      "sha256": "350ec2b8bc20dbb5f09f6a39eb58e2137803dd57b7e013dbbd7a4f36b71a9c7d"
+    },
+    {
+      "path": "sources/npm/_types_geojson-7946.0.16.tgz",
+      "sha256": "5275058028351e9656972a31295f81b61637c641df6cc13766f48a5fdab1b39e"
+    },
+    {
+      "path": "sources/npm/_types_supercluster-7.1.3.tgz",
+      "sha256": "1f1e21362bfee9ff4f9917ce2f136f7fc1e7c7d18452954c80a77b55a216819e"
+    },
+    {
+      "path": "sources/npm/_types_trusted-types-2.0.7.tgz",
+      "sha256": "28521d6d9bcb45f9527cf45b9346e9e2142e81b17c6518229973df04044941d3"
+    },
+    {
+      "path": "sources/npm/earcut-3.0.2.tgz",
+      "sha256": "546b92493d021b05b5c3832edbae292ad3686848a3f434697b6338d4d74c8253"
+    },
+    {
+      "path": "sources/npm/geotiff-3.0.5.tgz",
+      "sha256": "9b3628c4fd2357cddef76a511fc4df3c054ad3a2a9393a0d79797a052f888355"
+    },
+    {
+      "path": "sources/npm/gl-matrix-3.4.4.tgz",
+      "sha256": "e08f1f9fc56d91d2aa1392e51cbc3db00d3eb9572dcb352acd9e187fc1a7e63a"
+    },
+    {
+      "path": "sources/npm/json-stringify-pretty-compact-4.0.0.tgz",
+      "sha256": "f15336163c9de2e2d9b820516be061235f4eed93a0a4d5bc9593700799c25f4f"
+    },
+    {
+      "path": "sources/npm/kdbush-4.0.2.tgz",
+      "sha256": "2b1cbfbb969a4aaca7eb0c3c783eaa0f0cdfab3c2be77b42c3bb1f26dc8a77b8"
+    },
+    {
+      "path": "sources/npm/lerc-3.0.0.tgz",
+      "sha256": "5c927cdc5d70387b2f4215f99595f8c119157eacc3cf0fec9a7c4db2da3e784d"
+    },
+    {
+      "path": "sources/npm/lit-3.3.3.tgz",
+      "sha256": "92f8d5bcd63e2d5efc41afd0a3d58a0a0f554ef826af9c8e368887c71949fd4d"
+    },
+    {
+      "path": "sources/npm/lit-element-4.2.2.tgz",
+      "sha256": "436004379d2f0ce912435c9cbcf9cabb28a3cfd9fb6823c7a7c6d686124b162e"
+    },
+    {
+      "path": "sources/npm/lit-html-3.3.2.tgz",
+      "sha256": "82b5e0feacc17112dc35c73cc9ea0bce438201344b3a5b4e016e4d039fb339ba"
+    },
+    {
+      "path": "sources/npm/maplibre-gl-5.24.0.tgz",
+      "sha256": "5cbf83c328c9d39cb24e3f2cefc9b407d69dd104ba0b41e84c0bfbb31c44e283"
+    },
+    {
+      "path": "sources/npm/minimist-1.2.8.tgz",
+      "sha256": "350a76c115b393c19d24654834261e5dc9f0e8cc5e08f3937fa80140f3e4ce83"
+    },
+    {
+      "path": "sources/npm/murmurhash-js-1.0.0.tgz",
+      "sha256": "0807f0738886929c36e3274e6bf0721efe9ba81d6edbe5ad9ec11ab5cb8ecc12"
+    },
+    {
+      "path": "sources/npm/pako-2.1.0.tgz",
+      "sha256": "49fedc8866b4abfc8e71dc7fe75ad4ef1ff1ac9601b0642cff88ee5bf2338709"
+    },
+    {
+      "path": "sources/npm/parse-headers-2.0.6.tgz",
+      "sha256": "baf17b489c3b1c5c05b21a1299db0cbf09b5b0ff294891f3245c4ac00db55528"
+    },
+    {
+      "path": "sources/npm/pbf-4.0.2.tgz",
+      "sha256": "e15669276c4a7b9da1ba46ef21a64ed0c2030875e5234c4657ad67b23b770bfa"
+    },
+    {
+      "path": "sources/npm/pbf-5.1.0.tgz",
+      "sha256": "f8c47453932249b5006329fdb8611155afae9cc702f5a85b4420766560a324f4"
+    },
+    {
+      "path": "sources/npm/potpack-2.1.0.tgz",
+      "sha256": "dac2dd4009e2fad0862b723423c8333162e8a6f4d87604af1de23fdec490587c"
+    },
+    {
+      "path": "sources/npm/protocol-buffers-schema-3.6.1.tgz",
+      "sha256": "907f8fd7d60cc2a96875b128e161b0013bdef8c2523012d3041a0f72f20de852"
+    },
+    {
+      "path": "sources/npm/quick-lru-6.1.2.tgz",
+      "sha256": "bc8de1866874dbbbe5efcdc41d7c8fe762658b80155bbe6671637ddb8ef08563"
+    },
+    {
+      "path": "sources/npm/quickselect-3.0.0.tgz",
+      "sha256": "2cf90a3c6f9eb7ccb618bc31e362a615f9f46de593b8465176d883e66b5f8c84"
+    },
+    {
+      "path": "sources/npm/resolve-protobuf-schema-2.1.0.tgz",
+      "sha256": "3e80010114da31a6f2a09345c62b7b9d67640d816df0f5099cecdeb9342517c5"
+    },
+    {
+      "path": "sources/npm/rw-1.3.3.tgz",
+      "sha256": "2dcde28200167d3774d1f0f2b66942790c762dc37ad211fb1135959e87fb85fb"
+    },
+    {
+      "path": "sources/npm/supercluster-8.0.1.tgz",
+      "sha256": "9cc3a18707e07453270c5e0b1d2ec2419af03f1794b8c8ca7ac4e33d61f78673"
+    },
+    {
+      "path": "sources/npm/tinyqueue-3.0.0.tgz",
+      "sha256": "64d0414e61332c1ee6a2a99a26d42e847d8650d32b2bea232b563e01bbe643ae"
+    },
+    {
+      "path": "sources/npm/web-worker-1.5.0.tgz",
+      "sha256": "00ef32e02fce57085539e99cb8ea8afa4fa53bfc30e38d7742ed431869c0c47c"
+    },
+    {
+      "path": "sources/npm/xml-utils-1.10.2.tgz",
+      "sha256": "f7b2e31a2f80b092bcea191f5d486864e00689458c2b90d99c53ba5fdf6c3423"
+    },
+    {
+      "path": "sources/npm/zstddec-0.2.0.tgz",
+      "sha256": "4708fc2e97b5ae6e8c2545ceabdd965bfe8858a5064fce30380eeb4c6ba3f41d"
+    },
+    {
+      "path": "sources/sunsynk-51b2fd8715df9e967acd8c7e095246e0b544d7e3.zip",
+      "sha256": "8002db4a78d4ff139a1109c3087737a9a3b25b2e887b69649a880cbc72232855"
+    },
+    {
+      "path": "sources/sunsynk-dependencies/_lit-labs_scoped-registry-mixin-1.0.3.tgz",
+      "sha256": "fa8994caf0a8341aa8d014eff355e5d503fa50601951462eb413b3e3e95bfaca"
+    },
+    {
+      "path": "sources/sunsynk-dependencies/_lit_reactive-element-2.0.4.tgz",
+      "sha256": "2a6262e93a2b88ad11a690ea43068a8d50d1148110908f4d6bd78ec2ac995fa2"
+    },
+    {
+      "path": "sources/sunsynk-dependencies/custom-card-helpers-1.9.0.tgz",
+      "sha256": "95d40374fbd113f45ef28d384595cfe072201becdaa7649a2e53f106335426d4"
+    },
+    {
+      "path": "sources/sunsynk-dependencies/lit-3.1.3.tgz",
+      "sha256": "9fb63c10f6854d251c3fc3cdc9324ccb5f0043bb42b7bcbc98adcfa1225d21d3"
+    },
+    {
+      "path": "sources/sunsynk-dependencies/lit-element-4.0.5.tgz",
+      "sha256": "d0cc8b2cb1a10f6de16ca15e242e150122e750d09b9b757838da457aaf0467c5"
+    },
+    {
+      "path": "sources/sunsynk-dependencies/lit-html-3.1.3.tgz",
+      "sha256": "5ff1df1e4566a9cb561f0c52532da4a1c1549b036745a57e6bc23e3beb631702"
+    },
+    {
+      "path": "sources/sunsynk-dependencies/lodash-4.17.23.tgz",
+      "sha256": "9aba685f4b44d7a8e778cdf7085e9512143dabd78812df40e258375e1e8dceb4"
+    },
+    {
+      "path": "sources/sunsynk-dependencies/lodash.merge-4.6.2.tgz",
+      "sha256": "a34e27a950d64a15ee31c652ff1f29c29b42eadaace1d203c680ca314959ef96"
+    },
+    {
+      "path": "sources/upstream/DanielJDufour_xml-utils-cf0a53ae840eb924.zip",
+      "sha256": "cf0a53ae840eb924b87c81ca523d51b92baf3954614de2270b10cf2fbf043d63"
+    },
+    {
+      "path": "sources/upstream/developit_web-worker-bb27b6dc6b707300.zip",
+      "sha256": "bb27b6dc6b707300e53b1d5e22a7575c25b6c63f4213049bbfb6dcaf1c7e5d1e"
+    },
+    {
+      "path": "sources/upstream/geotiffjs_geotiff.js-9617f60c4414585c.zip",
+      "sha256": "9617f60c4414585c8536597237fc94142346e0e36a60b1aa334e340b272670e3"
+    },
+    {
+      "path": "sources/upstream/kesla_parse-headers-62650483119aa1a6.zip",
+      "sha256": "62650483119aa1a639cae26296779614153eb20c57a2942e62d20b2b208406d9"
+    },
+    {
+      "path": "sources/upstream/kurkle_color-7f53ccc7bb71999c.zip",
+      "sha256": "7f53ccc7bb71999ce25eb793140e44f2b8787f7a739b306028bad14d429ac9c1"
+    },
+    {
+      "path": "sources/upstream/lit_lit-1a6fc88cb1196444.zip",
+      "sha256": "1a6fc88cb11964444d54abc3b0e169ee1bb9c986ed5779730b0fbc52851ff457"
+    },
+    {
+      "path": "sources/upstream/lit_lit-4a20bae278a6da90.zip",
+      "sha256": "4a20bae278a6da90681fd9d69cc8605cbc70ecd46646ca329d6885120544b6b0"
+    },
+    {
+      "path": "sources/upstream/lydell_json-stringify-pretty-compact-f72766a33cfefa77.zip",
+      "sha256": "f72766a33cfefa778a34b4422dc665077d7122331a739c05cf6307a5c83af229"
+    },
+    {
+      "path": "sources/upstream/mafintosh_protocol-buffers-schema-8338c8ac9f55a012.zip",
+      "sha256": "8338c8ac9f55a0122f4107e2f68c04916e7df94df5fde6b2261c716e914d0244"
+    },
+    {
+      "path": "sources/upstream/mafintosh_resolve-protobuf-schema-8434c21fd21d4aca.zip",
+      "sha256": "8434c21fd21d4acab92bf37df884c6a0aff06b63d4930f43df3df99f5ba20bf3"
+    },
+    {
+      "path": "sources/upstream/mapbox_earcut-534076a03e0e78a6.zip",
+      "sha256": "534076a03e0e78a6f959a6b72a75053efef15ca102f56f9be04652ec4e80c7e2"
+    },
+    {
+      "path": "sources/upstream/mapbox_jsonlint-4476dcd3f8c8bbce.zip",
+      "sha256": "4476dcd3f8c8bbcef9748f373704866f790860c28b01c339494ac65183518405"
+    },
+    {
+      "path": "sources/upstream/mapbox_pbf-3c0c2beaeb576cc7.zip",
+      "sha256": "3c0c2beaeb576cc70ca475f8fb72a1f17a9328b4e0763d876ef7a879891bec17"
+    },
+    {
+      "path": "sources/upstream/mapbox_pbf-aef71555fe088ce9.zip",
+      "sha256": "aef71555fe088ce9bbd5eb14d90cce85ed722547cf92a5041fb6fd5a4c6ce9d8"
+    },
+    {
+      "path": "sources/upstream/mapbox_point-geometry-6a5489574dd670e8.zip",
+      "sha256": "6a5489574dd670e8f3bbacab47c365f174824cae87c5a26d87d384908e4184a3"
+    },
+    {
+      "path": "sources/upstream/mapbox_potpack-1e7b86b72dd452a5.zip",
+      "sha256": "1e7b86b72dd452a50972d5774862217d6a79bb8e380397b49caf5619846fda2d"
+    },
+    {
+      "path": "sources/upstream/mapbox_supercluster-5ee722b91217f5e0.zip",
+      "sha256": "5ee722b91217f5e047997d2487f86591fd3a926089a275765f92aa5044c3724f"
+    },
+    {
+      "path": "sources/upstream/mapbox_tiny-sdf-6e579ea3a668544b.zip",
+      "sha256": "6e579ea3a668544b51dff1d0097361b9407f80c84fe6af725a694d2a8b067063"
+    },
+    {
+      "path": "sources/upstream/mapbox_unitbezier-aefcc31993155506.zip",
+      "sha256": "aefcc31993155506d89315c863a43141245492c271f0c74270936276cdb7c52c"
+    },
+    {
+      "path": "sources/upstream/mapbox_vector-tile-js-673422b938c0e444.zip",
+      "sha256": "673422b938c0e444a0bbbd7f1d5ea57f3a6814f5f8c93fbb879288a949cfc937"
+    },
+    {
+      "path": "sources/upstream/mapbox_vector-tile-js-e1ca2737a3be25ac.zip",
+      "sha256": "e1ca2737a3be25acf34afcff63d5546a300f61db8cee94a98edf509ec287eeb0"
+    },
+    {
+      "path": "sources/upstream/mapbox_whoots-js-96eda756765486b1.zip",
+      "sha256": "96eda756765486b19486ebc22fc6f69a5c26572c84afc45517d497d1c7cf3036"
+    },
+    {
+      "path": "sources/upstream/maplibre_geojson-vt-0dbc25590663de5f.zip",
+      "sha256": "0dbc25590663de5fa62e26b4292261a631eec42c14b6be8a9e62fa371f0b38b4"
+    },
+    {
+      "path": "sources/upstream/maplibre_geojson-vt-969df84216183452.zip",
+      "sha256": "969df842161834526eef55e71f1b71eb699f0a6b1f1456babb766ef1b2d8826b"
+    },
+    {
+      "path": "sources/upstream/maplibre_maplibre-style-spec-dadf27f0135776f2.zip",
+      "sha256": "dadf27f0135776f2124107d99ac392f3662fef0acda36b040e4ad1562389bb0a"
+    },
+    {
+      "path": "sources/upstream/maplibre_vt-pbf-f213cb37e0f2df96.zip",
+      "sha256": "f213cb37e0f2df966488080f0359042db752c3f92e127a0b1721b6e42ea39488"
+    },
+    {
+      "path": "sources/upstream/mbostock_rw-23a41919d5cc98fa.zip",
+      "sha256": "23a41919d5cc98fa9586a22561d474a417b4e2ee89f49c8ef66290031ec1d76a"
+    },
+    {
+      "path": "sources/upstream/mikolalysenko_murmurhash-js-f592f721c06dd407.zip",
+      "sha256": "f592f721c06dd407e1bb7a05cfabd04139d8e83acf3873270b23e6a65f627877"
+    },
+    {
+      "path": "sources/upstream/minimistjs_minimist-2e2133cae1a1839f.zip",
+      "sha256": "2e2133cae1a1839f21e1e53436f45223f42ddacebe7a2995dbef9f00620fe1cb"
+    },
+    {
+      "path": "sources/upstream/mlt-1.1.9-preferred-source.zip",
+      "sha256": "1b1664273bb8d5049a696624496abfb2832b84e4d95aaf97208d728a56261839"
+    },
+    {
+      "path": "sources/upstream/mourner_kdbush-f77f2fd1eea1493b.zip",
+      "sha256": "f77f2fd1eea1493b6414b4bd07da5ca00d743aff0e2c58456d46541932e70682"
+    },
+    {
+      "path": "sources/upstream/mourner_quickselect-5e235b6be2a1290f.zip",
+      "sha256": "5e235b6be2a1290ff8f2169f939583dc9273af95994895689bc285d35c450344"
+    },
+    {
+      "path": "sources/upstream/mourner_tinyqueue-009ff978995bf1c9.zip",
+      "sha256": "009ff978995bf1c95c90cdf066440cbfac3e92ddbc2cffc69667008a6f1c26d1"
+    },
+    {
+      "path": "sources/upstream/nodeca_pako-758409f159edd79f.zip",
+      "sha256": "758409f159edd79f8cdc4430c27dacf8ea255df9646001c5b3e2342098aad34e"
+    },
+    {
+      "path": "sources/upstream/petamoriken_float16-48895832b66ad65a.zip",
+      "sha256": "48895832b66ad65a41f841ebff76fc27f4403b8133a98115eb60dacb18d087bf"
+    },
+    {
+      "path": "sources/upstream/sindresorhus_quick-lru-5a5ba53d35cf628d.zip",
+      "sha256": "5a5ba53d35cf628d9c7cafbb1e9ada2413d233d3870e0d22a30af50edb5b0b50"
+    },
+    {
+      "path": "sources/upstream/toji_gl-matrix-42f5e2ba6be866c6.zip",
+      "sha256": "42f5e2ba6be866c6ddd17b7f325585916a44afc03532e0e25dbad3c064e266d4"
+    },
+    {
+      "path": "sources/upstream/zstd-f8745da6.zip",
+      "sha256": "410ee89c5a00723739fcb84d6549fa146c2763a0ab14fb1b88869830e51604c5"
+    },
+    {
+      "path": "sources/upstream/zstddec-858fe7f7890f618f85c38b330d2cb37457a6333f.zip",
+      "sha256": "71b1a643158c256c3d4ea14d601371c25ddfa9c0df2a8f07809a1b6562d08636"
+    },
+    {
+      "path": "licenses/chartjs.txt",
+      "sha256": "41a84aa2caba645f966a18d9c2056b73e6d3a81d80bc0046bc0011a2634d4cce"
+    },
+    {
+      "path": "licenses/helios.txt",
+      "sha256": "1a0280a0ab6c6813a4c8b90cefebd9df319eb6527e0ec6e58104171ad7d4b9c0"
+    },
+    {
+      "path": "licenses/npm/_kurkle_color-0.3.4/LICENSE.md",
+      "sha256": "89ba0032731489153d552db918b727feb05128cf9eca20092875a9ad14147671"
+    },
+    {
+      "path": "licenses/npm/_lit_reactive-element-2.1.2/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/npm/_mapbox_point-geometry-1.1.0/LICENSE",
+      "sha256": "0c0ede0036a425ff8b2d49341ea9aa8eccbeeae1ac4eb59874c9dd8bcf5186d3"
+    },
+    {
+      "path": "licenses/npm/_mapbox_tiny-sdf-2.1.0/LICENSE.txt",
+      "sha256": "4f78063c6c0757df950aa3440cef9a2a6bd1c552c994c32237c3acc283e72ee6"
+    },
+    {
+      "path": "licenses/npm/_mapbox_unitbezier-0.0.1/LICENSE",
+      "sha256": "f0dc305ad097eddbc66eebb79288c92d8a5043818ace81206383a4c1a3268fe3"
+    },
+    {
+      "path": "licenses/npm/_mapbox_vector-tile-2.0.5/LICENSE.txt",
+      "sha256": "5b09a507df6f21d6c2112c46dcaf2927b9dbd8b580a08b542d8ec2f9191d783d"
+    },
+    {
+      "path": "licenses/npm/_mapbox_vector-tile-3.0.0/LICENSE.txt",
+      "sha256": "5b09a507df6f21d6c2112c46dcaf2927b9dbd8b580a08b542d8ec2f9191d783d"
+    },
+    {
+      "path": "licenses/npm/_mapbox_whoots-js-3.1.0/LICENSE.md",
+      "sha256": "27043d1a6a0e1985fde12660decbbd3b23c67de900b00609c90d4f0aa492f425"
+    },
+    {
+      "path": "licenses/npm/_maplibre_geojson-vt-5.0.4/LICENSE",
+      "sha256": "9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3"
+    },
+    {
+      "path": "licenses/npm/_maplibre_geojson-vt-6.1.0/LICENSE",
+      "sha256": "9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3"
+    },
+    {
+      "path": "licenses/npm/_maplibre_maplibre-gl-style-spec-24.8.3/LICENSE.txt",
+      "sha256": "bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890"
+    },
+    {
+      "path": "licenses/npm/_maplibre_mlt-1.1.9/LICENSE.txt",
+      "sha256": "c7baf90e18cffdef7f97486b441170ca4c4228d3cd42ab34e6aa4d883a24624b"
+    },
+    {
+      "path": "licenses/npm/_maplibre_vt-pbf-4.3.0/LICENSE",
+      "sha256": "4c61c5753d4b021bc3b07f21d2a830506974ce200c19cfadf3d4a25e747fc853"
+    },
+    {
+      "path": "licenses/npm/_petamoriken_float16-3.9.3/LICENSE",
+      "sha256": "3b833441ea7e5766f591a927e9f26960be46670a8fbc302732b72afd5623c0e9"
+    },
+    {
+      "path": "licenses/npm/_types_geojson-7946.0.16/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "licenses/npm/_types_supercluster-7.1.3/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "licenses/npm/_types_trusted-types-2.0.7/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "licenses/npm/earcut-3.0.2/LICENSE",
+      "sha256": "324139c19d87af03fda38afea1590e00ca354c4159bdb2ae9e9cec070cfa46a8"
+    },
+    {
+      "path": "licenses/npm/geotiff-3.0.5/LICENSE",
+      "sha256": "da0811089f254e909f69f75fa496ca97e5167a8eaa945d9a6bffdd8499b47a49"
+    },
+    {
+      "path": "licenses/npm/gl-matrix-3.4.4/LICENSE.md",
+      "sha256": "af62d31a0cdc1bf95d5e19428c3e0de368b727d9d5b6b6cdb466f8a52e68ad06"
+    },
+    {
+      "path": "licenses/npm/json-stringify-pretty-compact-4.0.0/LICENSE",
+      "sha256": "2d51145876dda3dd13253463b852aa83b78aa598b90fca1709f39f1740ff9a2f"
+    },
+    {
+      "path": "licenses/npm/kdbush-4.0.2/LICENSE",
+      "sha256": "597034cb7c11c916ad407344ea99a0b08e3c443a6b4421460f1d23c411c69707"
+    },
+    {
+      "path": "licenses/npm/lit-3.3.3/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/npm/lit-element-4.2.2/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/npm/lit-html-3.3.2/LICENSE",
+      "sha256": "2b66f9390afde29edfe4314daff93f01fb182e1178053e228120178987e5db75"
+    },
+    {
+      "path": "licenses/npm/maplibre-gl-5.24.0/dist/LICENSE.txt",
+      "sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2"
+    },
+    {
+      "path": "licenses/npm/maplibre-gl-5.24.0/LICENSE.txt",
+      "sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2"
+    },
+    {
+      "path": "licenses/npm/minimist-1.2.8/LICENSE",
+      "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b"
+    },
+    {
+      "path": "licenses/npm/pako-2.1.0/LICENSE",
+      "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539"
+    },
+    {
+      "path": "licenses/npm/parse-headers-2.0.6/LICENCE",
+      "sha256": "b1c5db90de223cc6ca40bab4ade764220f86c5b0335f56f1ab3baa6e62fe18bd"
+    },
+    {
+      "path": "licenses/npm/pbf-4.0.2/LICENSE",
+      "sha256": "85a46bda3ddc8bb2fe2a6c361ed8ab75898c81b5d054a57a0722f1fa364c0136"
+    },
+    {
+      "path": "licenses/npm/pbf-5.1.0/LICENSE",
+      "sha256": "fdf1d5279107d760c7df8c6edab1faab2b72ba17528273a8b417b08f1e12ebbe"
+    },
+    {
+      "path": "licenses/npm/potpack-2.1.0/LICENSE",
+      "sha256": "cfec0482fb785fe27e3b368a2d9e84bf7a61b275e83ec582bf288e98cd530bb0"
+    },
+    {
+      "path": "licenses/npm/protocol-buffers-schema-3.6.1/LICENSE",
+      "sha256": "3fe8d55a98dbf260eace67c00cf9bc53edb46234e840098a0b93df3096b97fb6"
+    },
+    {
+      "path": "licenses/npm/quick-lru-6.1.2/license",
+      "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3"
+    },
+    {
+      "path": "licenses/npm/quickselect-3.0.0/LICENSE",
+      "sha256": "238ddb00e12a420a54e060afa19bdab4f70bf49e0e2a8ebb1a5e851f9ef447df"
+    },
+    {
+      "path": "licenses/npm/resolve-protobuf-schema-2.1.0/LICENSE",
+      "sha256": "c0993ca46cd47c09710a977d3a3d51602cff96f19e8d2eb8d5887aa20a7beead"
+    },
+    {
+      "path": "licenses/npm/rw-1.3.3/LICENSE",
+      "sha256": "e273680c43c2ab5bb3b50af28de6a08000b333396834db7bf6129cd6f130c9cd"
+    },
+    {
+      "path": "licenses/npm/supercluster-8.0.1/LICENSE",
+      "sha256": "b8878372a0d7d1c303f48659ddbd6881807cd2196e4af2f548d8da0c0f7c4d71"
+    },
+    {
+      "path": "licenses/npm/tinyqueue-3.0.0/LICENSE",
+      "sha256": "780453e05abdc22307ee01c706a2e73f508d3e484fc4c804485ebf6fe0964694"
+    },
+    {
+      "path": "licenses/npm/web-worker-1.5.0/LICENSE",
+      "sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1"
+    },
+    {
+      "path": "licenses/npm/xml-utils-1.10.2/LICENSE",
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+    },
+    {
+      "path": "licenses/npm/zstddec-0.2.0/LICENSE",
+      "sha256": "8d078b49fc02bd63c1beaf4ddc629a8b48e4ba6a435415408c8209e2a5c3aacf"
+    },
+    {
+      "path": "licenses/docan-deye-ems.txt",
+      "sha256": "3ff058d10bdcadc93362361a0f32ffd0568775b47f57c81e8485f2d51a79b00f"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/context/LICENSE",
+      "sha256": "2503b5766520d283dd6cc9c9852bdfc59ffe16b0538d554db4e5b9b725269604"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/analyzer/LICENSE",
+      "sha256": "2e0bcc5859806c71260e84164df2b980c0cb3b60de6b62f62646ba383d97c384"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/context/LICENSE",
+      "sha256": "2503b5766520d283dd6cc9c9852bdfc59ffe16b0538d554db4e5b9b725269604"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/eleventy-plugin-lit/LICENSE",
+      "sha256": "2503b5766520d283dd6cc9c9852bdfc59ffe16b0538d554db4e5b9b725269604"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/eslint-plugin/LICENSE",
+      "sha256": "836d66f2ee136be045f2efd66b86cd3fb06e795b26364e28ade791678b0d0e25"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/forms/LICENSE",
+      "sha256": "4aadc909cc4f8ce5a3154f81b927f48a5422874a592de7d8992f13bfa48490dd"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/motion/LICENSE",
+      "sha256": "2b66f9390afde29edfe4314daff93f01fb182e1178053e228120178987e5db75"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/nextjs/LICENSE",
+      "sha256": "836d66f2ee136be045f2efd66b86cd3fb06e795b26364e28ade791678b0d0e25"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/observers/LICENSE",
+      "sha256": "96a42c804d1bacc9c62768bb7e37d697ce625f12e3587e2f939359f26f1beb80"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/preact-signals/LICENSE",
+      "sha256": "836d66f2ee136be045f2efd66b86cd3fb06e795b26364e28ade791678b0d0e25"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/react/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/rollup-plugin-minify-html-literals/LICENSE.md",
+      "sha256": "337fd4ef01081f424c428939735ea0e44c3b22544e820866cd303a8b8e108bc3"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/router/LICENSE",
+      "sha256": "2503b5766520d283dd6cc9c9852bdfc59ffe16b0538d554db4e5b9b725269604"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/scoped-registry-mixin/LICENSE",
+      "sha256": "2503b5766520d283dd6cc9c9852bdfc59ffe16b0538d554db4e5b9b725269604"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/signals/LICENSE",
+      "sha256": "a17a095301ae64680eef6ce2102380daa1149925da146f6bd88a241c055c95ff"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/ssr/LICENSE",
+      "sha256": "2367847c0e5414ef7dd90158477d0e0ae8de17d3725f1e479dd63a90fa602d89"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/ssr-client/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/task/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/testing/LICENSE",
+      "sha256": "2e0bcc5859806c71260e84164df2b980c0cb3b60de6b62f62646ba383d97c384"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/tsserver-plugin/LICENSE",
+      "sha256": "a17a095301ae64680eef6ce2102380daa1149925da146f6bd88a241c055c95ff"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/virtualizer/LICENSE",
+      "sha256": "a6b724d9ae6b2f6e0a951ea59b867743ecd901ffc0caaba6ae38437e7601606d"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/virtualizer/src/polyfills/resize-observer-polyfill/LICENSE",
+      "sha256": "05c026d1910304cb62a85e7816af65e88655b1ade49e9ccbf4f69a412a06dbd2"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/vscode-extension/syntaxes/vscode-lit-html/LICENSE",
+      "sha256": "fd6efc504beca2a1b4dffed93c6fa718564016a09e76a7b94b1995129dc25680"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/vscode-extension/syntaxes/vscode-styled-components/LICENSE",
+      "sha256": "fd6efc504beca2a1b4dffed93c6fa718564016a09e76a7b94b1995129dc25680"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/labs/vue-utils/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit-element/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit-html/LICENSE",
+      "sha256": "2b66f9390afde29edfe4314daff93f01fb182e1178053e228120178987e5db75"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit-starter-js/LICENSE",
+      "sha256": "4335070d6da4969ad6cef4f7fe55a9c8d0ff10692307f1ecacf3ea780dfb32be"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/lit-starter-ts/LICENSE",
+      "sha256": "4335070d6da4969ad6cef4f7fe55a9c8d0ff10692307f1ecacf3ea780dfb32be"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/localize/LICENSE",
+      "sha256": "cafa087dc204c4a9c2261d69a1093c131aad9b1cbe6b91888a21bcd196ccd3b0"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/localize-tools/LICENSE",
+      "sha256": "2503b5766520d283dd6cc9c9852bdfc59ffe16b0538d554db4e5b9b725269604"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/react/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/reactive-element/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/task/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/source/_lit-labs_ssr-dom-shim-1.6.0/lit-20afabd3c5bfd49fdcdf1b8518e05c7f99a46db6/packages/ts-transformers/LICENSE",
+      "sha256": "2503b5766520d283dd6cc9c9852bdfc59ffe16b0538d554db4e5b9b725269604"
+    },
+    {
+      "path": "licenses/source/_mapbox_jsonlint-lines-primitives-2.0.2/README.md",
+      "sha256": "455b5f47146413119c29de804e7a6efda7b73db67e67a639058ab7efaa94e75c"
+    },
+    {
+      "path": "licenses/source/jsonlint/UPSTREAM_README.md",
+      "sha256": "bfa3f4d86658f2c9fb739a67aa675774e78d28706a1ff7f04f3fb1cdb48c098b"
+    },
+    {
+      "path": "licenses/source/lerc/LICENSE",
+      "sha256": "77a8b761727c75e2167b15bfdf61b2c0bcf8792271228bebe80779106ad00671"
+    },
+    {
+      "path": "licenses/source/lerc/NOTICE",
+      "sha256": "f222a70d24e261b9b4b238df4fe9132e669d7776f137753c6cbbc5be4701124d"
+    },
+    {
+      "path": "licenses/source/murmurhash-js-1.0.0/README.md",
+      "sha256": "a6df412756139a6706db058a33f8aa39b9e280facf7f1587e86f6680f9e5cbb6"
+    },
+    {
+      "path": "licenses/sunsynk-dependencies/_lit-labs_scoped-registry-mixin-1.0.3/LICENSE",
+      "sha256": "2503b5766520d283dd6cc9c9852bdfc59ffe16b0538d554db4e5b9b725269604"
+    },
+    {
+      "path": "licenses/sunsynk-dependencies/_lit_reactive-element-2.0.4/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/sunsynk-dependencies/custom-card-helpers-1.9.0/LICENSE",
+      "sha256": "5fe0e4b4b5179df1ae560269cc0879d56532ddabad39f56b85c0b57171c17805"
+    },
+    {
+      "path": "licenses/sunsynk-dependencies/lit-3.1.3/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/sunsynk-dependencies/lit-element-4.0.5/LICENSE",
+      "sha256": "45d31799d0db956cc3eb5469346abbd9b7025babc5ff29fab10d7095da992ef1"
+    },
+    {
+      "path": "licenses/sunsynk-dependencies/lit-html-3.1.3/LICENSE",
+      "sha256": "2b66f9390afde29edfe4314daff93f01fb182e1178053e228120178987e5db75"
+    },
+    {
+      "path": "licenses/sunsynk-dependencies/lodash-4.17.23/LICENSE",
+      "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc"
+    },
+    {
+      "path": "licenses/sunsynk-dependencies/lodash.merge-4.6.2/LICENSE",
+      "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc"
+    },
+    {
+      "path": "licenses/sunsynk.txt",
+      "sha256": "e595b64632d9456d1a42a0dbe114ef6c100f55f532de14bfb63a47329f0b2506"
+    }
+  ],
+  "scope": "Source and attribution inventory, not a complete exact binary SBOM. Sunsynk upstream release has no published dependency lockfile. Unresolved redundant archive lookups are addressed in SOURCE_EXCEPTIONS and SOURCE_FINALIZATION."
+}

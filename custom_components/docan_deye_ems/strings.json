@@ -1,0 +1,415 @@
+{
+  "title": "Docan Panda & Deye EMS",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Docan Panda & Deye EMS",
+        "description": "Set up the experimental read-only beta. Connect to a compatible local Deye logger/gateway, or use existing HA sensors. Physical hardware and firmware compatibility are not yet field-verified. This integration cannot operate your equipment.",
+        "data": {},
+        "menu_options": {
+          "hardware": "Set up a new household",
+          "restore": "Restore exported settings"
+        }
+      },
+      "restore": {
+        "title": "Restore household settings",
+        "description": "Paste an exported settings document. Review the local connection details or sensor bindings on this HA; a direct connection is tested again. Tibber credentials are never exported and must be entered again.",
+        "data": {
+          "document": "Exported settings JSON"
+        }
+      },
+      "hardware": {
+        "title": "Your battery and inverter",
+        "description": "Docan Panda 32 kWh is the battery profile. A working wired battery-to-inverter BMS link is mandatory; power cables alone are insufficient. Select the actual BMS protocol. Direct battery-to-HA readings use a separate RS485-to-USB adapter. All inverter/BMS profiles remain experimental.",
+        "data": {
+          "name": "Dashboard name",
+          "model": "Deye model",
+          "bms_link": "Battery BMS communication",
+          "diagram_reserve_soc": "Diagram reserve threshold (%)"
+        }
+      },
+      "connection": {
+        "title": "Connect the inverter",
+        "description": "Choose your local adapter protocol. A Solarman V5 logger uses its own framing (usually port 8899); it is not plain Modbus TCP. A gateway must already be wired and configured for Modbus TCP or transparent RTU. Choose existing sensors if another integration already polls this equipment; avoid competing pollers. No separate Deye integration is required for direct mode.",
+        "data": {
+          "method": "Connection type"
+        }
+      },
+      "equipment": {
+        "title": "Local equipment connection",
+        "description": "Enter the local IP from your router and the configured port/unit address. For Solarman V5, enter the logger serial number printed on the logger, not the inverter serial. Next performs fixed telemetry reads only. No network scan or device configuration occurs. The battery BMS connection must already work.",
+        "data": {
+          "host": "Logger or gateway local IP address",
+          "port": "TCP port",
+          "unit": "Modbus device address",
+          "serial": "Solarman V5 logger serial number"
+        }
+      },
+      "equipment_check": {
+        "title": "Check the live readings",
+        "description": "The device reports a low-voltage three-phase hybrid profile. Battery: {battery_soc}% at {battery_voltage} V, {battery_power} W, {battery_current} A. Inverter: {inverter_power} W. Home: {load_power} W. Grid: {grid_power} W. DC solar: {solar_power} W. Compare these with the inverter screen. Battery positive means discharge; grid positive means import. Confirm only when the readings and directions match. Exact firmware/model compatibility still requires field verification.",
+        "data": {
+          "readings_match": "These readings and directions match my inverter"
+        }
+      },
+      "measurements": {
+        "title": "Connect your local measurements",
+        "description": "Select sensors already provided by your Deye/battery/meter integration. Values must have compatible units. Whole-home power must include every load you want shown. Set signs explicitly: normalized battery positive = discharge; grid positive = import. Optional daily energy counters reset daily. Maximum age uses the last report, even if the number is unchanged.",
+        "data": {
+          "battery_soc": "Battery state of charge",
+          "battery_power": "Battery power",
+          "battery_voltage": "Battery voltage",
+          "battery_current": "Battery current",
+          "inverter_power": "Inverter AC power",
+          "load_power": "Whole-home consumption",
+          "grid_power": "Grid import/export power",
+          "solar_today": "Solar energy today (optional)",
+          "load_today": "Home energy today (optional)",
+          "import_today": "Grid import today (optional)",
+          "export_today": "Grid export today (optional)",
+          "battery_power_direction": "Battery power sign",
+          "battery_current_direction": "Battery current sign",
+          "grid_power_direction": "Grid power sign",
+          "max_age": "Maximum measurement age (seconds)"
+        }
+      },
+      "location": {
+        "title": "Sun and home location",
+        "description": "Optional sun map. Map/weather providers receive selected coordinates and your browser network address. Disabling the map removes its saved location. Solar forecasting has a separate location and consent setting.",
+        "data": {
+          "enabled": "Enable sun map and external map/weather requests"
+        }
+      },
+      "home": {
+        "title": "Choose your home location",
+        "description": "Enter your address as a private label, then place the map pin at your home. Only the selected coordinates are used for the map and weather. Your address is not sent to the price provider.",
+        "data": {
+          "address": "Home address (private label, optional)",
+          "position": "Home map location"
+        }
+      },
+      "solar": {
+        "title": "Your solar installation",
+        "description": "Enter the total installed panel capacity in kWp (not instantaneous kW). Choose DC solar connected to Deye, another AC inverter, mixed, or no solar. Direct Deye DC mode reads both MPPTs automatically; leave the sensor blank. External AC/mixed setups require a separate combined production sensor. Mixed installations show aggregate production; this beta does not invent an AC/DC split or a yield forecast.",
+        "data": {
+          "connection": "Solar connection",
+          "kwp": "Total installed panels (kWp)",
+          "solar_power": "Total solar production sensor"
+        }
+      },
+      "pricing": {
+        "title": "Your electricity prices",
+        "description": "Choose Tibber for its final household import tariff, Nord Pool for spot plus your taxes and supplier fees, or a local compatible price-curve sensor. The full current delivery day must be available before planning is ready.",
+        "data": {
+          "provider": "Price provider",
+          "currency": "Contract currency"
+        }
+      },
+      "tibber": {
+        "title": "Connect Tibber",
+        "description": "Enter your personal Tibber token. This integration only queries homes and prices; it cannot alter your subscription or hardware. HA stores the token privately in its configuration. Keep an existing token by leaving this field empty during reconfiguration.",
+        "data": {
+          "token": "Tibber API token"
+        }
+      },
+      "tibber_home": {
+        "title": "Choose your Tibber home",
+        "description": "Choose the home whose electricity tariff applies to this installation.",
+        "data": {
+          "home_id": "Tibber home"
+        }
+      },
+      "nordpool": {
+        "title": "Nord Pool bidding area",
+        "description": "Select the price area for your electricity contract. HA timezone defines the delivery day. Your import tariff is calculated on the next page.",
+        "data": {
+          "area": "Bidding area"
+        }
+      },
+      "sensor": {
+        "title": "Local price curve",
+        "description": "Select a sensor with a date attribute (YYYY-MM-DD), unit currency/kWh or currency/MWh, and periods containing timezone-aware start, end and value. Optional export values are a separate compensation tariff. A current-price-only sensor is insufficient.",
+        "data": {
+          "price_curve": "Complete price-curve sensor",
+          "basis": "Prices are final all-in or raw spot"
+        }
+      },
+      "tariff": {
+        "title": "Household taxes and fees",
+        "description": "For spot prices: final import = (spot + tax + supplier fee) × (1 + VAT/100). Enter per-kWh amounts in the selected currency before VAT. For all-in prices, tax, fee and VAT must stay zero to avoid double charging. Fixed monthly charges are excluded. Export fees apply only to a separately supplied export price; import prices are never assumed to be export compensation.",
+        "data": {
+          "tax": "Energy tax / kWh",
+          "fee": "Supplier fee / kWh",
+          "vat": "VAT (%)",
+          "export_fee": "Export fee / kWh"
+        }
+      },
+      "plan": {
+        "title": "Where should the plan come from?",
+        "description": "Forecast shadow planning combines solar/load forecasts, separate import/export tariffs, battery losses, wear and reserves. Simple shadow estimate only ranks charging prices. Observed displays an external controller plan. All modes are read-only.",
+        "data": {
+          "source": "Plan source"
+        }
+      },
+      "observed": {
+        "title": "Observe your controller plan",
+        "description": "Select a sensor with date, updated_at (timezone-aware), and windows containing timezone-aware start/end plus action charge, export or idle. Its timestamps must be refreshed within your maximum age. No installation-specific entity names are needed.",
+        "data": {
+          "observed_plan": "Structured controller-plan sensor"
+        }
+      },
+      "limits": {
+        "title": "Shadow charging assumptions",
+        "description": "Enter values appropriate to your installation; This integration will not commission or change them. These estimate-only limits do not authorize hardware operations. The deadline is today in HA local time. After it passes, any unmet target is shown as unreachable.",
+        "data": {
+          "reserve_soc": "Planning reserve (%)",
+          "target_soc": "Target state of charge (%)",
+          "charge_power_kw": "Assumed constant charge power (kW)",
+          "charge_efficiency": "Assumed charging efficiency (%)",
+          "charge_deadline": "Todayâ€™s charge deadline"
+        }
+      },
+      "finish": {
+        "title": "Create the household dashboard",
+        "description": "Create {name} for {model}. Plan source: {plan}. The sidebar dashboard and read-only entities are added automatically. No plant control is enabled.",
+        "data": {}
+      },
+      "battery": {
+        "title": "Battery readings and mandatory RS485 link",
+        "description": "Direct Docan mode requires an RS485-to-USB adapter between the battery and HA host (9600 baud, 8N1). Enter your serial path from HA hardware settings and the configured battery address. No scanning or device configuration occurs. This is separate from the battery-to-inverter BMS cable. Do not share a serial port with another poller. Choose existing/inverter readings if you already have a battery reader.",
+        "data": {
+          "source": "Battery data source",
+          "port": "USB serial device path",
+          "address": "Configured battery address"
+        }
+      },
+      "battery_check": {
+        "title": "Confirm direct battery measurements",
+        "description": "Battery reports {battery_soc}% at {battery_voltage} V, {battery_current} A and {battery_power} W. Temperature: {battery_temperature} °C; cell spread: {battery_cell_delta} V. Positive current/power means discharge. Compare with the BMS display. This decoder does not certify BMS alarms or protections.",
+        "data": {
+          "readings_match": "These values and directions match my battery display"
+        }
+      },
+      "export_tariff": {
+        "title": "Separate selling tariff",
+        "description": "Enter NET export compensation per kWh in your contract currency, including applicable selling fees. Zero explicitly means no compensation; negative means you pay to export. It is never inferred from import prices. Curve mode requires a compatible price sensor with export values. Fixed mode does not apply the export fee again.",
+        "data": {
+          "export_mode": "Fixed net price or separate curve values",
+          "net_export_price": "Net export compensation / kWh (fixed mode)"
+        }
+      },
+      "forecast": {
+        "title": "Forecast inputs and learning",
+        "description": "Forecast.Solar uses one panel orientation and sends the selected coordinates, tilt, azimuth and kWp to its service after consent. Azimuth: south 0°, east -90°, west 90°. For multiple orientations use an aggregated forecast sensor with updated_at and complete start/end/kwh periods. Enter expected average home load for cold start; a local time-of-day profile learns after 3 complete historical days per interval. Price anticipation needs 3 historical price days and remains labelled estimated. Efficiency learning requires a dedicated battery AC power sensor, positive discharge: never select whole-inverter or grid power.",
+        "data": {
+          "solar_source": "Solar forecast source",
+          "position": "Solar forecast location (separate from map)",
+          "tilt": "Panel tilt (degrees)",
+          "azimuth": "Panel azimuth (south = 0 degrees)",
+          "consent": "Allow Forecast.Solar to receive these location and panel details",
+          "baseline_load_kw": "Expected average home load until history is learned (kW)",
+          "anticipate_prices": "Estimate unpublished tomorrow prices from local history",
+          "learn_efficiency": "Learn efficiency from dedicated battery AC/DC readings",
+          "solar_forecast": "Aggregated solar forecast sensor (sensor mode)",
+          "battery_ac_power": "Dedicated battery AC power sensor (optional learning)"
+        }
+      },
+      "optimizer": {
+        "title": "Read-only optimization limits",
+        "description": "These assumptions constrain a simulation; no controls are enabled. Capacity is 32 kWh. Limits must match your installation. Target applies to today’s deadline, terminal charge applies to the horizon end. Export simulation uses your separate compensation. Battery export on estimated prices is off by default. Wear cost is per DC kWh discharged. The planner does not assume that excess solar can be curtailed; impossible limits produce no feasible plan.",
+        "data": {
+          "reserve_soc": "Minimum reserve (%)",
+          "target_soc": "Charge target at deadline (%)",
+          "terminal_soc": "Minimum charge at horizon end (%)",
+          "max_soc": "Maximum simulated charge (%)",
+          "charge_power_kw": "AC charging limit (kW)",
+          "discharge_power_kw": "AC discharging limit (kW)",
+          "charge_efficiency": "Initial charging efficiency (%)",
+          "discharge_efficiency": "Initial discharging efficiency (%)",
+          "grid_import_limit_kw": "Whole-home grid import limit (kW)",
+          "grid_export_limit_kw": "Whole-home grid export limit (kW)",
+          "cycle_cost_per_kwh": "Wear cost per DC kWh discharged",
+          "charge_deadline": "Today’s charge-target deadline",
+          "allow_battery_export": "Include battery export in the simulation",
+          "export_on_anticipated": "Allow simulated battery export using anticipated prices"
+        }
+      }
+    },
+    "error": {
+      "invalid_age": "Invalid age. Check the selected inputs and try again.",
+      "unsupported_query": "Unsupported query. Check the selected inputs and try again.",
+      "plan_unavailable": "Plan unavailable. Check the selected inputs and try again.",
+      "incomplete_price_day": "Incomplete price day. Check the selected inputs and try again.",
+      "missing_solar": "Missing solar. Check the selected inputs and try again.",
+      "invalid_solar": "Invalid solar. Check the selected inputs and try again.",
+      "missing_source": "Missing source. Check the selected inputs and try again.",
+      "invalid_sign": "Invalid sign. Check the selected inputs and try again.",
+      "self_source": "Self source. Check the selected inputs and try again.",
+      "missing_price_source": "Missing price source. Check the selected inputs and try again.",
+      "invalid_number": "Invalid number. Check the selected inputs and try again.",
+      "invalid_price_rows": "Invalid price rows. Check the selected inputs and try again.",
+      "stale_plan": "Stale plan. Check the selected inputs and try again.",
+      "invalid_equipment_response": "Invalid equipment response. Check the selected inputs and try again.",
+      "currency_mismatch": "Currency mismatch. Check the selected inputs and try again.",
+      "invalid_price_unit": "Invalid price unit. Check the selected inputs and try again.",
+      "price_gap_or_overlap": "Price gap or overlap. Check the selected inputs and try again.",
+      "invalid_plan": "Invalid plan. Check the selected inputs and try again.",
+      "invalid_tariff": "Invalid tariff. Check the selected inputs and try again.",
+      "equipment_already_configured": "Equipment already configured. Check the selected inputs and try again.",
+      "all_in_tax_twice": "All in tax twice. Check the selected inputs and try again.",
+      "provider_unavailable": "Provider unavailable. Check the selected inputs and try again.",
+      "prices_not_final": "Prices not final. Check the selected inputs and try again.",
+      "invalid_price_interval": "Invalid price interval. Check the selected inputs and try again.",
+      "equipment_rejected_read": "Equipment rejected read. Check the selected inputs and try again.",
+      "invalid_deadline": "Invalid deadline. Check the selected inputs and try again.",
+      "invalid_entity": "Invalid entity. Check the selected inputs and try again.",
+      "wrong_price_day": "Wrong price day. Check the selected inputs and try again.",
+      "missing_plan_source": "Missing plan source. Check the selected inputs and try again.",
+      "invalid_equipment_readings": "Invalid equipment readings. Check the selected inputs and try again.",
+      "check_equipment_readings": "Check equipment readings. Check the selected inputs and try again.",
+      "unsupported_equipment": "Unsupported equipment. Check the selected inputs and try again.",
+      "overlapping_plan_windows": "Overlapping plan windows. Check the selected inputs and try again.",
+      "invalid_soc": "Invalid soc. Check the selected inputs and try again.",
+      "source_unavailable": "Source unavailable. Check the selected inputs and try again.",
+      "invalid_timestamp": "Invalid timestamp. Check the selected inputs and try again.",
+      "source_stale": "Source stale. Check the selected inputs and try again.",
+      "wrong_plan_day": "Wrong plan day. Check the selected inputs and try again.",
+      "invalid_planning_limits": "Invalid planning limits. Check the selected inputs and try again.",
+      "invalid_unit": "Invalid unit. Check the selected inputs and try again.",
+      "invalid_document": "Invalid document. Check the selected inputs and try again.",
+      "invalid_connection": "Invalid connection. Check the selected inputs and try again.",
+      "invalid_location": "Invalid location. Check the selected inputs and try again.",
+      "timezone_required": "Timezone required. Check the selected inputs and try again.",
+      "prices_not_ready": "Prices not ready. Check the selected inputs and try again.",
+      "invalid_plan_windows": "Invalid plan windows. Check the selected inputs and try again.",
+      "no_tibber_homes": "No tibber homes. Check the selected inputs and try again.",
+      "cannot_connect_equipment": "Cannot connect equipment. Check the selected inputs and try again.",
+      "invalid_name": "Invalid name. Check the selected inputs and try again.",
+      "invalid_profile": "Invalid profile. Check the selected inputs and try again.",
+      "unsupported_read": "Unsupported read. Check the selected inputs and try again.",
+      "provider_retry_pending": "Provider retry pending. Check the selected inputs and try again.",
+      "provider_query_failed": "Provider query failed. Check the selected inputs and try again.",
+      "unsupported_provider": "Unsupported provider. Check the selected inputs and try again.",
+      "invalid_auth": "Invalid auth. Check the selected inputs and try again.",
+      "prices_unavailable": "Prices unavailable. Check the selected inputs and try again.",
+      "price_source_missing": "Price source missing. Check the selected inputs and try again.",
+      "measurements_not_ready": "Measurements not ready. Check the selected inputs and try again.",
+      "battery_connection_failed": "Battery connection failed. Review the selected inputs.",
+      "battery_no_response": "Battery no response. Review the selected inputs.",
+      "battery_port_in_use": "Battery port in use. Review the selected inputs.",
+      "deadline_outside_horizon": "Deadline outside horizon. Review the selected inputs.",
+      "dedicated_ac_measurement_required": "Dedicated ac measurement required. Review the selected inputs.",
+      "export_curve_requires_sensor": "Export curve requires sensor. Review the selected inputs.",
+      "export_price_required": "Export price required. Review the selected inputs.",
+      "forecast_gap_or_overlap": "Forecast gap or overlap. Review the selected inputs.",
+      "forecast_horizon_incomplete": "Forecast horizon incomplete. Review the selected inputs.",
+      "forecast_location_consent_required": "Forecast location consent required. Review the selected inputs.",
+      "invalid_battery_connection": "Invalid battery connection. Review the selected inputs.",
+      "invalid_battery_frame": "Invalid battery frame. Review the selected inputs.",
+      "invalid_forecast_settings": "Invalid forecast settings. Review the selected inputs.",
+      "invalid_planning_horizon": "Invalid planning horizon. Review the selected inputs.",
+      "invalid_planning_interval": "Invalid planning interval. Review the selected inputs.",
+      "invalid_solar_forecast": "Invalid solar forecast. Review the selected inputs.",
+      "negative_forecast_energy": "Negative forecast energy. Review the selected inputs.",
+      "soc_above_planning_ceiling": "Soc above planning ceiling. Review the selected inputs.",
+      "solar_forecast_day_incomplete": "Solar forecast day incomplete. Review the selected inputs.",
+      "solar_forecast_gap": "Solar forecast gap. Review the selected inputs.",
+      "solar_forecast_required": "Solar forecast required. Review the selected inputs.",
+      "solar_forecast_retry_pending": "Solar forecast retry pending. Review the selected inputs.",
+      "solar_forecast_stale": "Solar forecast stale. Review the selected inputs.",
+      "solar_forecast_unavailable": "Solar forecast unavailable. Review the selected inputs."
+    },
+    "abort": {
+      "invalid_age": "Invalid age.",
+      "unsupported_query": "Unsupported query.",
+      "plan_unavailable": "Plan unavailable.",
+      "already_configured": "Already configured.",
+      "incomplete_price_day": "Incomplete price day.",
+      "missing_solar": "Missing solar.",
+      "invalid_solar": "Invalid solar.",
+      "missing_source": "Missing source.",
+      "invalid_sign": "Invalid sign.",
+      "self_source": "Self source.",
+      "missing_price_source": "Missing price source.",
+      "invalid_number": "Invalid number.",
+      "invalid_price_rows": "Invalid price rows.",
+      "stale_plan": "Stale plan.",
+      "invalid_equipment_response": "Invalid equipment response.",
+      "currency_mismatch": "Currency mismatch.",
+      "invalid_price_unit": "Invalid price unit.",
+      "price_gap_or_overlap": "Price gap or overlap.",
+      "invalid_plan": "Invalid plan.",
+      "invalid_tariff": "Invalid tariff.",
+      "equipment_already_configured": "Equipment already configured.",
+      "all_in_tax_twice": "All in tax twice.",
+      "provider_unavailable": "Provider unavailable.",
+      "prices_not_final": "Prices not final.",
+      "invalid_price_interval": "Invalid price interval.",
+      "equipment_rejected_read": "Equipment rejected read.",
+      "invalid_deadline": "Invalid deadline.",
+      "invalid_entity": "Invalid entity.",
+      "wrong_price_day": "Wrong price day.",
+      "missing_plan_source": "Missing plan source.",
+      "invalid_equipment_readings": "Invalid equipment readings.",
+      "check_equipment_readings": "Check equipment readings.",
+      "unsupported_equipment": "Unsupported equipment.",
+      "overlapping_plan_windows": "Overlapping plan windows.",
+      "invalid_soc": "Invalid soc.",
+      "source_unavailable": "Source unavailable.",
+      "invalid_timestamp": "Invalid timestamp.",
+      "source_stale": "Source stale.",
+      "wrong_plan_day": "Wrong plan day.",
+      "invalid_planning_limits": "Invalid planning limits.",
+      "invalid_unit": "Invalid unit.",
+      "invalid_document": "Invalid document.",
+      "invalid_connection": "Invalid connection.",
+      "invalid_location": "Invalid location.",
+      "timezone_required": "Timezone required.",
+      "prices_not_ready": "Prices not ready.",
+      "invalid_plan_windows": "Invalid plan windows.",
+      "no_tibber_homes": "No tibber homes.",
+      "cannot_connect_equipment": "Cannot connect equipment.",
+      "invalid_name": "Invalid name.",
+      "invalid_profile": "Invalid profile.",
+      "unsupported_read": "Unsupported read.",
+      "provider_retry_pending": "Provider retry pending.",
+      "reconfigure_successful": "Reconfigure successful.",
+      "provider_query_failed": "Provider query failed.",
+      "unsupported_provider": "Unsupported provider.",
+      "invalid_auth": "Invalid auth.",
+      "prices_unavailable": "Prices unavailable.",
+      "price_source_missing": "Price source missing.",
+      "measurements_not_ready": "Measurements not ready.",
+      "battery_connection_failed": "Battery connection failed.",
+      "battery_no_response": "Battery no response.",
+      "battery_port_in_use": "Battery port in use.",
+      "deadline_outside_horizon": "Deadline outside horizon.",
+      "dedicated_ac_measurement_required": "Dedicated ac measurement required.",
+      "export_curve_requires_sensor": "Export curve requires sensor.",
+      "export_price_required": "Export price required.",
+      "forecast_gap_or_overlap": "Forecast gap or overlap.",
+      "forecast_horizon_incomplete": "Forecast horizon incomplete.",
+      "forecast_location_consent_required": "Forecast location consent required.",
+      "invalid_battery_connection": "Invalid battery connection.",
+      "invalid_battery_frame": "Invalid battery frame.",
+      "invalid_forecast_settings": "Invalid forecast settings.",
+      "invalid_planning_horizon": "Invalid planning horizon.",
+      "invalid_planning_interval": "Invalid planning interval.",
+      "invalid_solar_forecast": "Invalid solar forecast.",
+      "negative_forecast_energy": "Negative forecast energy.",
+      "soc_above_planning_ceiling": "Soc above planning ceiling.",
+      "solar_forecast_day_incomplete": "Solar forecast day incomplete.",
+      "solar_forecast_gap": "Solar forecast gap.",
+      "solar_forecast_required": "Solar forecast required.",
+      "solar_forecast_retry_pending": "Solar forecast retry pending.",
+      "solar_forecast_stale": "Solar forecast stale.",
+      "solar_forecast_unavailable": "Solar forecast unavailable."
+    }
+  },
+  "issues": {
+    "inputs_not_ready": {
+      "title": "Household observations need attention",
+      "description": "{name} has missing, stale or incompatible measurements, prices or a plan. Open its dashboard for the affected inputs, then reconfigure the integration. It remains shadow-only and cannot operate equipment."
+    }
+  }
+}

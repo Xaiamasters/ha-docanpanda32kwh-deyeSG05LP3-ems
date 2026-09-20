@@ -1,0 +1,23 @@
+{
+  "domain": "docan_deye_ems",
+  "name": "Docan Panda & Deye EMS",
+  "codeowners": [
+    "@Xaiamasters"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "frontend",
+    "http",
+    "panel_custom"
+  ],
+  "documentation": "https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems#readme",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/issues",
+  "requirements": [
+    "pynordpool==0.4.0",
+    "forecast-solar==5.0.0",
+    "pyserial==3.5"
+  ],
+  "version": "0.4.0-beta.1"
+}

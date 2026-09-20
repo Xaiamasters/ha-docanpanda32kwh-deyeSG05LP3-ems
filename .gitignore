@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.env
+secrets.yaml
+.storage/
+*.key
+*.pem
+.env.*
+.venv/
+.pytest_cache/
+.ruff_cache/
+evidence/
+backups/
+private/
+PRIVATE_*
+*.db
+*.sqlite
