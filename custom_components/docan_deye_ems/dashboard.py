@@ -35,8 +35,11 @@ class HouseholdView(HomeAssistantView):
             # Activation already runs a policy tick. Do not run another just to
             # render the response; the next scheduled poll refreshes all inputs.
             from .control_host import reported_plan
+            from .analytics import command_observation
+            from datetime import datetime, timezone
             status=coordinator.control.status()
             coordinator.async_set_updated_data({**coordinator.data,'control':status,
+                'command':command_observation(status,datetime.now(timezone.utc)),
                 'plan':reported_plan(coordinator.data.get('plan',{}),status),
                 'mode':coordinator.control.mode,'physical_authority':coordinator.control.store.get('active',False)})
             return self.json(result,headers={'Cache-Control':'no-store'})

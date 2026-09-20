@@ -79,6 +79,10 @@ class HostTests(unittest.IsolatedAsyncioTestCase):
         await self.host.tick(inputs_ready=True)
         self.assertEqual(self.host.store.state['action'],'charge')
         self.assertEqual(self.peer.registers[130],1)
+        from custom_components.docan_deye_ems.analytics import command_observation
+        diagnostic=command_observation(self.host.status(),self.host.now())
+        self.assertEqual(diagnostic['charge_current_a'],160)
+        self.assertEqual(diagnostic['setpoint_w'],-8000)
         stopped=await self.host.command('stop',{})
         self.assertFalse(stopped['active']);self.assertIsNotNone(stopped['stop'])
         ack=await self.host.command('acknowledge_stop',{'id':stopped['stop']['id']})

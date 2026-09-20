@@ -465,5 +465,6 @@ class Controller(PolicyContext):
         rec['converged'], rec['converge_note'] = (ok, note)
         rec['phase_observed'] = 'UNVERIFIED_STOP' if not ok else 'CHARGE_ACTIVE' if s['grid_charge_on'] else 'ARMING' if action == CHARGE else 'SAFE_IDLE'
         self.journal(rec)
-        self.persist({'at': s['at'], 'action': action, 'reason': reason, 'converged': ok, 'note': note, 'shadow': False})
+        self.persist({'at': s['at'], 'action': action, 'reason': reason, 'converged': ok, 'note': note, 'shadow': False,
+                      'verified_target': want if ok else None, 'active_program': self.active_program(s)})
         self.log(f'[LIVE] {action} :: {reason} :: {note}')

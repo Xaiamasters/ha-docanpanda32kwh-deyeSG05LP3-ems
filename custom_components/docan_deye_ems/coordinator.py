@@ -34,19 +34,23 @@ class HouseholdCoordinator(DataUpdateCoordinator):
         self.solar_reader = SolarReader(hass,settings.get('forecast',{}),settings['solar'])
         self.production_engine=ProductionShadowAdapter(hass,settings) if settings['plan']['source']=='production_shadow' else None
         self.control=None
+        self.reporting=None
 
     async def async_initialize(self):
         saved = await self.store.async_load()
         # Rebinding equipment, signs, a tariff or forecast invalidates learned
         # comparisons. Credentials and display/map labels are excluded.
         cfg=self.settings
-        context={k:cfg.get(k) for k in ('connection','equipment','battery','bindings','signs','solar','forecast')}
+        context={k:cfg.get(k) for k in ('connection','equipment','battery','bindings','signs','solar','forecast','plan','control')}
+        context['time_zone']=self.hass.config.time_zone
         context['pricing']={k:v for k,v in cfg['pricing'].items() if k!='token'}
         digest=hashlib.sha256(json.dumps(context,sort_keys=True).encode()).hexdigest()
         if not isinstance(saved,dict) or saved.get('context')!=digest:
             saved=None
         self.learning = Learning(saved)
         self.learning.data['context']=digest
+        from .reporting import Reporting
+        self.reporting=Reporting(self.hass,cfg,self.learning,self.prices,self.solar_reader)
         if self.production_engine:
             await self.production_engine.initialize()
             if self.production_engine.observation:
@@ -59,6 +63,8 @@ class HouseholdCoordinator(DataUpdateCoordinator):
 
     async def async_shutdown(self):
         await super().async_shutdown()
+        if self.reporting:
+            await self.reporting.close()
         if self.control:
             await self.control.close()
             self.control=None
@@ -93,7 +99,7 @@ class HouseholdCoordinator(DataUpdateCoordinator):
                     forecast_solar_kwh=sum(r['pv_kwh'] for r in slots),
                     forecast_load_kwh=sum(r['load_kwh'] for r in slots),
                     anticipated_intervals=sum(r['price_origin']=='anticipated' for r in slots))
-        self.learning.remember_plan(plan,now)
+        # Reporting freezes issued comparison forecasts outside the control path.
         price_data={**price_data,'periods':periods}
         return plan, price_data
 
@@ -183,8 +189,12 @@ class HouseholdCoordinator(DataUpdateCoordinator):
         active = next((p for p in price_data['periods'] if instant(p['start']) <= now < instant(p['end'])), None) if price_data else None
         values['import_price'] = active['import'] if active else None
         export = d['pricing'].get('net_export_price') if d['pricing'].get('export_mode')=='fixed' else active.get('export') if active else None
-        self.learning.observe(now,values,values['import_price'],export)
-        metrics = self.learning.metrics(now,self.hass.config.time_zone)
+        from .analytics import comparison_limits, command_observation
+        limits=comparison_limits(d)
+        self.learning.observe(now,values,values['import_price'],export,limits['charge_efficiency'],
+                              d['solar']['connection'],limits['discharge_efficiency'])
+        metrics = {**self.learning.metrics(now,self.hass.config.time_zone),
+                   **(self.reporting.metrics if self.reporting else {})}
         if self.last_save is None or now-self.last_save>=timedelta(minutes=5):
             self.store.async_delay_save(lambda:self.learning.data,10)
             self.last_save=now
@@ -195,6 +205,9 @@ class HouseholdCoordinator(DataUpdateCoordinator):
         control['available']=self.control is not None
         from .control_host import reported_plan
         plan=reported_plan(plan,control)
+        command=command_observation(control,datetime.now(timezone.utc))
+        if self.reporting:
+            self.reporting.schedule(now,price_data,sources,values,plan)
         if control.get('stop'):
             ir.async_create_issue(self.hass,DOMAIN,f'{self.entry.entry_id}_control_stop',is_fixable=False,
                 severity=ir.IssueSeverity.ERROR,translation_key='control_stopped',
@@ -212,6 +225,7 @@ class HouseholdCoordinator(DataUpdateCoordinator):
                 'time_zone': self.hass.config.time_zone, 'day': {'start': begin.isoformat(), 'end': end.isoformat()}, 'ready': ready, 'mode': control['mode'],
                 'physical_authority':control['active'],'control':control, 'model': d['model'], 'capacity_kwh':d['plan'].get('capacity_kwh',CAPACITY_KWH),
                 'values': values, 'errors': failures, 'prices': price_data, 'plan': plan,
-                'metrics':metrics,'battery_source':d['battery']['source'],
+                'metrics':metrics,'battery_source':d['battery']['source'],'command':command,
+                'comparison_plan':self.reporting.plan if self.reporting else {},
                 'solar': dict(d['solar']), 'location': {k: v for k, v in d['location'].items() if k != 'address'},
                 'reserve_soc': d['diagram_reserve_soc']}

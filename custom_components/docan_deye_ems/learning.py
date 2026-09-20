@@ -12,7 +12,7 @@ class Learning:
     def __init__(self, data=None):
         self.data = data if isinstance(data, dict) and data.get('schema') == 1 else {
             'schema': 1, 'intervals': {}, 'prices': {}, 'predictions': {}, 'efficiency': {}}
-        for key in ('intervals', 'prices', 'predictions', 'efficiency'):
+        for key in ('intervals', 'prices', 'predictions', 'efficiency', 'vintages', 'scores'):
             self.data.setdefault(key, {})
         self.previous = None  # Never integrate over downtime or a restart.
 
@@ -20,8 +20,10 @@ class Learning:
         cutoff = (now-timedelta(days=30)).timestamp()
         for key in ('intervals', 'prices', 'predictions'):
             self.data[key] = {k: v for k, v in self.data[key].items() if float(k) >= cutoff}
+        self.data['vintages'] = {k: v for k, v in self.data['vintages'].items() if v['issued'] >= cutoff}
+        self.data['scores'] = {k: v for k, v in self.data['scores'].items() if v['end'] >= cutoff}
 
-    def observe(self, now, values, buy, sell):
+    def observe(self, now, values, buy, sell, charge_efficiency=95, solar_connection='external_ac', discharge_efficiency=95):
         required = ('load_power', 'solar_power', 'grid_power', 'battery_power')
         if any(values.get(k) is None for k in required) or buy is None:
             self.previous = None
@@ -48,6 +50,33 @@ class Learning:
             row['seconds'] += duration
             row['load'] += max(0, v['load_power'])*k
             row['pv'] += max(0, v['solar_power'])*k
+            # Convert DC PV to the common AC basis used by the simulator. Mixed
+            # PV without a split cannot be assigned a defensible conversion.
+            charge = max(0, -v['battery_power'])
+            pv_ac = v['solar_power']*discharge_efficiency/100 if solar_connection=='deye_dc' else v['solar_power']
+            if solar_connection=='mixed':
+                row['pv_basis_unknown'] = True
+            else:
+                row['pv_ac'] = row.get('pv_ac', 0)+max(0, pv_ac)*k
+                surplus = max(0, v['solar_power']-v['load_power']/(discharge_efficiency/100)) if solar_connection=='deye_dc' else max(0, pv_ac-v['load_power'])*charge_efficiency/100
+                row['solar_charge'] = row.get('solar_charge', 0)+min(charge, surplus)*k
+                row['solar_charge_seconds'] = row.get('solar_charge_seconds', 0)+duration
+            for key, value in (('discharge_dc', max(0, v['battery_power'])),):
+                row[key] = row.get(key, 0) + value*k
+            first = a == datetime.fromtimestamp(start, UTC)
+            if 'soc_start' not in row:
+                row['soc_start'] = v.get('battery_soc') if first else None
+            row['soc_end'] = values.get('battery_soc')
+            if v.get('battery_soc') is not None and values.get('battery_soc') is not None:
+                fraction = (b-old['time']).total_seconds()/seconds
+                row['soc_end'] = v['battery_soc']+(values['battery_soc']-v['battery_soc'])*fraction
+                if first:
+                    fraction = (a-old['time']).total_seconds()/seconds
+                    row['soc_start'] = v['battery_soc']+(values['battery_soc']-v['battery_soc'])*fraction
+            tariff = [old['buy'], old['sell']]
+            row.setdefault('tariff', tariff)
+            if row['tariff'] != tariff:
+                row['tariff_mixed'] = True
             row['import'] += max(0, v['grid_power'])*k
             row['export'] += max(0, -v['grid_power'])*k
             row['cost'] += max(0, v['grid_power'])*k*old['buy']
@@ -136,7 +165,11 @@ class Learning:
             value = learned.get(key)
             learned_count += value is not None
             kw = value*4*adjustment if value is not None else number(baseline_kw)
-            rows.append({'start': a.isoformat(), 'end': b.isoformat(), 'kwh': kw*(b-a).total_seconds()/3600})
+            hours = (b-a).total_seconds()/3600
+            samples = sorted(profiles.get(key, {}).values())
+            p80 = samples[min(len(samples)-1, int(.8*(len(samples)-1)+.999999))]*4*adjustment if len(samples) >= 3 else None
+            rows.append({'start': a.isoformat(), 'end': b.isoformat(), 'kwh': kw*hours,
+                         'p50_kwh': kw*hours, 'p80_kwh': p80*hours if p80 is not None else None})
             a = b
         return rows, {'source': 'learned_profile' if learned_count == len(rows) else 'mixed_profile' if learned_count else 'entered_baseline',
                       'learned_slots': learned_count, 'total_slots': len(rows), 'intraday_multiplier': adjustment}
@@ -154,8 +187,22 @@ class Learning:
         for row in plan.get('horizon', []):
             a, b = instant(row['start']), instant(row['end'])
             if a >= now and int(a.timestamp()) % 900 == 0 and (b-a).total_seconds() == 900:
-                self.data['predictions'].setdefault(str(int(a.timestamp())), {
-                    'pv': row['pv_kwh'], 'load': row['load_kwh'], 'cost': row['cost']})
+                record = self.data['predictions'].setdefault(str(int(a.timestamp())), {})
+                fields = {
+                    'pv': row['pv_kwh'], 'load': row['load_kwh'], 'cost': row['cost'],
+                    'p50': row.get('p50_kwh', row['load_kwh']), 'p80': row.get('p80_kwh'),
+                    'dp_delta': row.get('battery_delta_kwh'), 'heuristic_action': row.get('heuristic_action')}
+                for key, value in fields.items():
+                    if value is not None:
+                        record.setdefault(key, value)
+
+    def remember_load(self, rows, now):
+        for row in rows:
+            a, b = instant(row['start']), instant(row['end'])
+            if a >= now and int(a.timestamp()) % 900 == 0 and (b-a).total_seconds() == 900:
+                record = self.data['predictions'].setdefault(str(int(a.timestamp())), {})
+                for key, value in (('load', row['kwh']), ('p50', row['p50_kwh']), ('p80', row['p80_kwh'])):
+                    record.setdefault(key, value)
 
     def metrics(self, now, zone):
         days, pv_errors, load_errors, cost_errors = {}, [], [], []
@@ -163,15 +210,19 @@ class Learning:
             at = datetime.fromtimestamp(int(stamp), UTC)
             day = at.astimezone(ZoneInfo(zone)).date().isoformat()
             summary = days.setdefault(day, {'date': day, 'coverage_seconds': 0, 'import_kwh': 0,
-                'export_kwh': 0, 'observed_net_cost': 0, 'unpriced_export_kwh': 0})
+                'export_kwh': 0, 'observed_net_cost': 0, 'unpriced_export_kwh': 0,
+                'solar_charge_estimate_kwh': 0, 'solar_charge_coverage_seconds': 0})
             for to, source in [('coverage_seconds', 'seconds'), ('import_kwh', 'import'),
                                ('export_kwh', 'export'), ('observed_net_cost', 'cost'), ('unpriced_export_kwh', 'unpriced_export')]:
                 summary[to] += row[source]
+            summary['solar_charge_estimate_kwh'] += row.get('solar_charge', 0)
+            summary['solar_charge_coverage_seconds'] += row.get('solar_charge_seconds', 0)
             prediction = self.data['predictions'].get(stamp)
             if prediction and row['seconds'] >= 850 and at+timedelta(minutes=15) <= now:
-                pv_errors.append(abs(row['pv']*900/row['seconds']-prediction['pv'])*4000)
+                if not row.get('pv_basis_unknown') and prediction.get('pv') is not None:
+                    pv_errors.append(abs(row.get('pv_ac',row['pv'])*900/row['seconds']-prediction['pv'])*4000)
                 load_errors.append(abs(row['load']*900/row['seconds']-prediction['load'])*4000)
-                if row['unpriced_export'] == 0:
+                if row['unpriced_export'] == 0 and prediction.get('cost') is not None:
                     cost_errors.append(abs(row['cost']*900/row['seconds']-prediction['cost']))
         return {'days': sorted(days.values(), key=lambda r: r['date']),
                 'solar_forecast_mae_w': statistics.mean(pv_errors) if pv_errors else None,

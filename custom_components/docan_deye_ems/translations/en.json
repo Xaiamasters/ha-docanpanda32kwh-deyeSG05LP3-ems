@@ -248,7 +248,7 @@
       },
       "control_limits": {
         "title": "Equipment control limits",
-        "description": "These limits apply only after separate dashboard commissioning and live activation. Defaults are bounded for the selected inverter. Check them against your battery, inverter and grid agreement. The household load and delivery factor are estimates until you have measured your own system.",
+        "description": "These limits apply only after separate dashboard commissioning and live activation. Defaults are bounded for the selected inverter. Check them against your battery, inverter and grid agreement. The household load and delivery factor are estimates until you have measured your own system. Comparison sensors otherwise learn a local solar profile after three complete days. An optional forecast supplies estimates sooner and never changes live control.",
         "data": {
           "charge_current_a": "Maximum charging current (A)",
           "program_power_w": "Program power limit (W)",
@@ -264,7 +264,8 @@
           "baseline_load_kw": "Estimated overnight household load (kW)",
           "meter_factor": "Estimated pack-to-meter delivery factor",
           "allow_export": "Permit battery export after commissioning",
-          "export_end": "Latest export end (HH:MM)"
+          "export_end": "Latest export end (HH:MM)",
+          "comparison_forecast": "Configure an optional solar forecast for comparison sensors"
         }
       }
     },

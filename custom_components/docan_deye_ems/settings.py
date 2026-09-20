@@ -135,6 +135,7 @@ def _validate_document(data):
         except (ValueError,TypeError):raise InputError('invalid_deadline') from None
         if t.tzinfo or t.second:raise InputError('invalid_deadline')
         if p.get('export_mode') not in ('fixed','curve','spot'):raise InputError('export_price_required')
+    if k['source']=='forecast_shadow' or (k['source']=='production_shadow' and d.get('forecast')):
         f=d.get('forecast',{})
         permitted={'solar_source','latitude','longitude','tilt','azimuth','consent','baseline_load_kw','anticipate_prices','learn_efficiency'}
         if set(f)-permitted or f.get('solar_source') not in ('none','sensor','forecast_solar'):raise InputError('invalid_forecast_settings')
@@ -147,7 +148,7 @@ def _validate_document(data):
             if not -90<=number(f.get('latitude'))<=90 or not -180<=number(f.get('longitude'))<=180:raise InputError('invalid_location')
             if not 0<=number(f.get('tilt'))<=90 or not -180<=number(f.get('azimuth'))<=180 or solar['kwp']<=0:raise InputError('invalid_forecast_settings')
         if f['learn_efficiency'] and 'battery_ac_power' not in bindings:raise InputError('dedicated_ac_measurement_required')
-    if k['source']!='forecast_shadow':
+    if k['source'] not in ('forecast_shadow','production_shadow'):
         d.pop('forecast',None)
         bindings.pop('solar_forecast',None)
         bindings.pop('battery_ac_power',None)
