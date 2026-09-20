@@ -18,22 +18,23 @@ Version: `0.4.0-beta.1`. The owner approved this separate public beta on
 
 ## Authorized publication checks
 
-- [ ] Start this separate public edition with clean Git history and a GitHub
+- [x] Start this separate public edition with clean Git history and a GitHub
   noreply commit email. Never push the private repository's history.
-- [ ] Create this separate repository with Issues enabled, an accurate read-only
+- [x] Create this separate repository with Issues enabled, an accurate read-only
   beta description and topics such as `home-assistant`, `hacs`, `deye`, `docan`,
   `energy-monitoring` and `solar`.
-- [ ] Push only the sealed public tree. Verify the remote commit and inspect
+- [x] Push only the sealed public tree. Verify the remote commit and inspect
   hassfest, software-tests and HACS workflow outcomes. Fix actual failures;
   do not ignore checks or show passing badges for checks that did not run.
-- [ ] Publish GitHub prerelease `0.4.0-beta.1` with its matching source/release ZIP,
+- [x] Publish GitHub prerelease `0.4.0-beta.1` with its matching source/release ZIP,
   checksum, changelog and experimental hardware limitations.
-- [ ] In a disposable HA instance, verify HACS → menu → Custom repositories →
+- [x] In a disposable HA instance, verify HACS → menu → Custom repositories →
   this repository URL → Integration → Add. Enable beta versions if needed,
-  download the prerelease, and verify setup/dashboard, upgrade and removal.
-- [ ] Confirm downloaded component hashes match the release. This is separate
+  download the prerelease, and verify setup/dashboard, reload and removal.
+- [ ] Verify a real version-to-version upgrade when a subsequent release exists.
+- [x] Confirm downloaded component hashes match the release. This is separate
   from the completed manual-copy/software simulation evidence.
-- [ ] Enable private vulnerability reporting if available and add truthful
+- [x] Enable private vulnerability reporting if available and add truthful
   workflow badges after the relevant remote runs exist.
 
 ## Later, optional default-store submission
@@ -50,4 +51,17 @@ Official references:
 - [HACS validation action](https://www.hacs.xyz/docs/publish/action/)
 - [HACS default-store inclusion](https://www.hacs.xyz/docs/publish/include/)
 
-For current evidence, consult TESTING.md and the private finalization report.
+Published on 2026-09-20: [repository](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems) and [prerelease](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/releases/tag/0.4.0-beta.1).
+Hassfest, HACS validation and software-test workflows passed on the release commit.
+The downloaded release ZIP matches its published SHA-256. Actual HACS 2.0.5 UI
+installation passed in a disposable HA instance: all 224 component files matched
+the release, and five HACS-generated gzip files decompressed to identical source
+assets. Native HA config-flow setup created 31 read-only entities, its dashboard
+and a simulated forecast plan. Reload and native config-entry removal passed;
+zero domain services were registered. No physical equipment was contacted.
+
+A version-to-version upgrade cannot yet be tested because this is the first
+public release. The immutable release tag retains its original checklist;
+these completed results are documented in the follow-up on the default branch.
+
+For current evidence, consult TESTING.md and the private publication report.

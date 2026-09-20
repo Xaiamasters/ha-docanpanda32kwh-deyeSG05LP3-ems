@@ -1,5 +1,9 @@
 # Docan Panda & Deye EMS
 
+[![Hassfest](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hassfest.yaml)
+[![HACS validation](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hacs.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hacs.yaml)
+[![Software tests](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/tests.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/tests.yaml)
+
 ![Docan Panda & Deye EMS](custom_components/docan_deye_ems/brand/icon.png)
 
 Understand your battery, forecast tomorrow's energy needs, and compare a simulated
@@ -76,8 +80,9 @@ This integration is not a default-store HACS listing. Home Assistant 2026.5.3 or
 2. Open **HACS → menu → Custom repositories**.
 3. Add `https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems` with
    category **Integration**.
-4. Open **Docan Panda & Deye EMS**, enable beta versions if necessary, and download
-   `0.4.0-beta.1`.
+4. Open **Docan Panda & Deye EMS → Download → Need a different version?**.
+   Select **Release → 0.4.0-beta.1**, then **Download**. HACS 2.0.5 may initially
+   offer a commit identifier; select the named prerelease explicitly.
 5. Restart HA. Open **Settings → Devices & services → Add integration →
    Docan Panda & Deye EMS**.
 6. Complete the wizard: hardware → battery source/readings check → inverter
