@@ -374,9 +374,15 @@ class HouseholdFlow(config_entries.ConfigFlow, domain=DOMAIN):
         error=None
         if user_input:
             try:
-                self.d['control']=validate_control(user_input,self.d['model'])
+                values=dict(user_input)
+                configure_forecast=values.pop('comparison_forecast',False)
+                self.d['control']=validate_control(values,self.d['model'])
+                if not configure_forecast:
+                    self.d.pop('forecast',None)
+                    self.d['bindings'].pop('solar_forecast',None)
+                    self.d['bindings'].pop('battery_ac_power',None)
                 validate_document(self.d)
-                return await self.async_step_finish()
+                return await (self.async_step_forecast() if configure_forecast else self.async_step_finish())
             except (ValueError,InputError):error='invalid_control_profile'
         cfg={**defaults(self.d['model']),**self.d.get('control',{})}
         max_w=MODELS[self.d['model']]*1000
@@ -387,7 +393,8 @@ class HouseholdFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 'baseline_load_kw':(.05,10,.05),'meter_factor':(.5,1,.01)}
         schema={vol.Required(key,default=cfg[key]):numeric(*bounds) for key,bounds in fields.items()}
         schema.update({vol.Required('allow_export',default=cfg['allow_export']):bool,
-                       vol.Required('export_end',default=cfg['export_end']):str})
+                       vol.Required('export_end',default=cfg['export_end']):str,
+                       vol.Required('comparison_forecast',default=bool(self.d.get('forecast'))):bool})
         return self.form('control_limits',schema,error)
 
     async def async_step_export_tariff(self, user_input=None):
@@ -436,7 +443,7 @@ class HouseholdFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 if cfg['learn_efficiency']:
                     self.d['bindings']['battery_ac_power']=binding(self.hass,ac,'W')
                 self.d['forecast']=cfg
-                return await self.async_step_optimizer()
+                return await (self.async_step_finish() if self.d['plan']['source']=='production_shadow' else self.async_step_optimizer())
             except (InputError, KeyError, TypeError) as err:
                 error = str(err) if isinstance(err,InputError) else 'invalid_forecast_settings'
         schema={

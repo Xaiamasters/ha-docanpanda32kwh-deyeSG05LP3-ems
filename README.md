@@ -5,7 +5,7 @@ A Home Assistant energy controller for a **Docan Panda 32 kWh** battery and
 an energy dashboard, plans charging from electricity prices and can execute
 that plan after you commission the installation and enable live control.
 
-**0.5.0-beta.1 is an experimental control beta.** New installations start in
+**0.5.0-beta.2 is an experimental control beta.** New installations start in
 shadow mode. Software and simulated equipment tests do not establish physical
 compatibility with every battery, logger or inverter firmware.
 
@@ -83,7 +83,7 @@ repository, not a HACS default-store entry.
 3. Add `https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems`
    with category **Integration**.
 4. Open **Docan Panda & Deye EMS > Download**. If needed, choose **Need a
-   different version? > Release > 0.5.0-beta.1**.
+   different version? > Release > 0.5.0-beta.2**.
 5. Restart HA. Open **Settings > Devices & services > Add integration >
    Docan Panda & Deye EMS**.
 6. Follow the setup wizard for hardware, connections, readings, location, solar,
@@ -130,6 +130,10 @@ limits. See [commissioning and failure behaviour](CONTROL_ADAPTER.md).
 Entity names use your installation name. Optional sources determine which
 measurements exist.
 
+The [complete sensor catalogue](docs/SENSORS.md) lists every reporting sensor,
+its units and when it becomes available. Forecast and comparison reporting now
+runs alongside automatic live control as well as in shadow mode.
+
 | Group | Information |
 |---|---|
 | Battery | SoC, voltage, current, power, temperature and cell spread |
@@ -138,6 +142,9 @@ measurements exist.
 | Controller | Active/commissioned state, stop reason, verified program date and guard health |
 | Forecast comparison | Forecast solar/load energy, planned import/export, costs, wear and projected SoC |
 | Learning | Load model, measured efficiency where configured, forecast errors and observed daily grid statistics |
+| Commands | Verified charging current and a labelled watt equivalent or export limit |
+| Comparison | Parallel DP plan, solar-to-battery estimate, daily hindsight regret, over/under buying and seven-day paired schedule costs |
+| Accuracy | 12/24-hour energy errors and P50/P80 quantile losses with sample counts |
 
 Battery power/current are positive when discharging. Grid power is positive
 when importing. The direct grid reading is the inverter's measurement, not a

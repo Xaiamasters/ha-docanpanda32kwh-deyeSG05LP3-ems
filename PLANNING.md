@@ -1,8 +1,9 @@
 # Forecasts and read-only planning
 
 The integration also includes a separate [automatic charge and export engine](ENGINE_PORT.md).
-The forecast, anticipation and learning behaviour described below does not apply
-to that policy.
+The forecast, anticipation and learning behaviour described below runs as a
+parallel reporting model alongside that policy. It does not change its live
+decisions. See the [sensor catalogue](docs/SENSORS.md) for inputs and coverage.
 
 The forecast mode simulates a feasible energy schedule. It cannot execute
 that schedule. The other modes display a structured external controller plan or

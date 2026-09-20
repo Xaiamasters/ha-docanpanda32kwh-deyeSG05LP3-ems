@@ -1,6 +1,6 @@
 # Validation and limits
 
-Version **0.5.0-beta.1** includes live control after commissioning. Validation
+Version **0.5.0-beta.2** includes live control after commissioning. Validation
 uses Python 3.14, Home Assistant 2026.6.1, a disposable local HA instance, a
 headless Edge browser, owned loopback inverter emulators and an OS pseudo-terminal
 for the Docan reader. No operating household equipment is used by these tests.
@@ -25,6 +25,9 @@ for the Docan reader. No operating household equipment is used by these tests.
   command authority.
 - Forecast energy conservation, an independent exhaustive optimization oracle,
   forecast consent, historical price anticipation and measured-efficiency rules.
+- Causal forecast vintages, P50/P80 loss units, complete-day hindsight scoring,
+  paired schedule replays, AC/DC solar attribution, missing coverage and DST.
+- Reporting entities in automatic mode and setpoint invalidation on STOP.
 
 The current test count and full result are recorded by the
 [Software tests workflow](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/tests.yaml).

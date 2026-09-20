@@ -45,6 +45,7 @@ class ControlApiTests(unittest.IsolatedAsyncioTestCase):
         self.control.command.assert_awaited_once_with('stop',{})
         self.assertEqual(response.headers['Cache-Control'],'no-store')
         self.assertFalse(self.coordinator.async_set_updated_data.call_args.args[0]['physical_authority'])
+        self.assertIsNone(self.coordinator.async_set_updated_data.call_args.args[0]['command']['setpoint_w'])
 
     async def test_live_stop_and_ack_report_actual_decision_then_restore_preview(self):
         status={'available':True,'active':True,'mode':'live','controller':{'action':'idle','reason':'outside current window'},'stop':None,'programmed_day':'2026-09-20'}

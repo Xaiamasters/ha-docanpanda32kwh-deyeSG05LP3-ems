@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0-beta.2
+
+- Adds controller state, verified charge current, a labelled power-setpoint equivalent and remaining grid-charge hours.
+- Exposes forecast and daily-statistics sensors alongside automatic live control, with an independent comparison plan.
+- Adds solar-to-battery attribution, completed-day hindsight regret, over/under buying and paired seven-day DP versus controller-window replay costs.
+- Records forecasts before delivery for 12/24-hour energy errors and P50/P80 quantile losses; missing history stays unavailable.
+- Offers optional solar forecasting for automatic-mode comparisons, with local historical profiles as the default and no new external location access.
+- Keeps comparison calculations outside the controller heartbeat and preserves existing entity unique IDs.
+
 ## 0.5.0-beta.1
 
 - Adds the complete automatic charge/export engine, direct observations, six-program transactions and authenticated commissioning/live controls.
