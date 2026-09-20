@@ -51,7 +51,7 @@ def _validate_document(data):
     if d.get('bms_link') not in ('can','rs485','unknown'):raise InputError('invalid_profile')
     if not 0<=number(d.get('diagram_reserve_soc'))<=99:raise InputError('invalid_planning_limits')
     bindings=d.get('bindings',{})
-    if set(bindings)-(set(MEASUREMENTS)|{'price_curve','observed_plan','solar_forecast'}):raise InputError('invalid_entity')
+    if set(bindings)-(set(MEASUREMENTS)|{'price_curve','observed_plan','solar_forecast','controller_snapshot'}):raise InputError('invalid_entity')
     for b in bindings.values():
         if not isinstance(b,dict) or set(b)-{'entity_id','platform','unique_id'} or not re.fullmatch(r'sensor\.[a-z0-9_]+',b.get('entity_id','')):raise InputError('invalid_entity')
         if any(not isinstance(v,str) or len(v)>255 for v in b.values()):raise InputError('invalid_entity')
@@ -90,8 +90,17 @@ def _validate_document(data):
         if p.get('area') not in set(AREAS)-{'SYS'} or p['basis']!='spot':raise InputError('invalid_tariff')
     elif 'price_curve' not in bindings:raise InputError('missing_price_source')
     k=d.get('plan',{})
-    if k.get('source') not in ('observed','shadow_estimate','forecast_shadow'):raise InputError('invalid_plan')
-    if k['source']=='observed':
+    if k.get('source') not in ('observed','shadow_estimate','forecast_shadow','production_shadow'):raise InputError('invalid_plan')
+    if k['source']=='production_shadow':
+        required={'source','capacity_kwh','fallback_reserve_soc','export_power_w','round_trip_efficiency','wear_cost_per_kwh','export_price_deduction'}
+        if set(k)!=required or 'controller_snapshot' not in bindings:raise InputError('missing_controller_snapshot')
+        if not 20<=number(k['capacity_kwh'])<=40 or not 25<=number(k['fallback_reserve_soc'])<=70:raise InputError('invalid_planning_limits')
+        if not 0<number(k['export_power_w'])<=MODELS[d['model']]*1000:raise InputError('invalid_planning_limits')
+        if not 0<number(k['round_trip_efficiency'])<=1 or not 0<=number(k['wear_cost_per_kwh'])<=1:raise InputError('invalid_planning_limits')
+        if p['currency']!='EUR':raise InputError('production_policy_requires_eur')
+        if not -2<=number(k['export_price_deduction'])<=2:raise InputError('invalid_planning_limits')
+        if d['model']!='SUN-10K-SG05LP3-EU-SM2':raise InputError('production_profile_requires_10k')
+    elif k['source']=='observed':
         if set(k)!={'source'} or 'observed_plan' not in bindings:raise InputError('missing_plan_source')
     elif k['source']=='shadow_estimate':
         from datetime import time

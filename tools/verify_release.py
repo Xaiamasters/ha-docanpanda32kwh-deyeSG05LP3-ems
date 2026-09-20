@@ -26,14 +26,14 @@ def main():
     tree = ast.parse((component / 'const.py').read_text(encoding='utf-8'))
     constants = {target.id: node.value for node in tree.body if isinstance(node, ast.Assign)
                  for target in node.targets if isinstance(target, ast.Name)}
-    assert ast.literal_eval(constants['VERSION']) == manifest['version'] == '0.4.0-beta.1'
+    assert ast.literal_eval(constants['VERSION']) == manifest['version'] == '0.5.0.dev1'
     platforms = constants['PLATFORMS']
     assert isinstance(platforms, ast.List)
     assert {node.attr for node in platforms.elts if isinstance(node, ast.Attribute)} == {'SENSOR', 'BINARY_SENSOR'}
     prohibited_files = {'services.yaml', 'services.yml', 'switch.py', 'button.py', 'number.py', 'select.py', 'climate.py', 'cover.py'}
     assert not any((component / name).exists() for name in prohibited_files)
     forbidden_calls = {'async_call', 'call_service', 'write_register', 'write_registers', 'write_coil', 'write_coils'}
-    for source in component.glob('*.py'):
+    for source in component.rglob('*.py'):
         module = ast.parse(source.read_text(encoding='utf-8'))
         for node in ast.walk(module):
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):

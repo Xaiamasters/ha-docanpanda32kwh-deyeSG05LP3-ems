@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0.dev1 (unreleased)
+
+- Port the production price planner, conditional charge ceiling, measured reserve,
+  six-program conversion, controller decisions and verified-write transaction core.
+- Add a separate production-policy shadow adapter with persistent local state.
+- Compare the port with the original source offline and test write failures using
+  an in-memory device. No physical equipment adapter or live-mode switch is added.
+- Keep the forecast optimizer as a separate selectable policy. See ENGINE_PORT.md
+  for reference-profile limits and the remaining live-control work.
+
 ## 0.4.0-beta.1: first public beta, 2026-09-20
 
 - Public identity: Docan Panda & Deye EMS, integration domain `docan_deye_ems`.

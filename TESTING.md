@@ -1,5 +1,26 @@
 # Validation and limits
 
+## Unreleased production engine candidate
+
+Version 0.5.0.dev1 adds production-policy software tests. They run the controller
+against an in-memory plant and exercise the real Home Assistant coordinator,
+configuration form and storage with synthetic observations. This candidate has
+not undergone a new HACS installation test or a physical equipment test.
+
+Private offline comparisons also run the captured original modules against the
+port. They compare 1,000 planner cases, 1,000 controller cases, 150 ceiling
+decisions, 150 firmware schedule cases, 25 ordered write/failure cases, 20 reserve
+admission cases and 10 recovery cases. Additional checks compare 138 assembled
+daily plans, 12 matching plan refusals and 20 overnight histories. Differences in
+sanitized explanatory wording are excluded from numerical comparisons.
+
+These checks establish equivalence for the tested inputs, not all possible
+operating conditions. See [the engine port](ENGINE_PORT.md) for missing live
+equipment, supervision and commissioning work. The release evidence below refers
+to the published 0.4.0-beta.1 unless a section states otherwise.
+
+## Published beta
+
 Release: **0.4.0-beta.1**, published 2026-09-20. Local testing used Home Assistant
 2026.6.1, Python 3.14 and a headless Edge browser. No production HA system or
 physical battery/inverter was contacted.

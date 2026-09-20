@@ -146,7 +146,7 @@
       },
       "plan": {
         "title": "Where should the plan come from?",
-        "description": "Forecast shadow planning combines solar/load forecasts, separate import/export tariffs, battery losses, wear and reserves. Simple shadow estimate only ranks charging prices. Observed displays an external controller plan. All modes are read-only.",
+        "description": "Choose the forecast optimizer, a simple charging estimate, a supplied plan, or the advanced production policy comparison. All modes are read-only. The production comparison needs a complete observation frame and does not use solar forecasts or price anticipation.",
         "data": {
           "source": "Plan source"
         }
@@ -233,6 +233,19 @@
           "allow_battery_export": "Include battery export in the simulation",
           "export_on_anticipated": "Allow simulated battery export using anticipated prices"
         }
+      },
+      "production": {
+        "title": "Production policy comparison",
+        "description": "Advanced shadow comparison for the 10 kW reference profile. Select a sensor carrying the complete controller observation frame described in ENGINE_PORT.md. This calculates decisions and proposed settings without sending commands. It requires 96 published quarter-hour prices in EUR. Enter your tariff deduction; no other household's fee is supplied. This reference policy uses one price curve for planning; the separate fixed/curve selling tariff from the forecast optimizer does not apply. Solar forecasts and anticipated prices do not affect this policy.",
+        "data": {
+          "controller_snapshot": "Complete controller observation sensor",
+          "capacity_kwh": "Usable battery capacity (kWh)",
+          "fallback_reserve_soc": "Reserve fallback when no dated measurement is available (%)",
+          "export_power_w": "Proposed export power (W)",
+          "round_trip_efficiency": "Round-trip efficiency (0 to 1)",
+          "wear_cost_per_kwh": "Battery wear cost (EUR/kWh)",
+          "export_price_deduction": "Controller export-value deduction from the input price (EUR/kWh)"
+        }
       }
     },
     "error": {
@@ -317,7 +330,18 @@
       "solar_forecast_required": "Solar forecast required. Review the selected inputs.",
       "solar_forecast_retry_pending": "Solar forecast retry pending. Review the selected inputs.",
       "solar_forecast_stale": "Solar forecast stale. Review the selected inputs.",
-      "solar_forecast_unavailable": "Solar forecast unavailable. Review the selected inputs."
+      "solar_forecast_unavailable": "Solar forecast unavailable. Review the selected inputs.",
+      "missing_controller_snapshot": "Select a complete controller observation sensor and fill in every comparison setting.",
+      "production_policy_requires_eur": "The reference policy comparison currently requires prices in EUR.",
+      "production_profile_requires_10k": "The captured controller profile is for the 10 kW inverter. Other model control profiles still need commissioning.",
+      "controller_snapshot_unavailable": "The selected controller observation sensor is unavailable.",
+      "controller_snapshot_stale": "The controller observation is too old. No current decision can be shown.",
+      "invalid_controller_snapshot": "The observation frame is incomplete or has invalid values. See ENGINE_PORT.md.",
+      "production_policy_requires_96_published_prices": "This reference policy needs 96 published quarter-hour prices. Short and long daylight-saving days are not supported yet.",
+      "invalid_controller_prices": "The published prices must form 96 consecutive quarter-hour intervals.",
+      "published_prices_required": "The production policy comparison only accepts published prices.",
+      "controller_inputs_not_ready": "A controller guard rejected the observation. See the plan reason for details.",
+      "invalid_saved_engine_state": "Saved engine state is unreadable. Review the local state before continuing."
     },
     "abort": {
       "invalid_age": "Invalid age.",

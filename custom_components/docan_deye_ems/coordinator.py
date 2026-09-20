@@ -16,6 +16,7 @@ from .docan import read_docan, BATTERY_KEYS
 from .learning import Learning
 from .forecast import SolarReader
 from .optimizer import make_slots, optimize
+from .engine_adapter import ProductionShadowAdapter
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,6 +31,7 @@ class HouseholdCoordinator(DataUpdateCoordinator):
         self.learning = Learning()
         self.last_save = None
         self.solar_reader = SolarReader(hass,settings.get('forecast',{}),settings['solar'])
+        self.production_engine=ProductionShadowAdapter(hass,settings) if settings['plan']['source']=='production_shadow' else None
 
     async def async_initialize(self):
         saved = await self.store.async_load()
@@ -43,10 +45,14 @@ class HouseholdCoordinator(DataUpdateCoordinator):
             saved=None
         self.learning = Learning(saved)
         self.learning.data['context']=digest
+        if self.production_engine:
+            await self.production_engine.initialize()
 
     async def async_shutdown(self):
         await super().async_shutdown()
         await self.store.async_save(self.learning.data)
+        if self.production_engine:
+            await self.production_engine.save()
 
     async def forecast_plan(self, now, price_data, sources, values):
         d, zone = self.settings, self.hass.config.time_zone
@@ -142,6 +148,11 @@ class HouseholdCoordinator(DataUpdateCoordinator):
                 plan = observed_plan(state.state, state.attributes, now, self.hass.config.time_zone, d['max_age'])
             elif d['plan']['source']=='forecast_shadow':
                 plan, price_data = await self.forecast_plan(now,price_data,sources,values)
+            elif d['plan']['source']=='production_shadow':
+                periods=await self.prices.horizon(now,price_data,sources.get('price_curve'))
+                plan=await self.production_engine.plan(now,sources.get('controller_snapshot'),periods)
+                if not plan['inputs_valid']:
+                    failures['plan']='controller_inputs_not_ready'
             else:
                 plan = shadow_plan(price_data['periods'], values['battery_soc'], d['plan'], now, self.hass.config.time_zone)
         except InputError as err:

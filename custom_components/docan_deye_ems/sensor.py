@@ -30,7 +30,7 @@ class Measurement(HouseholdEntity, SensorEntity):
 
 
 class Plan(HouseholdEntity, SensorEntity):
-    _unrecorded_attributes = frozenset({'horizon','windows','assumptions'})
+    _unrecorded_attributes = frozenset({'horizon','windows','assumptions','decision','scheduled_jobs'})
     def __init__(self, coordinator):
         super().__init__(coordinator, 'plan', 'Observed or shadow plan')
 

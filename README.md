@@ -1,5 +1,10 @@
 # Docan Panda & Deye EMS
 
+**Development branch: 0.5.0.dev1.** This branch adds a production planning and
+control-policy port for offline and Home Assistant shadow comparison. It is not
+a published release and does not enable equipment control. See the
+[engine port status and remaining work](ENGINE_PORT.md).
+
 [![Hassfest](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hassfest.yaml)
 [![HACS validation](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hacs.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/hacs.yaml)
 [![Software tests](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/tests.yaml/badge.svg)](https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems/actions/workflows/tests.yaml)

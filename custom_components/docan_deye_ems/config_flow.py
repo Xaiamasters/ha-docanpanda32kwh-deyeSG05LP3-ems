@@ -333,8 +333,36 @@ class HouseholdFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self.d['plan'] = {'source': source}
             if source == 'forecast_shadow':
                 return await self.async_step_forecast()
+            if source == 'production_shadow':
+                return await self.async_step_production()
             return await (self.async_step_observed() if source == 'observed' else self.async_step_limits())
-        return self.form('plan', {vol.Required('source', default=self.d['plan'].get('source', 'forecast_shadow')): choice(['forecast_shadow','shadow_estimate', 'observed'])})
+        options=[{'value':'forecast_shadow','label':'Forecast optimizer (shadow)'},
+                 {'value':'shadow_estimate','label':'Charging estimate'},
+                 {'value':'observed','label':'Supplied controller plan'},
+                 {'value':'production_shadow','label':'Production policy comparison'}]
+        return self.form('plan', {vol.Required('source', default=self.d['plan'].get('source', 'forecast_shadow')): choice(options)})
+
+    async def async_step_production(self, user_input=None):
+        error=None
+        if user_input:
+            try:
+                values=dict(user_input)
+                self.d['bindings']['controller_snapshot']=binding(self.hass,values.pop('controller_snapshot'))
+                self.d['plan']={'source':'production_shadow',**values}
+                validate_document(self.d)
+                return await self.async_step_finish()
+            except InputError as err:
+                error=str(err)
+        old=self.d['plan']
+        entity=resolve(self.hass,self.d['bindings'].get('controller_snapshot'))
+        schema={vol.Required('controller_snapshot',**({'default':entity} if entity else {})):SENSOR}
+        fields={'capacity_kwh':(32.0,20,40,.01),'fallback_reserve_soc':(64,25,70,1),
+                'export_power_w':(min(7900,MODELS[self.d['model']]*1000),1,MODELS[self.d['model']]*1000,1),
+                'round_trip_efficiency':(.87,.01,1,.01),'wear_cost_per_kwh':(.04,0,1,.001),
+                'export_price_deduction':(0,-2,2,'any')}
+        for key,(default,low,high,step) in fields.items():
+            schema[vol.Required(key,default=old.get(key,default))]=numeric(low,high,step)
+        return self.form('production',schema,error)
 
     async def async_step_export_tariff(self, user_input=None):
         error = None
