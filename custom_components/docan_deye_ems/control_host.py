@@ -38,8 +38,12 @@ def reported_plan(plan,control):
     row['preview']=plan.get('preview') or {key:plan.get(key) for key in ('mode','status','reason','assumptions')}
     active=bool(control.get('active'))
     state=control.get('controller') or {}
+    status=state.get('action','waiting')
+    if state.get('converged') is True and state.get('shadow') is False:
+        if state.get('reserve_hold') is True:status='reserve_hold'
+        elif state.get('reserve_watch') is True:status='reserve_watch'
     row.update(mode='production_live' if active else 'production_stopped',
-               status=state.get('action','waiting') if active else 'stopped',
+               status=status if active else 'stopped',
                reason=state.get('reason') if active else control['stop'].get('why'),
                physical_authority=active,
                assumptions=['The timeline shows planned windows. The status above is the actual controller decision.',
@@ -195,7 +199,7 @@ class ControlHost:
         try:
             await self.apply_plan(at,plan)
             self.mode='live'
-            await self.session.tick(at,prices,plan,self.engine.tomorrow)
+            await self.session.tick(self.now(),prices,plan,self.engine.tomorrow)
         except BaseException:
             await self.session.stop('activation_incomplete');self.mode='stopped';raise
 
@@ -205,14 +209,22 @@ class ControlHost:
             return
         async with self.lock:
             try:
-                if not inputs_ready:raise WriteDenied('live_inputs_unavailable')
-                at=self.now();prices,plan=self._current_plan(at)
+                at=self.now()
+                try:
+                    if not inputs_ready:raise WriteDenied('live_inputs_unavailable')
+                    prices,plan=self._current_plan(at)
+                except WriteDenied:
+                    # Only the armed session may use fresh native observations
+                    # for household reserve protection without planning inputs.
+                    await self.session.tick(at,None,None)
+                    return
                 # Only arm tomorrow in the scheduled evening window. At all other
                 # times apply the current pin, then run the captured control policy.
                 upcoming=self.engine.state.data.get('plans',{}).get((at.date()+timedelta(days=1)).isoformat())
                 apply=upcoming if at.hour==23 and at.minute>=15 and upcoming else plan
                 if self.store.get('programmed_pin')!=apply['pinned_at']:
                     await self.apply_plan(at,apply)
+                    at=self.now()
                 await self.session.tick(at,prices,plan,self.engine.tomorrow)
                 if self.store.latch:self.mode='stopped'
             except Exception as exc:

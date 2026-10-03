@@ -1,12 +1,14 @@
 # Validation and limits
 
-Version **0.5.0-beta.2** includes live control after commissioning. Validation
+Version **0.5.0-beta.3** includes live control after commissioning. Validation
 uses Python 3.14, Home Assistant 2026.6.1, a disposable local HA instance, a
 headless Edge browser, owned loopback inverter emulators and an OS pseudo-terminal
 for the Docan reader. No operating household equipment is used by these tests.
 
 ## Software coverage
 
+- Household 25% watch / 10% HOLD / 12% release, verified hysteresis, scheduled-charge priority and hardware/STOP refusal.
+- Native commissioned control with missing prices, household grid supply, protected timetable transitions, guarded cleanup and delayed voltage readback without duplicate commands.
 - Modbus TCP, RTU-over-TCP and Solarman V5 reads/writes with response identity,
   length, checksum, function, echo, readback, disconnect and timeout cases.
 - No retry after a write may have taken effect; durable intent before writes;

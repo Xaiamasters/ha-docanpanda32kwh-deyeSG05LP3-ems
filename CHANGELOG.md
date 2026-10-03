@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0-beta.3
+
+- Removes an artificial 15% opening-forecast floor that could reject a reachable next-day plan; rejects invalid forecast inputs.
+- Adds household reserve awareness at 25%, voltage HOLD at 10% and release at 12%, separately from configured export limits.
+- Preserves valid scheduled charging and allows reserve protection from fresh native observations when planning inputs fail.
+- Allows household grid supply during repeated safe programming checks and preserves reserve voltage while changing the six-period timetable.
+- Adds bounded voltage readback retries without repeating equipment writes, and reports reserve HOLD/WATCH on the dashboard.
+- Keeps STOP acknowledgement manual, fresh commissioning after restart, shadow defaults and independent equipment guards.
+- These changes are tested against simulated equipment; they do not establish physical firmware compatibility or automatic STOP recovery.
+
 ## 0.5.0-beta.2
 
 - Adds controller state, verified charge current, a labelled power-setpoint equivalent and remaining grid-charge hours.

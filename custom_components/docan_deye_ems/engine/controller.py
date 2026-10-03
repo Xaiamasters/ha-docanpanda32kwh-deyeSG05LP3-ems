@@ -3,12 +3,37 @@ from __future__ import annotations
 import math
 import re
 from dataclasses import replace
+from datetime import datetime
 from .planner import CHARGE, EXPORT, Contract, plan_day
 from .context import PolicyContext
 from .market import exports
 
 class ConvergeError(RuntimeError):
     pass
+
+HOUSEHOLD_WATCH_PCT = 25.0
+HOUSEHOLD_RESERVE_PCT = 10.0
+HOUSEHOLD_RELEASE_PCT = 12.0
+
+
+def household_reserve_requested(soc, previous, now):
+    """Household protection is separate from the planner's export reserve."""
+    if isinstance(soc, bool) or not isinstance(soc, (int, float)) or not math.isfinite(soc) or not 0 <= soc <= 100:
+        return False
+    if soc <= HOUSEHOLD_RESERVE_PCT:
+        return True
+    if soc >= HOUSEHOLD_RELEASE_PCT or not isinstance(previous, dict):
+        return False
+    floor = previous.get('reserve_floor_pct')
+    if (previous.get('reserve_hold') is not True or previous.get('action') != 'HOLD'
+        or previous.get('converged') is not True or previous.get('shadow') is not False
+        or isinstance(floor, bool) or not isinstance(floor, (int, float)) or floor != HOUSEHOLD_RESERVE_PCT):
+        return False
+    try:
+        return datetime.fromisoformat(previous['at']) <= now
+    except (KeyError, ValueError, TypeError):
+        return False
+
 
 class Controller(PolicyContext):
     HOLD, IDLE = ('HOLD', 'IDLE')
@@ -142,7 +167,27 @@ class Controller(PolicyContext):
         offset = min(tail) if tail else net
         return capped(offset, f'CAP-bound: {sellable:.1f} kWh above floor {floor_pct_now}% >= {k.export_cap_kwh:.1f} kWh cap ; will not sell tonight; offsets a purchase at {offset * 100:.1f}c ({span})')
 
+    def reserve_requested(self, s):
+        return household_reserve_requested(s.get('soc'), self.storage.state, self.now())
+
+    def reserve_reason(self, s):
+        return f"HOUSEHOLD RESERVE: {s['soc']:g}% battery; HOLD requested, grid charging off; release at {HOUSEHOLD_RELEASE_PCT:g}%"
+
     def decide(self, s, k):
+        reserve = self.reserve_requested(s)
+        try:
+            action, reason = self._planned_decision(s, k)
+        except (Exception, SystemExit):
+            if not reserve:
+                raise
+            return self.HOLD, self.reserve_reason(s)
+        if reserve and action != CHARGE:
+            return self.HOLD, self.reserve_reason(s)
+        if action == self.IDLE and HOUSEHOLD_RESERVE_PCT < s['soc'] <= HOUSEHOLD_WATCH_PCT:
+            reason += f'; RESERVE WATCH: grid support starts at {HOUSEHOLD_RESERVE_PCT:g}%'
+        return action, reason
+
+    def _planned_decision(self, s, k):
         if s['prices'] is None:
             return (self.IDLE, 'prices unavailable ; planner admission denied (never a physical veto)')
         if hasattr(s['prices'],'contract'):k=s['prices'].contract(k)
@@ -206,7 +251,7 @@ class Controller(PolicyContext):
                 veto.append(f"{ent.rsplit('_', 2)[-2]} temperature unreadable")
             elif charging and t >= derate:
                 veto.append(f"{ent.rsplit('_', 2)[-2]} {t} >= charge limit {derate}")
-            elif discharging and t >= stop:
+            elif (discharging or action == self.HOLD) and t >= stop:
                 veto.append(f"{ent.rsplit('_', 2)[-2]} {t} >= discharge limit {stop}")
         if action == self.HOLD and s['pack_v'] is not None and (s['pack_v'] >= self.HARD_V):
             veto.append(f"pack {s['pack_v']} V >= hard bound while holding")
@@ -294,7 +339,7 @@ class Controller(PolicyContext):
     READBACK_RETRY_S = 2.0
 
     def _retryable_readback(self, ent):
-        return ent in (self.E_GRID_CHARGE, self.E_SOLAR_SELL)
+        return ent in (self.E_GRID_CHARGE, self.E_SOLAR_SELL) or re.fullmatch(r'program_[1-6]_voltage', ent) is not None
 
     def _reread_after_mismatch(self, ent, want, first):
         if not self._retryable_readback(ent):
@@ -419,10 +464,13 @@ class Controller(PolicyContext):
                 k, floor_src = self.contract_for_today(self.DAY_PLAN)
                 action, reason = self.decide(s, k)
             except (Exception, SystemExit) as exc:
-                if not live:
+                if self.reserve_requested(s):
+                    action, reason, floor_src = self.HOLD, self.reserve_reason(s), 'household reserve'
+                elif not live:
                     raise
-                self._minimal_stop(f'decision context unavailable: {type(exc).__name__}')
-                return
+                else:
+                    self._minimal_stop(f'decision context unavailable: {type(exc).__name__}')
+                    return
             reason = f'{reason} [floor: {floor_src}]'
             veto = self.action_gate(s, action)
             if veto:
@@ -466,5 +514,8 @@ class Controller(PolicyContext):
         rec['phase_observed'] = 'UNVERIFIED_STOP' if not ok else 'CHARGE_ACTIVE' if s['grid_charge_on'] else 'ARMING' if action == CHARGE else 'SAFE_IDLE'
         self.journal(rec)
         self.persist({'at': s['at'], 'action': action, 'reason': reason, 'converged': ok, 'note': note, 'shadow': False,
+                      'reserve_hold': bool(ok and action == self.HOLD and reason.startswith('HOUSEHOLD RESERVE:')),
+                      'reserve_floor_pct': HOUSEHOLD_RESERVE_PCT if ok and action == self.HOLD and reason.startswith('HOUSEHOLD RESERVE:') else None,
+                      'reserve_watch': bool(ok and action == self.IDLE and 'RESERVE WATCH:' in reason),
                       'verified_target': want if ok else None, 'active_program': self.active_program(s)})
         self.log(f'[LIVE] {action} :: {reason} :: {note}')

@@ -57,16 +57,23 @@ Actual firmware acceptance of these commands remains unverified.
 
 ## Transactions and stopping
 
-Six-program application requires fresh idle equipment: absolute grid power
-at most 500 W, absolute battery power at most 300 W, healthy alarms, grid charge
-and solar sell off, zero export to CT and load-first. TOU is disabled while every
-period is staged, then the complete block is verified before restoring its
-previous enable bit. Weekday bits are preserved. Generator charging and
-duplicate or unproven midnight boundaries are refused.
+Six-program application requires three fresh observations over 20 seconds:
+healthy equipment, grid charge and solar sell off, zero export to CT and
+load-first. Household grid supply is allowed. Grid export below -200 W, or grid
+import above 500 W together with battery charging above 300 W, refuses the
+transaction. Initial commissioning preview retains its stricter idle limits.
+TOU stays enabled. Earlier boundaries move in ascending order and later
+boundaries in descending order, preserving a valid timetable throughout.
+At the household reserve, voltage points stay raised during boundary changes;
+inactive points are lowered only after fresh checks away from an imminent
+boundary. Weekday bits are untouched. Generator charging and duplicate or
+unproven midnight boundaries are refused.
 
 Commands record intent in SQLite with full synchronization before transmission.
 Write echoes and independent readback are checked. Missing acknowledgement or
-readback latches STOP without retrying the command. OS locks serialize device
+readback latches STOP without retrying the command. Program-voltage readback
+allows two additional reads, two seconds apart, after a verified write echo;
+an unknown write outcome is never retried. OS locks serialize device
 roles, wire access and serial reads. A physical identity lock prevents two
 commissioned entries on the same HA host owning the same inverter. This cannot
 detect every writer on a different host; sole-writer confirmation remains a
@@ -82,6 +89,8 @@ It clears only that reviewed stop and leaves the controller inactive. A policy
 thread still running after cancellation blocks acknowledgement and retains
 ownership until it exits. Normal unload is refused when stop readback remains
 unverified, preserving the available guards for recovery.
+
+Automatic latch clearing and automatic re-arming are not implemented.
 
 ## Independent guards
 

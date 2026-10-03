@@ -1,14 +1,22 @@
 """Production ceiling selection, opening-state guard and firmware window policy."""
 from __future__ import annotations
 from dataclasses import replace
+import math
 from .planner import CHARGE, EXPORT, SLOTS_PER_DAY, Contract, Period, _hhmm_to_slot, armed_window, assert_window_never_sells, plan_day
 from . import programs as writer
 from .market import exports
 DEADMAN_SOC_MAX = 96.0
 
+def _opening_inputs(soc_now, p50, p90):
+    if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v)
+           for v in (soc_now, p50, p90)) or not 0 <= soc_now <= 100 or not 0 <= p50 <= p90 <= 100:
+        raise ValueError('invalid_opening_forecast_inputs')
+
+
 def forecast_morning_soc(soc_now: float, p50: float, p90: float):
-    f50 = max(15.0, soc_now - p50)
-    f90 = max(15.0, soc_now - p90)
+    _opening_inputs(soc_now, p50, p90)
+    f50 = min(100.0, max(0.0, soc_now - p50))
+    f90 = min(100.0, max(0.0, soc_now - p90))
     basis = f'forecast opening SoC {f50:.0f}% = live {soc_now:.0f}% - P50 draw {p50:.0f} pts (p90 night lands {f90:.0f}%)'
     return (f50, f90, basis)
 GUARD_BELOW_P90 = 8.0
@@ -16,9 +24,12 @@ GUARD_ABOVE_P50 = 12.0
 GUARD_TODAY_BAND = 10.0
 
 def opening_guard(soc0: float, soc_now: float, p50: float, p90: float, tomorrow: bool) -> str:
+    _opening_inputs(soc_now, p50, p90)
+    if isinstance(soc0, bool) or not isinstance(soc0, (int, float)) or not math.isfinite(soc0) or not 0 <= soc0 <= 100:
+        raise ValueError('invalid_opening_soc')
     if tomorrow:
-        lo = soc_now - p90 - GUARD_BELOW_P90
-        hi = soc_now - p50 + GUARD_ABOVE_P50
+        lo = max(0.0, min(100.0, soc_now - p90 - GUARD_BELOW_P90))
+        hi = max(0.0, min(100.0, soc_now - p50 + GUARD_ABOVE_P50))
         if not lo <= soc0 <= hi:
             raise SystemExit(f'REFUSED (opening-state guard): planned opening SoC {soc0:.0f}% is outside the reachable envelope [{lo:.0f}%, {hi:.0f}%] = live {soc_now:.0f}% - draw series (P50 {p50:.0f} / p90 {p90:.0f}, guard -{GUARD_BELOW_P90:.0f}/+{GUARD_ABOVE_P50:.0f}). A tomorrow plan built from an unreachable opening state arms the wrong day ; F27.')
         return f'opening guard PASS: {soc0:.0f}% inside [{lo:.0f}%, {hi:.0f}%] (overnight-only envelope; acceptance curve n/a before the window)'

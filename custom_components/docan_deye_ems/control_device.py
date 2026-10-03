@@ -345,6 +345,11 @@ class DeyeDevice:
         # A write is never retried, including a successful echo with failed readback.
         try:
             after = (await self._request(3, spec.register, 1))[0]
+            if field.startswith('program_') and field.endswith('_voltage'):
+                for _ in range(2):
+                    if after==encoded:break
+                    await asyncio.sleep(2)
+                    after=(await self._request(3,spec.register,1))[0]
             if after != encoded:
                 raise DeviceError('write_readback_mismatch')
             return spec.decode(after)

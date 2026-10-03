@@ -8,7 +8,7 @@ import tempfile
 import threading
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch,AsyncMock
 from zoneinfo import ZoneInfo
 
 from control_peer import ControlPeer
@@ -34,6 +34,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.observation=EquipmentObservation(self.device,{},battery_reader=lambda _:copy.deepcopy(self.battery))
         self.store=ControlStore(Path(self.tmp.name)/'controller.sqlite')
         self.session=ControlSession(self.device,self.observation,self.store)
+        self.session._proof_pause=AsyncMock()
         self.patch_sleep=patch.object(ThreadTransport,'sleep',lambda *_:None)
         self.patch_sleep.start()
         await self.session.start()
@@ -258,7 +259,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                     'charging':'Grid' if i==2 else 'Disabled'}
                  for i,t in enumerate(('01:00:00','12:15:00','18:15:00','23:15:00','23:30:00','23:45:00'),1)}
         await self.session.apply_programs(AT,desired,AT.date().isoformat())
-        self.assertEqual(self.peer.writes[0],(146,254));self.assertEqual(self.peer.writes[-1],(146,255))
+        self.assertFalse(any(address==146 for address,_ in self.peer.writes))
         self.assertEqual(self.peer.registers[149],1215)
         self.assertEqual(self.store.get('programmed_day'),'2026-09-20')
         self.assertNotIn((130,1),self.peer.writes)
@@ -269,7 +270,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
         desired={i:{'time':f'{i+1:02d}:00','power':8000,'soc':25,'voltage':49,'charging':'Disabled'} for i in range(1,7)}
         self.peer.fault='lost_ack'
         with self.assertRaises(DeviceError):await self.session.apply_programs(AT,desired,AT.date().isoformat())
-        self.assertEqual(self.peer.registers[146],254)
+        self.assertEqual(self.peer.registers[146],255)
         self.assertIsNotNone(self.store.latch)
         self.assertNotIn((146,255),self.peer.writes)
 

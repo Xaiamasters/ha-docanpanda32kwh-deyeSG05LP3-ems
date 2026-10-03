@@ -5,7 +5,7 @@ A Home Assistant energy controller for a **Docan Panda 32 kWh** battery and
 an energy dashboard, plans charging from electricity prices and can execute
 that plan after you commission the installation and enable live control.
 
-**0.5.0-beta.2 is an experimental control beta.** New installations start in
+**0.5.0-beta.3 is an experimental control beta.** New installations start in
 shadow mode. Software and simulated equipment tests do not establish physical
 compatibility with every battery, logger or inverter firmware.
 
@@ -23,6 +23,7 @@ compatibility with every battery, logger or inverter firmware.
 | Export arbitrage | Selects evening exports when the actual selling price covers charging losses, wear and the required margin; export is disabled by default |
 | Charge target | Uses a 90% target, or your lower maximum. It can select 95% when the extra energy fits, is profitable and has an export opportunity |
 | Overnight reserve | Starts from your declared household-load estimate, then uses admitted overnight observations; incomplete measurements are rejected |
+| Household battery protection | Shows a watch status at 25%; at 10% requests voltage HOLD with grid charging off, releasing at 12%. A valid scheduled charge still takes priority |
 | Daily updates | Plans the next day at 23:15 and updates the current plan at 10:30 in HA's timezone; missed jobs and missing prices remain visible |
 | Live control | Applies all six inverter time programs and ordered charge, hold, idle and export settings, with readback and a persistent stop latch |
 | Independent guards | Separate processes monitor charging, export, controller health and unexplained setting changes |
@@ -65,9 +66,22 @@ including on a 12 kW inverter.
 
 Live commissioning requires healthy, fresh independent battery readings,
 voltage-mode TOU, today's TOU weekday enabled, six valid program times and
-inactive controls. Initial programming requires absolute grid power at most
+inactive controls. Commissioning preview requires absolute grid power at most
 500 W and absolute battery power at most 300 W. The integration does not switch
 battery operating mode or configure BMS wiring automatically.
+
+Daily programming allows the grid to supply the house. It checks inactive
+controls and fresh safe observations three times over 20 seconds, and refuses
+export or measured grid-to-battery charging. The schedule stays enabled while
+programs change. Household protection uses its own 10% threshold; configured
+planning and export floors are unchanged. Missing prices cannot prevent a
+commissioned, already active controller from requesting low-battery HOLD, but
+missing or unsafe equipment observations still stop it. HOLD readback confirms
+settings, not physical grid takeover; verify the measured power flow.
+
+Automatic recovery from a STOP latch is **not included**. Review and acknowledge
+the stop, then enable live control again. Restart and restore still require
+fresh commissioning.
 
 Existing HA sensors can still be used for observation and forecast comparisons.
 They do not grant live control. See [equipment connections](EQUIPMENT_CONNECTION.md)
@@ -83,7 +97,7 @@ repository, not a HACS default-store entry.
 3. Add `https://github.com/Xaiamasters/ha-docanpanda32kwh-deyeSG05LP3-ems`
    with category **Integration**.
 4. Open **Docan Panda & Deye EMS > Download**. If needed, choose **Need a
-   different version? > Release > 0.5.0-beta.2**.
+   different version? > Release > 0.5.0-beta.3**.
 5. Restart HA. Open **Settings > Devices & services > Add integration >
    Docan Panda & Deye EMS**.
 6. Follow the setup wizard for hardware, connections, readings, location, solar,
